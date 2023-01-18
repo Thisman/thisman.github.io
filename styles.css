@@ -21,6 +21,7 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 80px;
+    color: #009688;
 }
 .task-properties-container {
     margin: 16px auto;

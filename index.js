@@ -88,8 +88,26 @@ const updateSpDescription = (sp) => {
         spCountDescription.innerText = 'Сложная задача! Попробуй декомпозировать ее!'
     }
     
+    if (sp >= 8 && sp < 13) {
+        spCountDescription.innerText = 'Сложная задача! Нужна декомпозиция!'
+    }
+
+    if (sp >= 13) {
+        spCountDescription.innerText = 'Это точно задача, а не эпик? ©'
+    }
+}
+
+const updateSpColor = (sp) => {
+    if (sp < 5) {
+        spCountContainer.style.color = '#009688';
+    }
+
+    if (sp >= 5 && sp < 8) {
+        spCountContainer.style.color = '#ff8f00';
+    }
+
     if (sp >= 8) {
-        spCountDescription.innerText = 'Очень сложная задача! Нужна декомпозиция!'
+        spCountContainer.style.color = '#b71c1c';
     }
 }
 
@@ -103,6 +121,7 @@ const updateSpValue = () => {
     }
 
     updateSpDescription(sp);
+    updateSpColor(sp);
 }
 
 taskPropertiesContainer.addEventListener('click', ({ target }) => {
