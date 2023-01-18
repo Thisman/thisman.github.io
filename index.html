@@ -1,0 +1,85 @@
+<html lang="ru">
+<head>
+    <meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./styles.css">
+    <title>Сколько сториков?</title>
+</head>
+<body>
+    <div class="main-container">
+        <a href=""
+        <div class="description">
+            Сайт позволяет посчитать кол-во стори пойнтов для оценки задачи. <br />
+            Оценка строится из трех шагов:
+            <ol>
+                <li>Оценить кол-во информации которое известно о задаче и её решении - <i>uncertainty</i></li>
+                <li>Оценить объем решения задачи. Сколько обязательных шагов подразумевает решение задачи? - <i>complexity</i></li>
+                <li>Оценить сложность решения задачи. Насколько легко или трудно реализовать задачу, когда о ней всё известно? - <i>effort</i></li>
+            </ol>
+            <a href='/sp-matrix.png' target="_blank">Оригинал матрицы для подсчета</a>
+            <br />
+            <br />
+            Чтобы получить оценку задачи, выбери ниже для каждого критерия значение.
+        </div>
+        <hr />
+        <div class="task-properties-container" id="task-properties">
+            <div class="task-property">
+                <div class="task-property-name">Какое кол-во информации известно о решении задачи? <i>uncertainty</i></div>
+                <div class="task-property-values">
+                    <label class="task-property-value">
+                        <input type="radio" value="low" name="uncertainty" checked />
+                        <span>Низкое</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="medium" name="uncertainty" />
+                        <span>Среднее</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="high" name="uncertainty" />
+                        <span>Высокое</span>
+                    </label>
+                </div>
+            </div>
+            <div class="task-property">
+                <div class="task-property-name">Какая сложность у решения задачи? <i>complexity</i></div>
+                <div class="task-property-values">
+                    <label class="task-property-value">
+                        <input type="radio" value="low" name="complexity" checked />
+                        <span>Низкая</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="medium" name="complexity" />
+                        <span>Средняя</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="high" name="complexity" />
+                        <span>Высокая</span>
+                    </label>
+                </div>
+            </div>
+            <div class="task-property">
+                <div class="task-property-name">Какой объем у решения задачи? <i>effort</i></div>
+                <div class="task-property-values">
+                    <label class="task-property-value">
+                        <input type="radio" value="low" name="effort" checked />
+                        <span>Низкий</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="medium" name="effort" />
+                        <span>Средний</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="high" name="effort" />
+                        <span>Высокий</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="sp-count-container" id="sp-count">
+            1 сп
+        </div>
+        <div class="sp-count-description" id="sp-description"></div>
+    </div>
+<script src="./index.js"></script>
+</body>
+</html>

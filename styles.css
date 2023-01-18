@@ -1,0 +1,56 @@
+body {
+    font-family: arial;
+    padding: 0;
+}
+.main-container {
+    width: 500px;
+    margin: auto;
+    padding: 32px 8px 0;
+    height: 100%;
+    box-sizing: border-box;
+}
+.sp-count-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+}
+.task-properties-container {
+    margin: 16px 0;
+}
+.task-property {
+    margin-bottom: 40px;
+}
+.task-property-name {
+    font-size: 20px;
+    margin-bottom: 16px;
+}
+.task-property-values {
+    display: flex;
+    justify-content: space-between;
+}
+.task-property-value {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    color: #ddd;
+    transition: color .3s ease;
+}
+.task-property-value input {
+    display: none
+}
+.task-property-value span {
+    font-size: 30px;
+    user-select: none;
+}
+.task-property-value input:checked + span {
+    color: #000;
+}
+.sp-count-description {
+    font-size: 15px;
+    margin-top: 8px;
+    line-height: 18px;
+    height: 18px;
+    text-align: center;
+    font-style: italic;
+}
