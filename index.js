@@ -85,11 +85,11 @@ const updateSpDescription = (sp) => {
     }
 
     if (sp >= 5 && sp < 8) {
-        spCountDescription.innerText = 'Сложна задача! Попробуй декомпозировать ее!'
+        spCountDescription.innerText = 'Сложная задача! Попробуй декомпозировать ее!'
     }
     
     if (sp >= 8) {
-        spCountDescription.innerText = 'Очень сложна задача! Нужна декомпозиция!'
+        spCountDescription.innerText = 'Очень сложная задача! Нужна декомпозиция!'
     }
 }
 
