@@ -53,7 +53,7 @@ const spMatrix = {
         'high': {
             'low': 13,
             'medium': 13,
-            'high': 20,
+            'high': 21,
         },
     },
 }
