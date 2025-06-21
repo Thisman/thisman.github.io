@@ -1,15 +1,30 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Triangular Estimation</title>
+    <meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="triangular-estimation.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <title>Triangular Estimation</title>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="inputs">
-            <div class="field">
-                <label for="optimistic">Оптимистичная оценка</label>
+    <div class="main-container wider">
+        <a href="https://github.com/Thisman/thisman.github.io" class="github-link" target="_blank">
+            <img src="./images/github-icon.png" />
+        </a>
+        <div class="description">
+            <h4>Оценка по трём точкам</h4>
+            Метод позволяет учесть оптимистичную, реалистичную и пессимистичную оценку задачи.
+            Итог вычисляется по формуле <strong>(O + 4R + P) / 6</strong>.
+        </div>
+        <hr />
+        <div class="wrapper">
+            <div class="inputs">
+                <div class="field">
+                    <label for="optimistic">Оптимистичная оценка</label>
                 <input type="number" id="optimistic" />
             </div>
             <div class="field">
@@ -26,41 +41,8 @@
             <canvas id="chart" width="400" height="300"></canvas>
             <div id="result" class="result">Итоговая оценка: -</div>
         </div>
+        </div>
     </div>
-<script>
-const button = document.getElementById('calc');
-const resultEl = document.getElementById('result');
-const canvas = document.getElementById('chart');
-const ctx = canvas.getContext('2d');
-
-function drawGraph(values) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const max = Math.max(...values, 1);
-    const gap = 20;
-    const barWidth = (canvas.width - gap * (values.length + 1)) / values.length;
-    values.forEach((v, i) => {
-        const barHeight = (v / max) * (canvas.height - 40);
-        const x = gap + i * (barWidth + gap);
-        const y = canvas.height - barHeight - 20;
-        ctx.fillStyle = ['#4caf50', '#2196f3', '#f44336'][i];
-        ctx.fillRect(x, y, barWidth, barHeight);
-        ctx.fillStyle = '#000';
-        ctx.fillText(v, x + barWidth / 2 - 10, y - 5);
-    });
-}
-
-button.addEventListener('click', () => {
-    const o = parseFloat(document.getElementById('optimistic').value);
-    const r = parseFloat(document.getElementById('realistic').value);
-    const p = parseFloat(document.getElementById('pessimistic').value);
-    if (isNaN(o) || isNaN(r) || isNaN(p)) {
-        resultEl.textContent = 'Введите все оценки';
-        return;
-    }
-    drawGraph([o, r, p]);
-    const estimate = (o + 4 * r + p) / 6;
-    resultEl.textContent = 'Итоговая оценка: ' + estimate.toFixed(2);
-});
-</script>
+    <script src="triangular-estimation.js"></script>
 </body>
 </html>

@@ -1,12 +1,17 @@
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
     font-family: sans-serif;
 }
+
+body {
+    font-family: 'Roboto Condensed', sans-serif;
+}
 .wrapper {
     display: flex;
-    height: 100vh;
+    height: 100%;
 }
 .inputs, .graph {
     flex: 1;
@@ -39,4 +44,8 @@ button {
     font-size: 24px;
     text-align: center;
     margin-top: 20px;
+}
+
+.main-container.wider {
+    width: 700px;
 }
