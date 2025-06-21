@@ -29,31 +29,34 @@ function drawGraph(o, r, p, estimate) {
     ctx.font = '12px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
-    for (let i = 0; i <= maxX; i++) {
-        const x = margin + i * scaleX;
+    const xTicks = Math.min(10, Math.ceil(maxX));
+    for (let i = 0; i <= xTicks; i++) {
+        const value = (maxX / xTicks) * i;
+        const x = margin + value * scaleX;
         ctx.beginPath();
         ctx.moveTo(x, canvas.height - margin);
         ctx.lineTo(x, canvas.height - margin + 5);
         ctx.stroke();
-        ctx.fillText(i, x, canvas.height - margin + 7);
+        ctx.fillText(value.toFixed(1).replace(/\.0$/, ''), x, canvas.height - margin + 7);
     }
 
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
-    for (let i = 0; i <= 5; i++) {
-        const yVal = (maxY / 5) * i;
-        const y = canvas.height - margin - yVal * scaleY;
+    const yTicks = 10;
+    for (let i = 0; i <= yTicks; i++) {
+        const value = (maxY / yTicks) * i;
+        const y = canvas.height - margin - value * scaleY;
         ctx.beginPath();
         ctx.moveTo(margin - 5, y);
         ctx.lineTo(margin, y);
         ctx.stroke();
-        ctx.fillText(yVal.toFixed(2), margin - 7, y);
+        ctx.fillText(value.toFixed(2).replace(/\.0+$/, ''), margin - 7, y);
     }
 
     ctx.save();
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
-    ctx.fillText('X', canvas.width - margin, canvas.height - margin + 20);
+    ctx.fillText('Оценка', canvas.width - margin, canvas.height - margin + 20);
     ctx.restore();
 
     ctx.save();
@@ -61,17 +64,21 @@ function drawGraph(o, r, p, estimate) {
     ctx.rotate(-Math.PI / 2);
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
-    ctx.fillText('Y', 0, 0);
+    ctx.fillText('Вероятность', 0, 0);
     ctx.restore();
 
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
     ctx.beginPath();
-    for (let i = 0; i <= 100; i++) {
-        const xVal = (maxX / 100) * i;
-        const yVal = triangularPdf(xVal, o, r, p);
-        const x = margin + xVal * scaleX;
-        const y = canvas.height - margin - yVal * scaleY;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    }
+    const xO = margin + o * scaleX;
+    const yO = canvas.height - margin;
+    const xR = margin + r * scaleX;
+    const yR = canvas.height - margin - triangularPdf(r, o, r, p) * scaleY;
+    const xP = margin + p * scaleX;
+    const yP = canvas.height - margin;
+    ctx.moveTo(xO, yO);
+    ctx.quadraticCurveTo((xO + xR) / 2, yO, xR, yR);
+    ctx.quadraticCurveTo((xR + xP) / 2, yP, xP, yP);
     ctx.stroke();
 
     const colors = ['#009688', '#ff8f00', '#b71c1c'];
