@@ -1,7 +1,20 @@
 const button = document.getElementById('calc');
 const resultEl = document.getElementById('result');
-const ctx = document.getElementById('chart').getContext('2d');
+const canvas = document.getElementById('chart');
+const ctx = canvas.getContext('2d');
 let chart;
+
+function clearGraphWithError() {
+    if (chart) {
+        chart.destroy();
+        chart = null;
+    }
+    canvas.style.backgroundColor = '#ffdddd';
+}
+
+function resetGraphBackground() {
+    canvas.style.backgroundColor = '';
+}
 
 function triangularPdf(x, a, c, b) {
     if (x < a || x > b) return 0;
@@ -23,6 +36,8 @@ function drawGraph(o, r, p, estimate) {
         { x: p, y: 0 },
         { x: estimate, y: triangularPdf(estimate, o, r, p) },
     ];
+
+    resetGraphBackground();
 
     if (chart) {
         chart.destroy();
@@ -47,7 +62,7 @@ function drawGraph(o, r, p, estimate) {
                     backgroundColor: ['#009688', '#ff8f00', '#b71c1c', '#000'],
                     borderColor: ['#009688', '#ff8f00', '#b71c1c', '#000'],
                     borderWidth: 1,
-                    pointRadius: 5,
+                    pointRadius: [5, 5, 5, 7],
                 },
             ],
         },
@@ -81,6 +96,17 @@ button.addEventListener('click', () => {
     const p = parseFloat(document.getElementById('pessimistic').value);
     if (isNaN(o) || isNaN(r) || isNaN(p)) {
         resultEl.textContent = 'Введите все оценки';
+        clearGraphWithError();
+        return;
+    }
+    if (r <= o) {
+        resultEl.textContent = 'Реалистичная оценка должна быть больше оптимистичной';
+        clearGraphWithError();
+        return;
+    }
+    if (p <= r) {
+        resultEl.textContent = 'Пессимистичная оценка должна быть больше реалистичной';
+        clearGraphWithError();
         return;
     }
     const estimate = Math.ceil((o + 4 * r + p) / 6);
