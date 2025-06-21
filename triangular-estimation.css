@@ -35,6 +35,15 @@ body {
 button {
     margin-top: 10px;
     padding: 8px 12px;
+    background-color: #009688;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color .3s ease;
+}
+
+button:active {
+    background-color: #00796b;
 }
 .graph {
     display: flex;
