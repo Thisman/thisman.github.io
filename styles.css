@@ -78,6 +78,19 @@ h4 {
     width: 100%;
     height: 100%;
 }
+
+.triangular-link {
+    width: 32px;
+    height: 32px;
+    display: block;
+    position: absolute;
+    right: 40px;
+    top: 8px;
+}
+.triangular-link svg {
+    width: 100%;
+    height: 100%;
+}
 li {
     margin-bottom: 8px;
 }

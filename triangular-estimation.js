@@ -126,7 +126,7 @@ function drawGraph(o, r, p, estimate) {
                 {
                     label: 'PDF',
                     data: distribution,
-                    borderColor: '#000',
+                    borderColor: 'rgba(0, 0, 0, 0.5)',
                     pointRadius: 0,
                     fill: false,
                     tension: 0.2,
