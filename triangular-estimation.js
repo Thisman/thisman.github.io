@@ -3,19 +3,47 @@ const resultEl = document.getElementById('result');
 const canvas = document.getElementById('chart');
 const ctx = canvas.getContext('2d');
 
-function drawGraph(values) {
+function triangularCdf(x, a, c, b) {
+    if (x <= a) return 0;
+    if (x <= c) return ((x - a) ** 2) / ((b - a) * (c - a));
+    if (x < b) return 1 - ((b - x) ** 2) / ((b - a) * (b - c));
+    return 1;
+}
+
+function drawGraph(o, r, p) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const max = Math.max(...values, 1);
-    const gap = 20;
-    const barWidth = (canvas.width - gap * (values.length + 1)) / values.length;
-    values.forEach((v, i) => {
-        const barHeight = (v / max) * (canvas.height - 40);
-        const x = gap + i * (barWidth + gap);
-        const y = canvas.height - barHeight - 20;
-        ctx.fillStyle = ['#4caf50', '#2196f3', '#f44336'][i];
-        ctx.fillRect(x, y, barWidth, barHeight);
-        ctx.fillStyle = '#000';
-        ctx.fillText(v, x + barWidth / 2 - 10, y - 5);
+    const margin = 30;
+    const maxX = Math.max(o, r, p);
+    const scaleX = (canvas.width - margin * 2) / maxX;
+    const scaleY = canvas.height - margin * 2;
+
+    ctx.strokeStyle = '#000';
+    ctx.beginPath();
+    ctx.moveTo(margin, canvas.height - margin);
+    ctx.lineTo(canvas.width - margin, canvas.height - margin);
+    ctx.moveTo(margin, canvas.height - margin);
+    ctx.lineTo(margin, margin);
+    ctx.stroke();
+
+    ctx.beginPath();
+    for (let i = 0; i <= 100; i++) {
+        const xVal = (maxX / 100) * i;
+        const yVal = triangularCdf(xVal, o, r, p);
+        const x = margin + xVal * scaleX;
+        const y = canvas.height - margin - yVal * scaleY;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    const colors = ['#009688', '#ff8f00', '#b71c1c'];
+    [o, r, p].forEach((val, i) => {
+        const yVal = triangularCdf(val, o, r, p);
+        const x = margin + val * scaleX;
+        const y = canvas.height - margin - yVal * scaleY;
+        ctx.fillStyle = colors[i];
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fill();
     });
 }
 
@@ -27,7 +55,7 @@ button.addEventListener('click', () => {
         resultEl.textContent = 'Введите все оценки';
         return;
     }
-    drawGraph([o, r, p]);
+    drawGraph(o, r, p);
     const estimate = (o + 4 * r + p) / 6;
     resultEl.textContent = 'Итоговая оценка: ' + estimate.toFixed(2);
 });
