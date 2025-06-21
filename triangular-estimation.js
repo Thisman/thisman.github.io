@@ -3,19 +3,20 @@ const resultEl = document.getElementById('result');
 const canvas = document.getElementById('chart');
 const ctx = canvas.getContext('2d');
 
-function triangularCdf(x, a, c, b) {
-    if (x <= a) return 0;
-    if (x <= c) return ((x - a) ** 2) / ((b - a) * (c - a));
-    if (x < b) return 1 - ((b - x) ** 2) / ((b - a) * (b - c));
-    return 1;
+function triangularPdf(x, a, c, b) {
+    if (x < a || x > b) return 0;
+    if (x === c) return 2 / (b - a);
+    if (x < c) return (2 * (x - a)) / ((b - a) * (c - a));
+    return (2 * (b - x)) / ((b - a) * (b - c));
 }
 
 function drawGraph(o, r, p) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const margin = 30;
-    const maxX = Math.max(o, r, p);
+    const maxX = Math.max(o, r, p) + 2;
     const scaleX = (canvas.width - margin * 2) / maxX;
-    const scaleY = canvas.height - margin * 2;
+    const maxY = triangularPdf(r, o, r, p);
+    const scaleY = (canvas.height - margin * 2) / maxY;
 
     ctx.strokeStyle = '#000';
     ctx.beginPath();
@@ -28,7 +29,7 @@ function drawGraph(o, r, p) {
     ctx.beginPath();
     for (let i = 0; i <= 100; i++) {
         const xVal = (maxX / 100) * i;
-        const yVal = triangularCdf(xVal, o, r, p);
+        const yVal = triangularPdf(xVal, o, r, p);
         const x = margin + xVal * scaleX;
         const y = canvas.height - margin - yVal * scaleY;
         if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
@@ -37,7 +38,7 @@ function drawGraph(o, r, p) {
 
     const colors = ['#009688', '#ff8f00', '#b71c1c'];
     [o, r, p].forEach((val, i) => {
-        const yVal = triangularCdf(val, o, r, p);
+        const yVal = triangularPdf(val, o, r, p);
         const x = margin + val * scaleX;
         const y = canvas.height - margin - yVal * scaleY;
         ctx.fillStyle = colors[i];
