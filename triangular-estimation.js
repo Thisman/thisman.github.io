@@ -4,6 +4,51 @@ const canvas = document.getElementById('chart');
 const ctx = canvas.getContext('2d');
 let chart;
 
+const ARROW_COLOR = '#009688';
+
+const arrowPlugin = {
+    id: 'arrowPlugin',
+    afterDatasetsDraw(chart) {
+        const meta = chart.getDatasetMeta(1);
+        if (!meta || !meta.data || meta.data.length < 4) {
+            return;
+        }
+        const point = meta.data[3];
+        const { x, y } = point.getProps(['x', 'y'], true);
+
+        const ctx = chart.ctx;
+        const startX = x - 40;
+        const startY = y - 30;
+        const headlen = 8;
+        const angle = Math.atan2(y - startY, x - startX);
+
+        ctx.save();
+        ctx.strokeStyle = ARROW_COLOR;
+        ctx.fillStyle = ARROW_COLOR;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(
+            x - headlen * Math.cos(angle - Math.PI / 6),
+            y - headlen * Math.sin(angle - Math.PI / 6)
+        );
+        ctx.lineTo(
+            x - headlen * Math.cos(angle + Math.PI / 6),
+            y - headlen * Math.sin(angle + Math.PI / 6)
+        );
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    },
+};
+
+Chart.register(arrowPlugin);
+
 function clearGraphWithError() {
     if (chart) {
         chart.destroy();
@@ -59,8 +104,8 @@ function drawGraph(o, r, p, estimate) {
                     type: 'scatter',
                     label: 'Points',
                     data: points,
-                    backgroundColor: ['#009688', '#ff8f00', '#b71c1c', '#000'],
-                    borderColor: ['#009688', '#ff8f00', '#b71c1c', '#000'],
+                    backgroundColor: ['#000', '#000', '#000', ARROW_COLOR],
+                    borderColor: ['#000', '#000', '#000', ARROW_COLOR],
                     borderWidth: 1,
                     pointRadius: [5, 5, 5, 7],
                 },
