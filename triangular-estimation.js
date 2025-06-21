@@ -9,6 +9,10 @@ const ARROW_COLOR = '#009688';
 const arrowPlugin = {
     id: 'arrowPlugin',
     afterDatasetsDraw(chart) {
+        if (chart.animating) {
+            return;
+        }
+
         const meta = chart.getDatasetMeta(1);
         if (!meta || !meta.data || meta.data.length < 4) {
             return;
@@ -19,28 +23,34 @@ const arrowPlugin = {
         const ctx = chart.ctx;
         const { top, bottom, left, right } = chart.chartArea;
 
-        const offset = 40;
-        let startX = x;
-        let startY = y;
+        const offset = 50;
+        let startX = x + offset;
+        let startY = y - offset;
 
-        if (bottom - y >= offset) {
-            startY = y + offset;
-        } else if (y - top >= offset) {
-            startY = y - offset;
-        } else if (x - left >= offset) {
-            startX = x - offset;
-        } else {
-            startX = x + offset;
+        if (startY < top || startX > right) {
+            if (y - offset >= top && x - offset >= left) {
+                startX = x - offset;
+                startY = y - offset;
+            } else if (bottom - y >= offset && right - x >= offset) {
+                startX = x + offset;
+                startY = y + offset;
+            } else if (bottom - y >= offset && x - left >= offset) {
+                startX = x - offset;
+                startY = y + offset;
+            } else {
+                startX = x;
+                startY = Math.max(top, y - offset);
+            }
         }
 
         const dx = x - startX;
         const dy = y - startY;
         const length = Math.sqrt(dx * dx + dy * dy);
-        const gap = 8;
+        const gap = 12;
 
         const endX = x - (dx / length) * gap;
         const endY = y - (dy / length) * gap;
-        const headlen = 8;
+        const headlen = 6;
         const angle = Math.atan2(endY - startY, endX - startX);
 
         ctx.save();
