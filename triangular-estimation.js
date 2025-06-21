@@ -13,33 +13,54 @@ const arrowPlugin = {
         if (!meta || !meta.data || meta.data.length < 4) {
             return;
         }
+
         const point = meta.data[3];
         const { x, y } = point.getProps(['x', 'y'], true);
-
         const ctx = chart.ctx;
-        const startX = x - 40;
-        const startY = y - 30;
+        const { top, bottom, left, right } = chart.chartArea;
+
+        const offset = 40;
+        let startX = x;
+        let startY = y;
+
+        if (bottom - y >= offset) {
+            startY = y + offset;
+        } else if (y - top >= offset) {
+            startY = y - offset;
+        } else if (x - left >= offset) {
+            startX = x - offset;
+        } else {
+            startX = x + offset;
+        }
+
+        const dx = x - startX;
+        const dy = y - startY;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const gap = 8;
+
+        const endX = x - (dx / length) * gap;
+        const endY = y - (dy / length) * gap;
         const headlen = 8;
-        const angle = Math.atan2(y - startY, x - startX);
+        const angle = Math.atan2(endY - startY, endX - startX);
 
         ctx.save();
         ctx.strokeStyle = ARROW_COLOR;
         ctx.fillStyle = ARROW_COLOR;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.beginPath();
         ctx.moveTo(startX, startY);
-        ctx.lineTo(x, y);
+        ctx.lineTo(endX, endY);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(x, y);
+        ctx.moveTo(endX, endY);
         ctx.lineTo(
-            x - headlen * Math.cos(angle - Math.PI / 6),
-            y - headlen * Math.sin(angle - Math.PI / 6)
+            endX - headlen * Math.cos(angle - Math.PI / 6),
+            endY - headlen * Math.sin(angle - Math.PI / 6)
         );
         ctx.lineTo(
-            x - headlen * Math.cos(angle + Math.PI / 6),
-            y - headlen * Math.sin(angle + Math.PI / 6)
+            endX - headlen * Math.cos(angle + Math.PI / 6),
+            endY - headlen * Math.sin(angle + Math.PI / 6)
         );
         ctx.closePath();
         ctx.fill();
