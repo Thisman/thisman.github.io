@@ -99,13 +99,18 @@ button.addEventListener('click', () => {
         clearGraphWithError();
         return;
     }
-    if (r <= o) {
-        resultEl.textContent = 'Реалистичная оценка должна быть больше оптимистичной';
+    if (o > r || o > p) {
+        resultEl.textContent = 'Оптимистичная оценка не должна быть больше других оценок';
         clearGraphWithError();
         return;
     }
-    if (p <= r) {
-        resultEl.textContent = 'Пессимистичная оценка должна быть больше реалистичной';
+    if (r < o || r > p) {
+        resultEl.textContent = 'Реалистичная оценка должна быть не меньше оптимистичной и не больше пессимистичной';
+        clearGraphWithError();
+        return;
+    }
+    if (p < r || p < o) {
+        resultEl.textContent = 'Пессимистичная оценка должна быть не меньше остальных оценок';
         clearGraphWithError();
         return;
     }
