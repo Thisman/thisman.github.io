@@ -1,7 +1,7 @@
 const button = document.getElementById('calc');
 const resultEl = document.getElementById('result');
-const canvas = document.getElementById('chart');
-const ctx = canvas.getContext('2d');
+const ctx = document.getElementById('chart').getContext('2d');
+let chart;
 
 function triangularPdf(x, a, c, b) {
     if (x < a || x > b) return 0;
@@ -11,96 +11,68 @@ function triangularPdf(x, a, c, b) {
 }
 
 function drawGraph(o, r, p, estimate) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const margin = 40;
-    const maxX = Math.max(o, r, p, estimate) + 2;
-    const scaleX = (canvas.width - margin * 2) / maxX;
-    const maxY = triangularPdf(r, o, r, p);
-    const scaleY = (canvas.height - margin * 2) / maxY;
-
-    ctx.strokeStyle = '#000';
-    ctx.beginPath();
-    ctx.moveTo(margin, canvas.height - margin);
-    ctx.lineTo(canvas.width - margin, canvas.height - margin);
-    ctx.moveTo(margin, canvas.height - margin);
-    ctx.lineTo(margin, margin);
-    ctx.stroke();
-
-    ctx.font = '12px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    const xTicks = Math.min(10, Math.ceil(maxX));
-    for (let i = 0; i <= xTicks; i++) {
-        const value = (maxX / xTicks) * i;
-        const x = margin + value * scaleX;
-        ctx.beginPath();
-        ctx.moveTo(x, canvas.height - margin);
-        ctx.lineTo(x, canvas.height - margin + 5);
-        ctx.stroke();
-        ctx.fillText(value.toFixed(1).replace(/\.0$/, ''), x, canvas.height - margin + 7);
+    const step = (p - o) / 100;
+    const distribution = [];
+    for (let x = o; x <= p; x += step) {
+        distribution.push({ x, y: triangularPdf(x, o, r, p) });
     }
 
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'middle';
-    const yTicks = 10;
-    for (let i = 0; i <= yTicks; i++) {
-        const value = (maxY / yTicks) * i;
-        const y = canvas.height - margin - value * scaleY;
-        ctx.beginPath();
-        ctx.moveTo(margin - 5, y);
-        ctx.lineTo(margin, y);
-        ctx.stroke();
-        ctx.fillText(value.toFixed(2).replace(/\.0+$/, ''), margin - 7, y);
+    const points = [
+        { x: o, y: 0 },
+        { x: r, y: triangularPdf(r, o, r, p) },
+        { x: p, y: 0 },
+        { x: estimate, y: triangularPdf(estimate, o, r, p) },
+    ];
+
+    if (chart) {
+        chart.destroy();
     }
 
-    ctx.save();
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    ctx.fillText('Оценка', canvas.width - margin, canvas.height - margin + 20);
-    ctx.restore();
-
-    ctx.save();
-    ctx.translate(margin - 25, margin);
-    ctx.rotate(-Math.PI / 2);
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'top';
-    ctx.fillText('Вероятность', 0, 0);
-    ctx.restore();
-
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    const xO = margin + o * scaleX;
-    const yO = canvas.height - margin;
-    const xR = margin + r * scaleX;
-    const yR = canvas.height - margin - triangularPdf(r, o, r, p) * scaleY;
-    const xP = margin + p * scaleX;
-    const yP = canvas.height - margin;
-    ctx.moveTo(xO, yO);
-    ctx.quadraticCurveTo((xO + xR) / 2, yO, xR, yR);
-    ctx.quadraticCurveTo((xR + xP) / 2, yP, xP, yP);
-    ctx.stroke();
-
-    const colors = ['#009688', '#ff8f00', '#b71c1c'];
-    [o, r, p].forEach((val, i) => {
-        const yVal = triangularPdf(val, o, r, p);
-        const x = margin + val * scaleX;
-        const y = canvas.height - margin - yVal * scaleY;
-        ctx.fillStyle = colors[i];
-        ctx.globalAlpha = 0.5;
-        ctx.beginPath();
-        ctx.arc(x, y, 5, 0, Math.PI * 2);
-        ctx.fill();
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    label: 'PDF',
+                    data: distribution,
+                    borderColor: '#000',
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.2,
+                },
+                {
+                    type: 'scatter',
+                    label: 'Points',
+                    data: points,
+                    backgroundColor: ['#009688', '#ff8f00', '#b71c1c', '#000'],
+                    borderColor: ['#009688', '#ff8f00', '#b71c1c', '#000'],
+                    borderWidth: 1,
+                    pointRadius: 5,
+                },
+            ],
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    title: {
+                        display: true,
+                        text: 'Оценка',
+                    },
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Вероятность',
+                    },
+                },
+            },
+            plugins: {
+                legend: { display: false },
+            },
+        },
     });
-
-    const yVal = triangularPdf(estimate, o, r, p);
-    const x = margin + estimate * scaleX;
-    const y = canvas.height - margin - yVal * scaleY;
-    ctx.fillStyle = '#000';
-    ctx.globalAlpha = 1;
-    ctx.beginPath();
-    ctx.arc(x, y, 5, 0, Math.PI * 2);
-    ctx.fill();
 }
 
 button.addEventListener('click', () => {
