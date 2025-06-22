@@ -67,6 +67,8 @@
     }
     </script>
     
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="./index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -74,8 +76,8 @@
 </head>
 <body>
     <div class="main-container">
-        <a href="/index.html" class="main-link" title="Оценка по трём точкам">
-            <img src="/images/main-icon.png" alt="Перейти к оценке по трем точкам" />
+        <a href="/index.html" class="main-link" title="На главную">
+            <img src="/images/main-icon.png" alt="Перейти на главную страницу" />
         </a>
         <a href="https://github.com/Thisman/thisman.github.io" class="github-link" target="_blank">
             <img src="/images/github-icon.png" alt="GitHub репозиторий" />
@@ -93,63 +95,63 @@
         </div>
         <hr />
         <div class="task-properties-container" id="task-properties">
-            <div class="task-property">
-                <div class="task-property-name">Какая неопределенность у задачи? <i>uncertainty</i></div>
-                <div class="task-property-values">
-                    <label class="task-property-value">
+            <div class="radio-group">
+                <div class="radio-group-name">Какая неопределенность у задачи? <i>uncertainty</i></div>
+                <div class="radio-group-values">
+                    <label class="radio-group-value">
                         <input type="radio" value="low" name="uncertainty" checked />
                         <span>Низкая</span>
                     </label>
-                    <label class="task-property-value">
+                    <label class="radio-group-value">
                         <input type="radio" value="medium" name="uncertainty" />
                         <span>Средняя</span>
                     </label>
-                    <label class="task-property-value">
+                    <label class="radio-group-value">
                         <input type="radio" value="high" name="uncertainty" />
                         <span>Высокая</span>
                     </label>
                 </div>
             </div>
-            <div class="task-property">
-                <div class="task-property-name">Какая сложность у решения задачи? <i>complexity</i></div>
-                <div class="task-property-values">
-                    <label class="task-property-value">
+            <div class="radio-group">
+                <div class="radio-group-name">Какая сложность у решения задачи? <i>complexity</i></div>
+                <div class="radio-group-values">
+                    <label class="radio-group-value">
                         <input type="radio" value="low" name="complexity" checked />
                         <span>Низкая</span>
                     </label>
-                    <label class="task-property-value">
+                    <label class="radio-group-value">
                         <input type="radio" value="medium" name="complexity" />
                         <span>Средняя</span>
                     </label>
-                    <label class="task-property-value">
+                    <label class="radio-group-value">
                         <input type="radio" value="high" name="complexity" />
                         <span>Высокая</span>
                     </label>
                 </div>
             </div>
-            <div class="task-property">
-                <div class="task-property-name">Какой объем у решения задачи? <i>effort</i></div>
-                <div class="task-property-values">
-                    <label class="task-property-value">
+            <div class="radio-group">
+                <div class="radio-group-name">Какой объем у решения задачи? <i>effort</i></div>
+                <div class="radio-group-values">
+                    <label class="radio-group-value">
                         <input type="radio" value="low" name="effort" checked />
                         <span>Низкий</span>
                     </label>
-                    <label class="task-property-value">
+                    <label class="radio-group-value">
                         <input type="radio" value="medium" name="effort" />
                         <span>Средний</span>
                     </label>
-                    <label class="task-property-value">
+                    <label class="radio-group-value">
                         <input type="radio" value="high" name="effort" />
                         <span>Высокий</span>
                     </label>
                 </div>
             </div>
         </div>
-        <div class="sp-count-container" id="sp-count">
+        <div class="result" id="sp-count">
             1 сп
         </div>
         <div class="sp-count-description" id="sp-description"></div>
     </div>
-    <script src="./index.js"></script>
+    <script type="module" src="./index.js"></script>
 </body>
 </html>

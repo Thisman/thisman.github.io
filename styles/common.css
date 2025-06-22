@@ -1,0 +1,234 @@
+/* Common styles for all pages */
+:root {
+    /* Colors */
+    --primary-color: #2196F3;
+    --primary-dark: #1976D2;
+    --primary-darker: #0D47A1;
+    --success-color: #009688;
+    --warning-color: #ff8f00;
+    --error-color: #f44336;
+    --danger-color: #b71c1c;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --text-muted: #ddd;
+    --border-color: #ddd;
+    --background-light: #ffdddd;
+    
+    /* Typography */
+    --font-primary: 'Roboto Condensed', sans-serif;
+    --font-secondary: 'Roboto', sans-serif;
+    
+    /* Spacing */
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Container */
+    --container-width: 700px;
+    --container-padding: 32px 8px 16px;
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* Reset and base styles */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-primary);
+    line-height: 1.5;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+/* Container */
+.main-container {
+    position: relative;
+    width: var(--container-width);
+    margin: auto;
+    padding: var(--container-padding);
+}
+
+/* Navigation links */
+.github-link,
+.main-link,
+.triangular-link {
+    width: 32px;
+    height: 32px;
+    display: block;
+    position: absolute;
+    top: 8px;
+    transition: transform var(--transition-normal);
+}
+
+.github-link {
+    right: 0;
+}
+
+.main-link,
+.triangular-link {
+    right: 50px;
+}
+
+.github-link:hover,
+.main-link:hover,
+.triangular-link:hover {
+    transform: scale(1.1);
+}
+
+.github-link img,
+.main-link img,
+.triangular-link img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Buttons */
+.btn {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    font-family: var(--font-secondary);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+    background-color: var(--primary-darker);
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Form elements */
+.field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--spacing-md);
+}
+
+.field label {
+    font-size: 16px;
+    margin-bottom: var(--spacing-xs);
+    font-family: var(--font-secondary);
+    color: var(--text-primary);
+}
+
+.field input[type="number"] {
+    font-size: 24px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    width: 100%;
+    transition: border-color var(--transition-normal);
+}
+
+.field input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Radio groups */
+.radio-group {
+    margin-bottom: var(--spacing-xl);
+}
+
+.radio-group-name {
+    font-size: 20px;
+    margin-bottom: var(--spacing-md);
+    font-family: var(--font-secondary);
+    color: var(--text-primary);
+}
+
+.radio-group-values {
+    display: flex;
+    justify-content: space-between;
+}
+
+.radio-group-value {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color var(--transition-normal);
+}
+
+.radio-group-value input {
+    display: none;
+}
+
+.radio-group-value span {
+    font-size: 30px;
+    user-select: none;
+}
+
+.radio-group-value input:checked + span {
+    color: var(--text-primary);
+}
+
+/* Results */
+.result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    color: var(--success-color);
+    margin: var(--spacing-md) 0;
+    transition: color var(--transition-normal);
+}
+
+/* Error messages */
+.error-message {
+    font-size: 15px;
+    color: var(--error-color);
+    margin-bottom: var(--spacing-md);
+    font-family: var(--font-secondary);
+    line-height: 18px;
+    min-height: 18px;
+    text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 750px) {
+    .main-container {
+        width: 100%;
+        padding: var(--spacing-md);
+    }
+    
+    .radio-group-values {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .result {
+        font-size: 60px;
+    }
+} 

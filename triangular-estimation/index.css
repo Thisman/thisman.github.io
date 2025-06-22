@@ -11,19 +11,17 @@ body {
 }
 
 .inputs-container {
-    margin: 16px auto;
+    margin: var(--spacing-md) auto;
 }
 
 .estimates-row {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 32px;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xl);
 }
 
 .field {
-    display: flex;
-    flex-direction: column;
     flex: 1;
     min-width: 0;
 }
@@ -101,13 +99,13 @@ body {
 }
 
 .graph-container {
-    margin-top: 20px;
+    margin-top: var(--spacing-lg);
     width: 100%;
 }
 
 .graph-container canvas {
     width: 100%;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
 }
 
@@ -146,7 +144,7 @@ button:active {
 @media (max-width: 750px) {
     .estimates-row {
         flex-direction: column;
-        gap: 15px;
+        gap: var(--spacing-sm);
     }
     
     .field {
