@@ -12,8 +12,8 @@
 </head>
 <body>
     <div class="main-container wider">
-        <a href="index.html" class="triangular-link" title="На главную">
-            <img src="/images/how-many-sp-icon.png" />
+        <a href="/index.html" class="main-link" title="На главную">
+            <img src="/images/main-icon.png" />
         </a>
         <a href="https://github.com/Thisman/thisman.github.io" class="github-link" target="_blank">
             <img src="/images/github-icon.png" />
@@ -29,27 +29,44 @@
             Итог вычисляется по формуле <strong>(O + 4R + P) / 6</strong>.
         </div>
         <hr />
-        <div class="wrapper">
-            <div class="inputs">
+        <div class="inputs-container">
+            <div class="estimates-row">
                 <div class="field">
-                    <label for="optimistic">Оптимистичная оценка</label>
-                <input type="number" id="optimistic" />
+                    <label for="optimistic">Оптимистичная</label>
+                    <input type="number" id="optimistic" />
+                </div>
+                <div class="field">
+                    <label for="realistic">Реалистичная</label>
+                    <input type="number" id="realistic" />
+                </div>
+                <div class="field">
+                    <label for="pessimistic">Пессимистичная</label>
+                    <input type="number" id="pessimistic" />
+                </div>
             </div>
-            <div class="field">
-                <label for="realistic">Реалистичная оценка</label>
-                <input type="number" id="realistic" />
-            </div>
-            <div class="field">
-                <label for="pessimistic">Пессимистичная оценка</label>
-                <input type="number" id="pessimistic" />
+            <div class="unit-property">
+                <div class="unit-property-name">Единица измерения</div>
+                <div class="unit-property-values">
+                    <label class="unit-property-value">
+                        <input type="radio" value="hours" name="unit" checked />
+                        <span>Часы</span>
+                    </label>
+                    <label class="unit-property-value">
+                        <input type="radio" value="days" name="unit" />
+                        <span>Дни</span>
+                    </label>
+                    <label class="unit-property-value">
+                        <input type="radio" value="weeks" name="unit" />
+                        <span>Недели</span>
+                    </label>
+                </div>
             </div>
             <button id="calc">Посчитать</button>
         </div>
-        <div class="graph">
-            <canvas id="chart" width="400" height="300"></canvas>
-        </div>
-        </div>
         <div id="result" class="result">Итоговая оценка: -</div>
+        <div class="graph-container">
+            <canvas id="chart" width="700" height="300"></canvas>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="./index.js"></script>

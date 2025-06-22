@@ -9,56 +9,137 @@ body {
 body {
     font-family: 'Roboto Condensed', sans-serif;
 }
-.wrapper {
+
+.inputs-container {
+    margin: 16px auto;
+}
+
+.estimates-row {
     display: flex;
-    height: 100%;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 32px;
 }
-.inputs, .graph {
-    flex: 1;
-    box-sizing: border-box;
-    padding: 20px;
-}
-.inputs {
-    max-width: 300px;
-    display: flex;
-    flex-direction: column;
-}
+
 .field {
     display: flex;
     flex-direction: column;
-    margin-bottom: 15px;
+    flex: 1;
+    min-width: 0;
 }
+
+.field label {
+    font-size: 16px;
+    margin-bottom: 8px;
+    font-family: 'Roboto', sans-serif;
+    white-space: nowrap;
+}
+
 .field input[type="number"] {
+    font-size: 24px;
+    user-select: none;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.unit-property {
+    margin-bottom: 32px;
+}
+
+.unit-property-name {
+    font-size: 20px;
+    margin-bottom: 16px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.unit-property-values {
+    display: flex;
+    justify-content: space-between;
+}
+
+.unit-property-value {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    color: #ddd;
+    transition: color .3s ease;
+}
+
+.unit-property-value input {
+    display: none
+}
+
+.unit-property-value span {
     font-size: 30px;
     user-select: none;
 }
+
+.unit-property-value input:checked + span {
+    color: #000;
+}
+
+.result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    color: #009688;
+    margin: 16px 0;
+}
+
+.graph-container {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.graph-container canvas {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
 button {
     margin-top: 10px;
-    padding: 8px 12px;
-    background-color: #009688;
-    color: #fff;
+    padding: 16px 24px;
+    background-color: #2196F3; /* Material Design Blue */
+    color: white;
     border: none;
     cursor: pointer;
-    transition: background-color .3s ease;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    font-family: 'Roboto', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: #1976D2; /* Darker blue on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 button:active {
-    background-color: #00796b;
-}
-.graph {
-    display: flex;
-    flex-direction: column;
-}
-.graph canvas {
-    flex: 1;
-    border: 1px solid #ddd;
-}
-.result {
-    font-size: 24px;
-    text-align: center;
-    margin-top: 20px;
+    background-color: #0D47A1; /* Even darker blue on click */
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .main-container.wider {
     width: 700px;
+}
+
+/* Responsive design */
+@media (max-width: 750px) {
+    .estimates-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .field {
+        margin-bottom: 0;
+    }
 }

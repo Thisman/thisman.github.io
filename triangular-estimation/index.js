@@ -92,10 +92,41 @@ function drawGraph(o, r, p, estimate) {
     });
 }
 
+function getUnitText(number, unit) {
+    const lastDigit = number % 10;
+    const lastTwoDigits = number % 100;
+    
+    switch(unit) {
+        case 'hours':
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return 'часов';
+            if (lastDigit === 1) return 'час';
+            if (lastDigit >= 2 && lastDigit <= 4) return 'часа';
+            return 'часов';
+            
+        case 'days':
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return 'дней';
+            if (lastDigit === 1) return 'день';
+            if (lastDigit >= 2 && lastDigit <= 4) return 'дня';
+            return 'дней';
+            
+        case 'weeks':
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return 'недель';
+            if (lastDigit === 1) return 'неделя';
+            if (lastDigit >= 2 && lastDigit <= 4) return 'недели';
+            return 'недель';
+            
+        default:
+            return '';
+    }
+}
+
 button.addEventListener('click', () => {
     const o = parseFloat(document.getElementById('optimistic').value);
     const r = parseFloat(document.getElementById('realistic').value);
     const p = parseFloat(document.getElementById('pessimistic').value);
+    const unitInput = document.querySelector('[name=unit]:checked');
+    const unit = unitInput ? unitInput.value : 'hours';
+    
     if (isNaN(o) || isNaN(r) || isNaN(p)) {
         resultEl.textContent = 'Введите все оценки';
         clearGraphWithError();
@@ -116,7 +147,10 @@ button.addEventListener('click', () => {
         clearGraphWithError();
         return;
     }
+    
     const estimate = Math.ceil((o + 4 * r + p) / 6);
+    const unitText = getUnitText(estimate, unit);
+    
     drawGraph(o, r, p, estimate);
-    resultEl.textContent = 'Итоговая оценка: ' + estimate;
+    resultEl.textContent = estimate + ' ' + unitText;
 });

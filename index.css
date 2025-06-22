@@ -1,0 +1,106 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: sans-serif;
+}
+
+body {
+    font-family: 'Roboto Condensed', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    position: relative;
+    width: 700px;
+    margin: auto;
+    padding: 32px 8px 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.main-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 48px;
+    text-align: center;
+    color: #333;
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.nav-button {
+    display: block;
+    padding: 16px 24px;
+    background-color: #2196F3; /* Material Design Blue */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+}
+
+.nav-button:hover {
+    background-color: #1976D2; /* Darker blue on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-button:active {
+    background-color: #0D47A1; /* Even darker blue on click */
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.github-link {
+    width: 32px;
+    height: 32px;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 8px;
+}
+
+.github-link img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Responsive design */
+@media (max-width: 750px) {
+    .main-container {
+        width: 100%;
+        padding: 16px;
+    }
+    
+    .main-title {
+        font-size: 28px;
+        margin-bottom: 32px;
+    }
+    
+    .buttons-container {
+        max-width: 100%;
+    }
+    
+    .nav-button {
+        font-size: 16px;
+        padding: 14px 20px;
+    }
+} 
