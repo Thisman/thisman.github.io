@@ -45,6 +45,16 @@ body {
     box-sizing: border-box;
 }
 
+.error-message {
+    font-size: 15px;
+    color: #f44336; /* Material Design Red */
+    margin-bottom: 16px;
+    font-family: 'Roboto', sans-serif;
+    line-height: 18px;
+    min-height: 18px;
+    text-align: center;
+}
+
 .unit-property {
     margin-bottom: 32px;
 }
