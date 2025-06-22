@@ -1,22 +1,87 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Оценка по трем точкам - PERT метод с визуализацией</title>
+    <meta name="title" content="Оценка по трем точкам - PERT метод с визуализацией">
+    <meta name="description" content="Онлайн калькулятор для оценки задач по методу PERT. Учет оптимистичной, реалистичной и пессимистичной оценки с визуализацией треугольного распределения вероятностей.">
+    <meta name="keywords" content="PERT метод, оценка по трем точкам, треугольное распределение, оптимистичная оценка, реалистичная оценка, пессимистичная оценка, планирование проектов, управление рисками, калькулятор">
+    <meta name="author" content="Thisman">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Russian">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://thisman.github.io/triangular-estimation/">
+    <meta property="og:title" content="Оценка по трем точкам - PERT метод с визуализацией">
+    <meta property="og:description" content="Онлайн калькулятор для оценки задач по методу PERT. Учет оптимистичной, реалистичной и пессимистичной оценки с визуализацией треугольного распределения вероятностей.">
+    <meta property="og:image" content="https://thisman.github.io/images/demo.png">
+    <meta property="og:site_name" content="Оценка по трем точкам">
+    <meta property="og:locale" content="ru_RU">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://thisman.github.io/triangular-estimation/">
+    <meta property="twitter:title" content="Оценка по трем точкам - PERT метод с визуализацией">
+    <meta property="twitter:description" content="Онлайн калькулятор для оценки задач по методу PERT. Учет оптимистичной, реалистичной и пессимистичной оценки с визуализацией треугольного распределения вероятностей.">
+    <meta property="twitter:image" content="https://thisman.github.io/images/demo.png">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="theme-color" content="#2196F3">
+    <meta name="msapplication-TileColor" content="#2196F3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Оценка по трем точкам">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://thisman.github.io/triangular-estimation/">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Оценка по трем точкам",
+        "description": "Онлайн калькулятор для оценки задач по методу PERT с визуализацией",
+        "url": "https://thisman.github.io/triangular-estimation/",
+        "applicationCategory": "ProductivityApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "Thisman"
+        },
+        "featureList": [
+            "Оптимистичная оценка",
+            "Реалистичная оценка",
+            "Пессимистичная оценка",
+            "Формула PERT: (O + 4R + P) / 6",
+            "Визуализация треугольного распределения",
+            "График плотности вероятности"
+        ]
+    }
+    </script>
+    
     <link rel="stylesheet" href="/how-many-sp/index.css">
     <link rel="stylesheet" href="index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
-    <title>Оценка по трем точкам</title>
 </head>
 <body>
     <div class="main-container wider">
         <a href="/index.html" class="main-link" title="На главную">
-            <img src="/images/main-icon.png" />
+            <img src="/images/main-icon.png" alt="Перейти на главную страницу" />
         </a>
         <a href="https://github.com/Thisman/thisman.github.io" class="github-link" target="_blank">
-            <img src="/images/github-icon.png" />
+            <img src="/images/github-icon.png" alt="GitHub репозиторий" />
         </a>
         <div class="description">
             <h4>Оценка по трём точкам</h4>
@@ -44,15 +109,16 @@
                     <input type="number" id="pessimistic" />
                 </div>
             </div>
+            <div id="error-message" class="error-message"></div>
             <div class="unit-property">
                 <div class="unit-property-name">Единица измерения</div>
                 <div class="unit-property-values">
                     <label class="unit-property-value">
-                        <input type="radio" value="hours" name="unit" checked />
+                        <input type="radio" value="hours" name="unit" />
                         <span>Часы</span>
                     </label>
                     <label class="unit-property-value">
-                        <input type="radio" value="days" name="unit" />
+                        <input type="radio" value="days" name="unit" checked />
                         <span>Дни</span>
                     </label>
                     <label class="unit-property-value">
@@ -63,7 +129,7 @@
             </div>
             <button id="calc">Посчитать</button>
         </div>
-        <div id="result" class="result">Итоговая оценка: -</div>
+        <div id="result" class="result">0 дней</div>
         <div class="graph-container">
             <canvas id="chart" width="700" height="300"></canvas>
         </div>

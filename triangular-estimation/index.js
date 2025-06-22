@@ -1,5 +1,6 @@
 const button = document.getElementById('calc');
 const resultEl = document.getElementById('result');
+const errorEl = document.getElementById('error-message');
 const canvas = document.getElementById('chart');
 const ctx = canvas.getContext('2d');
 let chart;
@@ -16,6 +17,15 @@ function clearGraphWithError() {
 
 function resetGraphBackground() {
     canvas.style.backgroundColor = '';
+}
+
+function clearError() {
+    errorEl.textContent = '';
+}
+
+function showError(message) {
+    errorEl.textContent = message;
+    clearGraphWithError();
 }
 
 function triangularPdf(x, a, c, b) {
@@ -120,37 +130,49 @@ function getUnitText(number, unit) {
     }
 }
 
-button.addEventListener('click', () => {
+function updateResult() {
     const o = parseFloat(document.getElementById('optimistic').value);
     const r = parseFloat(document.getElementById('realistic').value);
     const p = parseFloat(document.getElementById('pessimistic').value);
     const unitInput = document.querySelector('[name=unit]:checked');
-    const unit = unitInput ? unitInput.value : 'hours';
+    const unit = unitInput ? unitInput.value : 'days';
     
+    // Если не все поля заполнены, показываем 0
     if (isNaN(o) || isNaN(r) || isNaN(p)) {
-        resultEl.textContent = 'Введите все оценки';
-        clearGraphWithError();
+        const unitText = getUnitText(0, unit);
+        resultEl.textContent = '0 ' + unitText;
+        clearError();
         return;
     }
+    
+    // Проверяем валидность данных
     if (o > r || o > p) {
-        resultEl.textContent = 'Оптимистичная оценка не должна быть больше других оценок';
-        clearGraphWithError();
+        showError('Оптимистичная оценка не должна быть больше других оценок');
         return;
     }
     if (r < o || r > p) {
-        resultEl.textContent = 'Реалистичная оценка должна быть не меньше оптимистичной и не больше пессимистичной';
-        clearGraphWithError();
+        showError('Реалистичная оценка должна быть не меньше оптимистичной и не больше пессимистичной');
         return;
     }
     if (p < r || p < o) {
-        resultEl.textContent = 'Пессимистичная оценка должна быть не меньше остальных оценок';
-        clearGraphWithError();
+        showError('Пессимистичная оценка должна быть не меньше остальных оценок');
         return;
     }
     
     const estimate = Math.ceil((o + 4 * r + p) / 6);
     const unitText = getUnitText(estimate, unit);
     
+    clearError();
     drawGraph(o, r, p, estimate);
     resultEl.textContent = estimate + ' ' + unitText;
+}
+
+button.addEventListener('click', updateResult);
+
+// Обновляем результат при изменении единицы измерения
+document.querySelectorAll('[name=unit]').forEach(radio => {
+    radio.addEventListener('change', updateResult);
 });
+
+// Инициализация по умолчанию
+updateResult();
