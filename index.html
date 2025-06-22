@@ -1,111 +1,30 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="<link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
-    <title>Сколько сториков?</title>
-    <!-- Yandex.Metrika counter -->
-    <script type="text/javascript" >
-    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-    m[i].l=1*new Date();
-    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-    ym(92131315, "init", {
-            clickmap:true,
-            trackLinks:true,
-            accurateTrackBounce:true
-    });
-    </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/92131315" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
+    <title>Главная по подсчетам</title>
 </head>
 <body>
     <div class="main-container">
-        <a href="triangular-estimation.html" class="triangular-link" title="Оценка по трём точкам">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <polygon points="12,4 20,20 4,20" fill="currentColor" />
-            </svg>
-        </a>
         <a href="https://github.com/Thisman/thisman.github.io" class="github-link" target="_blank">
-            <img src="./images/github-icon.png" />
+            <img src="/images/github-icon.png" />
         </a>
-        <div class="description">
-            <h4>Сайт позволяет посчитать количество сторипоинтов для оценки задачи.</h4>
-            Оценка строится из трех шагов:
-            <ol>
-                <li>Оценить кол-во информации, которое известно о задаче и её решении <i>uncertainty</i></li>
-                <li>Оценить сложность решения задачи. Насколько легко или трудно реализовать задачу, когда о ней всё известно? <i>complexity</i></li>
-                <li>Оценить объем решения задачи. Сколько обязательных шагов подразумевает решение задачи? <i>effort</i></li>
-            </ol>
-            <br />
-            Чтобы получить оценку задачи, выбери ниже для каждого критерия значение.
+        
+        <h1 class="main-title">Главная по подсчетам</h1>
+        
+        <div class="buttons-container">
+            <a href="./how-many-sp/index.html" class="nav-button">
+                Сколько сториков?
+            </a>
+            <a href="./triangular-estimation/index.html" class="nav-button">
+                Оценка по трем точкам
+            </a>
         </div>
-        <hr />
-        <div class="task-properties-container" id="task-properties">
-            <div class="task-property">
-                <div class="task-property-name">Какая неопределенность у задачи? <i>uncertainty</i></div>
-                <div class="task-property-values">
-                    <label class="task-property-value">
-                        <input type="radio" value="low" name="uncertainty" checked />
-                        <span>Низкая</span>
-                    </label>
-                    <label class="task-property-value">
-                        <input type="radio" value="medium" name="uncertainty" />
-                        <span>Средняя</span>
-                    </label>
-                    <label class="task-property-value">
-                        <input type="radio" value="high" name="uncertainty" />
-                        <span>Высокая</span>
-                    </label>
-                </div>
-            </div>
-            <div class="task-property">
-                <div class="task-property-name">Какая сложность у решения задачи? <i>complexity</i></div>
-                <div class="task-property-values">
-                    <label class="task-property-value">
-                        <input type="radio" value="low" name="complexity" checked />
-                        <span>Низкая</span>
-                    </label>
-                    <label class="task-property-value">
-                        <input type="radio" value="medium" name="complexity" />
-                        <span>Средняя</span>
-                    </label>
-                    <label class="task-property-value">
-                        <input type="radio" value="high" name="complexity" />
-                        <span>Высокая</span>
-                    </label>
-                </div>
-            </div>
-            <div class="task-property">
-                <div class="task-property-name">Какой объем у решения задачи? <i>effort</i></div>
-                <div class="task-property-values">
-                    <label class="task-property-value">
-                        <input type="radio" value="low" name="effort" checked />
-                        <span>Низкий</span>
-                    </label>
-                    <label class="task-property-value">
-                        <input type="radio" value="medium" name="effort" />
-                        <span>Средний</span>
-                    </label>
-                    <label class="task-property-value">
-                        <input type="radio" value="high" name="effort" />
-                        <span>Высокий</span>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="sp-count-container" id="sp-count">
-            1 сп
-        </div>
-        <div class="sp-count-description" id="sp-description"></div>
     </div>
-<script src="./index.js"></script>
 </body>
 </html>

@@ -6,80 +6,6 @@ let chart;
 
 const ARROW_COLOR = '#009688';
 
-const arrowPlugin = {
-    id: 'arrowPlugin',
-    afterDatasetsDraw(chart) {
-        if (chart.animating) {
-            return;
-        }
-
-        const meta = chart.getDatasetMeta(1);
-        if (!meta || !meta.data || meta.data.length < 4) {
-            return;
-        }
-
-        const point = meta.data[3];
-        const { x, y } = point.getProps(['x', 'y'], true);
-        const ctx = chart.ctx;
-        const { top, bottom, left, right } = chart.chartArea;
-
-        const offset = 50;
-        let startX = x + offset;
-        let startY = y - offset;
-
-        if (startY < top || startX > right) {
-            if (y - offset >= top && x - offset >= left) {
-                startX = x - offset;
-                startY = y - offset;
-            } else if (bottom - y >= offset && right - x >= offset) {
-                startX = x + offset;
-                startY = y + offset;
-            } else if (bottom - y >= offset && x - left >= offset) {
-                startX = x - offset;
-                startY = y + offset;
-            } else {
-                startX = x;
-                startY = Math.max(top, y - offset);
-            }
-        }
-
-        const dx = x - startX;
-        const dy = y - startY;
-        const length = Math.sqrt(dx * dx + dy * dy);
-        const gap = 12;
-
-        const endX = x - (dx / length) * gap;
-        const endY = y - (dy / length) * gap;
-        const headlen = 6;
-        const angle = Math.atan2(endY - startY, endX - startX);
-
-        ctx.save();
-        ctx.strokeStyle = ARROW_COLOR;
-        ctx.fillStyle = ARROW_COLOR;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(endX, endY);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(endX, endY);
-        ctx.lineTo(
-            endX - headlen * Math.cos(angle - Math.PI / 6),
-            endY - headlen * Math.sin(angle - Math.PI / 6)
-        );
-        ctx.lineTo(
-            endX - headlen * Math.cos(angle + Math.PI / 6),
-            endY - headlen * Math.sin(angle + Math.PI / 6)
-        );
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-    },
-};
-
-Chart.register(arrowPlugin);
-
 function clearGraphWithError() {
     if (chart) {
         chart.destroy();
@@ -166,10 +92,41 @@ function drawGraph(o, r, p, estimate) {
     });
 }
 
+function getUnitText(number, unit) {
+    const lastDigit = number % 10;
+    const lastTwoDigits = number % 100;
+    
+    switch(unit) {
+        case 'hours':
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return 'часов';
+            if (lastDigit === 1) return 'час';
+            if (lastDigit >= 2 && lastDigit <= 4) return 'часа';
+            return 'часов';
+            
+        case 'days':
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return 'дней';
+            if (lastDigit === 1) return 'день';
+            if (lastDigit >= 2 && lastDigit <= 4) return 'дня';
+            return 'дней';
+            
+        case 'weeks':
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return 'недель';
+            if (lastDigit === 1) return 'неделя';
+            if (lastDigit >= 2 && lastDigit <= 4) return 'недели';
+            return 'недель';
+            
+        default:
+            return '';
+    }
+}
+
 button.addEventListener('click', () => {
     const o = parseFloat(document.getElementById('optimistic').value);
     const r = parseFloat(document.getElementById('realistic').value);
     const p = parseFloat(document.getElementById('pessimistic').value);
+    const unitInput = document.querySelector('[name=unit]:checked');
+    const unit = unitInput ? unitInput.value : 'hours';
+    
     if (isNaN(o) || isNaN(r) || isNaN(p)) {
         resultEl.textContent = 'Введите все оценки';
         clearGraphWithError();
@@ -190,7 +147,10 @@ button.addEventListener('click', () => {
         clearGraphWithError();
         return;
     }
+    
     const estimate = Math.ceil((o + 4 * r + p) / 6);
+    const unitText = getUnitText(estimate, unit);
+    
     drawGraph(o, r, p, estimate);
-    resultEl.textContent = 'Итоговая оценка: ' + estimate;
+    resultEl.textContent = estimate + ' ' + unitText;
 });
