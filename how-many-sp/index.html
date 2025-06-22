@@ -1,0 +1,93 @@
+<html lang="ru">
+<head>
+    <meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <title>Сколько сториков?</title>
+</head>
+<body>
+    <div class="main-container">
+        <a href="/triangular-estimation/index.html" class="triangular-link" title="Оценка по трём точкам">
+            <img src="/images/estimation-icon.png" />
+        </a>
+        <a href="https://github.com/Thisman/thisman.github.io" class="github-link" target="_blank">
+            <img src="/images/github-icon.png" />
+        </a>
+        <div class="description">
+            <h4>Сайт позволяет посчитать количество сторипоинтов для оценки задачи.</h4>
+            Оценка строится из трех шагов:
+            <ol>
+                <li>Оценить кол-во информации, которое известно о задаче и её решении <i>uncertainty</i></li>
+                <li>Оценить сложность решения задачи. Насколько легко или трудно реализовать задачу, когда о ней всё известно? <i>complexity</i></li>
+                <li>Оценить объем решения задачи. Сколько обязательных шагов подразумевает решение задачи? <i>effort</i></li>
+            </ol>
+            <br />
+            Чтобы получить оценку задачи, выбери ниже для каждого критерия значение.
+        </div>
+        <hr />
+        <div class="task-properties-container" id="task-properties">
+            <div class="task-property">
+                <div class="task-property-name">Какая неопределенность у задачи? <i>uncertainty</i></div>
+                <div class="task-property-values">
+                    <label class="task-property-value">
+                        <input type="radio" value="low" name="uncertainty" checked />
+                        <span>Низкая</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="medium" name="uncertainty" />
+                        <span>Средняя</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="high" name="uncertainty" />
+                        <span>Высокая</span>
+                    </label>
+                </div>
+            </div>
+            <div class="task-property">
+                <div class="task-property-name">Какая сложность у решения задачи? <i>complexity</i></div>
+                <div class="task-property-values">
+                    <label class="task-property-value">
+                        <input type="radio" value="low" name="complexity" checked />
+                        <span>Низкая</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="medium" name="complexity" />
+                        <span>Средняя</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="high" name="complexity" />
+                        <span>Высокая</span>
+                    </label>
+                </div>
+            </div>
+            <div class="task-property">
+                <div class="task-property-name">Какой объем у решения задачи? <i>effort</i></div>
+                <div class="task-property-values">
+                    <label class="task-property-value">
+                        <input type="radio" value="low" name="effort" checked />
+                        <span>Низкий</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="medium" name="effort" />
+                        <span>Средний</span>
+                    </label>
+                    <label class="task-property-value">
+                        <input type="radio" value="high" name="effort" />
+                        <span>Высокий</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="sp-count-container" id="sp-count">
+            1 сп
+        </div>
+        <div class="sp-count-description" id="sp-description"></div>
+    </div>
+    <script src="./index.js"></script>
+</body>
+</html>
