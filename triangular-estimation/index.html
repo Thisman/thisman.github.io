@@ -69,14 +69,15 @@
     }
     </script>
     
-    <link rel="stylesheet" href="/how-many-sp/index.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="main-container wider">
+    <div class="main-container">
         <a href="/index.html" class="main-link" title="На главную">
             <img src="/images/main-icon.png" alt="Перейти на главную страницу" />
         </a>
@@ -110,24 +111,24 @@
                 </div>
             </div>
             <div id="error-message" class="error-message"></div>
-            <div class="unit-property">
-                <div class="unit-property-name">Единица измерения</div>
-                <div class="unit-property-values">
-                    <label class="unit-property-value">
+            <div class="radio-group">
+                <div class="radio-group-name">Единица измерения</div>
+                <div class="radio-group-values">
+                    <label class="radio-group-value">
                         <input type="radio" value="hours" name="unit" />
                         <span>Часы</span>
                     </label>
-                    <label class="unit-property-value">
+                    <label class="radio-group-value">
                         <input type="radio" value="days" name="unit" checked />
                         <span>Дни</span>
                     </label>
-                    <label class="unit-property-value">
+                    <label class="radio-group-value">
                         <input type="radio" value="weeks" name="unit" />
                         <span>Недели</span>
                     </label>
                 </div>
             </div>
-            <button id="calc">Посчитать</button>
+            <button id="calc" class="btn">Посчитать</button>
         </div>
         <div id="result" class="result">0 дней</div>
         <div class="graph-container">
@@ -135,6 +136,6 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="./index.js"></script>
+    <script type="module" src="./index.js"></script>
 </body>
 </html>

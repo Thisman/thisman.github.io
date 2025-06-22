@@ -27,7 +27,7 @@ h4 {
     color: #009688;
 }
 .task-properties-container {
-    margin: 16px auto;
+    margin: var(--spacing-md) auto;
 }
 .task-property {
     margin-bottom: 32px;
@@ -60,11 +60,12 @@ h4 {
 }
 .sp-count-description {
     font-size: 15px;
-    margin-top: 8px;
+    margin-top: var(--spacing-xs);
     line-height: 18px;
     height: 18px;
     text-align: center;
     font-style: italic;
+    color: var(--text-secondary);
 }
 .github-link {
     width: 32px;
@@ -93,4 +94,12 @@ h4 {
 }
 li {
     margin-bottom: 8px;
+}
+
+/* Responsive design */
+@media (max-width: 750px) {
+    .radio-group-values {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
 }
