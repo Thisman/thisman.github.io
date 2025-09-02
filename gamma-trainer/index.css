@@ -176,6 +176,11 @@ body {
 }
 
 .note {
+    width: 78px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 10px 14px;
     border-radius: 999px;
     background: var(--pill-bg);
