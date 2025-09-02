@@ -1,79 +1,230 @@
-  :root{
+:root {
     /* Material Light */
-    --md-bg:#FAFAFA; --md-surface:#FFFFFF; --md-on:#1F1F1F; --md-muted:#5f6368;
-    --md-primary:#1E88E5; --md-secondary:#8E24AA;
-    --ring: rgba(30,136,229,.25);
+    --md-bg: #FAFAFA;
+    --md-surface: #FFFFFF;
+    --md-on: #1F1F1F;
+    --md-muted: #5f6368;
+    --md-primary: #1E88E5;
+    --md-secondary: #8E24AA;
+    --ring: rgba(30, 136, 229, .25);
 
     /* Ступени по качеству трезвучия */
-    --deg-major:#1B5E20; --deg-minor:#0D47A1; --deg-dim:#B71C1C; --deg-aug:#E65100;
-    --char:#FFC107;
+    --deg-major: #1B5E20;
+    --deg-minor: #0D47A1;
+    --deg-dim: #B71C1C;
+    --deg-aug: #E65100;
+    --char: #FFC107;
 
-    --pill-bg:#F1F3F4; --pill-on:#202124;
-  }
+    --pill-bg: #F1F3F4;
+    --pill-on: #202124;
+}
 
-  html,body{height:100%}
-  body{
-    margin:0; min-height:100svh; background:var(--md-bg); color:var(--md-on);
-    font:16px/1.35 system-ui,Segoe UI,Roboto,Inter,Arial
-  }
+html,
+body {
+    height: 100%;
+}
 
-  .main-container,
-  .container{max-width:1100px;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:16px}
-  .toolbar{display:flex;flex-direction:column;gap:10px}
+body {
+    margin: 0;
+    min-height: 100svh;
+    background: var(--md-bg);
+    color: var(--md-on);
+    font: 16px/1.35 system-ui, Segoe UI, Roboto, Inter, Arial;
+}
 
-  /* ===== ЧИПЫ-РАДИО ===== */
-  .chipbar{display:flex; gap:8px; align-items:center}
-  .chipbar.nowrap{flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px} /* ноты-тоники в одну строку */
-  .chipbar.wrap{flex-wrap:wrap}                                         /* лады с переносом */
+.main-container,
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
-  .chip-radio{position:relative;display:inline-block}
-  .chip-radio input{position:absolute; inset:0; opacity:0; pointer-events:none}
-  .chip{
-    display:inline-flex; align-items:center; gap:6px;
-    padding:8px 12px; border-radius:999px;
-    background:var(--md-surface);
-    border:1px solid rgba(127,127,127,.25);
-    color:var(--md-on); cursor:pointer; user-select:none;
-    transition:box-shadow .15s, background .15s, border-color .15s
-  }
-  .chip-radio input:checked + .chip{
+.toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ===== ЧИПЫ-РАДИО ===== */
+.chipbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* ноты-тоники в одну строку */
+.chipbar.nowrap {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+/* лады с переносом */
+.chipbar.wrap {
+    flex-wrap: wrap;
+}
+
+.chip-radio {
+    position: relative;
+    display: inline-block;
+}
+
+.chip-radio input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--md-surface);
+    border: 1px solid rgba(127, 127, 127, .25);
+    color: var(--md-on);
+    cursor: pointer;
+    user-select: none;
+    transition: box-shadow .15s, background .15s, border-color .15s;
+}
+
+.chip-radio input:checked + .chip {
     border-color: var(--md-primary);
     box-shadow: 0 0 0 3px var(--ring) inset;
     background: color-mix(in oklab, var(--md-primary) 12%, var(--md-surface));
-  }
+}
 
-  /* ===== Карточки ===== */
-  .stage{display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap}
-  .card{background:var(--md-surface); border:1px solid rgba(127,127,127,.25); border-radius:14px}
-  .notes-card{flex:1 1 600px; padding:18px}
-  .legend-card{flex:0 0 260px; padding:16px}
-  .card-title{margin:0 0 12px;font-weight:700}
+/* ===== Карточки ===== */
+.stage {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
 
-  /* ===== Линия нот лада ===== */
-  .notes-line{display:flex; gap:14px; flex-wrap:wrap; justify-content:center} /* центр по горизонтали */
-  .cell{display:flex; flex-direction:column; align-items:center; gap:6px; min-width:56px}
+.card {
+    background: var(--md-surface);
+    border: 1px solid rgba(127, 127, 127, .25);
+    border-radius: 14px;
+}
 
-  .degree{
-    font-weight:800; font-size:20px; line-height:1;
-    padding:8px 12px; border-radius:999px; border:2px solid transparent; letter-spacing:.5px
-  }
-  .degree.char{ box-shadow:0 0 0 3px var(--char) inset; border-color:var(--char) }
-  .deg-major{ color:var(--deg-major) }
-  .deg-minor{ color:var(--deg-minor) }
-  .deg-dim  { color:var(--deg-dim) }
-  .deg-aug  { color:var(--deg-aug) }
+.notes-card {
+    flex: 1 1 600px;
+    padding: 18px;
+}
 
-  .note{
-    padding:10px 14px; border-radius:999px; background:var(--pill-bg); color:var(--pill-on);
-    border:2px solid transparent; font-weight:700
-  }
-  .note.is-parent-major{ border-color:var(--md-primary); box-shadow:0 0 0 4px var(--ring) }
-  .note.is-parent-minor{ border-color:var(--md-secondary); box-shadow:0 0 0 4px color-mix(in oklab, var(--md-secondary) 25%, transparent) }
+.legend-card {
+    flex: 0 0 260px;
+    padding: 16px;
+}
 
-  /* ===== Легенда (в столбик) ===== */
-  .legend-list{display:flex; flex-direction:column; gap:10px}
-  .legend-item{display:flex; align-items:center; gap:10px}
-  .dot{width:14px;height:14px;border-radius:50%;display:inline-block; flex:0 0 14px}
-  .dot.major{background:var(--md-primary)}
-  .dot.minor{background:var(--md-secondary)}
-  .dot.char{background:var(--char); box-shadow:0 0 0 2px rgba(0,0,0,.08) inset}
+.card-title {
+    margin: 0 0 12px;
+    font-weight: 700;
+}
+
+/* ===== Линия нот лада ===== */
+.notes-line {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center; /* центр по горизонтали */
+}
+
+.cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 56px;
+}
+
+.degree {
+    font-weight: 800;
+    font-size: 20px;
+    line-height: 1;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    letter-spacing: .5px;
+}
+
+.degree.char {
+    box-shadow: 0 0 0 3px var(--char) inset;
+    border-color: var(--char);
+}
+
+.deg-major {
+    color: var(--deg-major);
+}
+
+.deg-minor {
+    color: var(--deg-minor);
+}
+
+.deg-dim {
+    color: var(--deg-dim);
+}
+
+.deg-aug {
+    color: var(--deg-aug);
+}
+
+.note {
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: var(--pill-bg);
+    color: var(--pill-on);
+    border: 2px solid transparent;
+    font-weight: 700;
+}
+
+.note.is-parent-major {
+    border-color: var(--md-primary);
+    box-shadow: 0 0 0 4px var(--ring);
+}
+
+.note.is-parent-minor {
+    border-color: var(--md-secondary);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--md-secondary) 25%, transparent);
+}
+
+/* ===== Легенда (в столбик) ===== */
+.legend-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    flex: 0 0 14px;
+}
+
+.dot.major {
+    background: var(--md-primary);
+}
+
+.dot.minor {
+    background: var(--md-secondary);
+}
+
+.dot.char {
+    background: var(--char);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, .08) inset;
+}
+
