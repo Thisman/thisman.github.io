@@ -13,6 +13,10 @@
     --text-muted: #ddd;
     --border-color: #ddd;
     --background-light: #ffdddd;
+
+    /* Footer */
+    --footer-bg: #000;
+    --footer-height: 40px;
     
     /* Typography */
     --font-primary: 'Roboto Condensed', sans-serif;
@@ -45,7 +49,7 @@ body {
     width: 100%;
     height: 100%;
     margin: 0;
-    padding: 0;
+    padding: 0 0 var(--footer-height) 0;
     font-family: var(--font-primary);
     line-height: 1.5;
 }
@@ -231,4 +235,23 @@ h1, h2, h3, h4, h5, h6 {
     .result {
         font-size: 60px;
     }
-} 
+}
+
+/* Footer */
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--footer-height);
+    background: var(--footer-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.footer a {
+    color: #fff;
+    text-decoration: none;
+}
