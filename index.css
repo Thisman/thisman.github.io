@@ -15,21 +15,13 @@ body {
     position: relative;
     width: 700px;
     margin: auto;
-    padding: 32px 8px 16px;
+    padding: 32px 8px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-}
-
-.main-title {
-    font-size: 36px;
-    font-weight: 700;
-    margin-bottom: 48px;
-    text-align: center;
-    color: var(--text-primary);
 }
 
 .buttons-container {
@@ -77,12 +69,7 @@ body {
         width: 100%;
         padding: 16px;
     }
-    
-    .main-title {
-        font-size: 28px;
-        margin-bottom: 32px;
-    }
-    
+
     .buttons-container {
         max-width: 100%;
     }
