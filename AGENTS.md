@@ -10,15 +10,19 @@
 
 ```
 thisman.github.io/
-├── index.html                 # Главная страница (пустая)
+├── index.html                 # Главная страница
+├── index.css                  # Стили главной страницы
 ├── README.md                  # Описание проекта
 ├── AGENTS.md                  # Этот файл с правилами
 ├── yarn.lock                  # Зависимости
 ├── images/                    # Общие изображения
 │   ├── demo.png
-│   ├── estimation-icon.png
 │   ├── github-icon.png
-│   └── how-many-sp-icon.png
+│   └── main-icon.png
+├── js/                        # Общие утилиты JavaScript
+│   └── utils.js
+├── styles/                    # Общие стили
+│   └── common.css
 ├── how-many-sp/              # Приложение "Сколько сториков?"
 │   ├── index.html
 │   ├── index.css
