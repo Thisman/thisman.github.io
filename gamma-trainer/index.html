@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Лады, гаммы и ступени — тренажёр</title>
+<link rel="stylesheet" href="../styles/common.css">
+<link rel="stylesheet" href="./index.css">
+</head>
+<body>
+  <div class="main-container">
+    <a href="/index.html" class="main-link" title="На главную">
+        <img src="/images/main-icon.png" alt="Перейти на главную страницу" />
+    </a>
+    <a href="https://github.com/Thisman/thisman.github.io" class="github-link" target="_blank">
+        <img src="/images/github-icon.png" alt="GitHub репозиторий" />
+    </a>
+  </div>
+  <div class="container">
+    <div class="toolbar">
+      <div aria-label="Выбор тоники" role="radiogroup" class="chipbar nowrap" id="tonicBar"></div>
+      <div aria-label="Выбор лада" role="radiogroup" class="chipbar wrap" id="modeBar"></div>
+    </div>
+
+    <div class="stage">
+      <section class="card notes-card">
+        <h3 class="card-title">Ноты лада и ступени</h3>
+        <div id="notes" class="notes-line" aria-live="polite"></div>
+      </section>
+
+      <aside class="card legend-card">
+        <h3 class="card-title">Легенда</h3>
+        <div class="legend-list">
+          <div class="legend-item"><span class="dot major"></span><span>Нота, от которой строится <b>мажорная</b> гамма (Ionian) для текущего набора</span></div>
+          <div class="legend-item"><span class="dot minor"></span><span>Нота, от которой строится <b>минорная</b> гамма (Aeolian) для текущего набора</span></div>
+          <div class="legend-item"><span class="dot char"></span><span>«Характерные» ступени (подсветка римских цифр)</span></div>
+          <div style="height:6px"></div>
+          <div style="font-size:13px;color:var(--md-muted);line-height:1.25">
+            Регистр и знаки ступеней соответствуют качеству трезвучий:<br/>
+            <b>I, IV, V</b> — мажорные; <b>ii, iii, vi</b> — минорные; <b>vii°</b> — уменьш.; возможны <b>III+</b> и др.
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+<script src="./index.js"></script>
+</body>
+</html>
