@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Swap-Tac-Toe (X/O)</title>
+  <link rel="stylesheet" href="/styles/common.css" />
+  <link rel="stylesheet" href="./index.css" />
+</head>
+<body>
+  <div class="main-container app">
+    <header>
+      <div class="title">
+        <h1>Swap-Tac-Toe</h1>
+        <div class="subtitle">Крестики-нолики / Connect-N с дополнительным ходом: swap соседних разных меток</div>
+      </div>
+      <div class="pill">
+        Режим: <strong>Place / Swap</strong> · Поле до <strong>15×15</strong>
+      </div>
+    </header>
+
+    <!-- Screen 1: Settings -->
+    <section id="screenSettings" class="screen active">
+      <div class="content">
+        <div class="settingsStack">
+          <div class="card settingsCard">
+            <div style="font-weight:700; margin-bottom:8px;">Правила</div>
+            <div class="hint" style="margin-top:0;">
+              <ul style="margin:0; padding-left: 18px; line-height:1.45;">
+                <li>Игроки: X и O. X ходит первым.</li>
+                <li>Цель: собрать линию длины N (гор/верт/диагональ).</li>
+                <li>Ход = <strong>Place</strong> (поставить метку в пустую клетку) или <strong>Swap</strong> (поменять местами две соседние клетки, если в них разные метки X и O; допускается диагональ).</li>
+                <li>Проверка победы: после хода сначала проверяем линию у сделавшего ход. Если её нет — проверяем, не “подарил” ли он победу сопернику swap’ом.</li>
+                <li>Ничья возможна: по кнопке “Ничья”; автоматически, если доска заполнена и у обоих игроков исчерпан лимит swap после заполнения; а также по правилу “трёхкратного повтора ходов” (аналог шахмат) — описательно.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card settingsCard">
+            <!-- hidden inputs keep game logic simple -->
+            <input id="rowsInput" type="hidden" value="10" />
+            <input id="colsInput" type="hidden" value="10" />
+            <input id="winInput"  type="hidden" value="5" />
+            <input id="swapLimitInput" type="hidden" value="10" />
+
+            <div class="modeRow" aria-label="Режим игры">
+              <div class="label">Режим:</div>
+              <div class="segmented">
+                <button id="modePvp" type="button" class="btn ghost active">Игрок vs игрок</button>
+                <button id="modePvc" type="button" class="btn ghost">Игрок vs компьютер</button>
+              </div>
+            </div>
+
+            <div class="steppers" aria-label="Настройки поля">
+              <div class="stepper">
+                <button id="rowsPlus" class="btn ghost stepperBtn" type="button" aria-label="Увеличить высоту">+</button>
+                <div id="rowsVal" class="value" aria-live="polite">10</div>
+                <button id="rowsMinus" class="btn ghost stepperBtn" type="button" aria-label="Уменьшить высоту">−</button>
+                <div class="lbl">Высота</div>
+              </div>
+
+              <div class="stepper">
+                <button id="colsPlus" class="btn ghost stepperBtn" type="button" aria-label="Увеличить ширину">+</button>
+                <div id="colsVal" class="value" aria-live="polite">10</div>
+                <button id="colsMinus" class="btn ghost stepperBtn" type="button" aria-label="Уменьшить ширину">−</button>
+                <div class="lbl">Ширина</div>
+              </div>
+
+              <div class="stepper">
+                <button id="winPlus" class="btn ghost stepperBtn" type="button" aria-label="Увеличить длину линии">+</button>
+                <div id="winVal" class="value" aria-live="polite">5</div>
+                <button id="winMinus" class="btn ghost stepperBtn" type="button" aria-label="Уменьшить длину линии">−</button>
+                <div class="lbl">Длина линии (N)</div>
+              </div>
+
+              <div class="stepper">
+                <button id="swapLimitPlus" class="btn ghost stepperBtn" type="button" aria-label="Увеличить лимит swap после заполнения">+</button>
+                <div id="swapLimitVal" class="value" aria-live="polite">6</div>
+                <button id="swapLimitMinus" class="btn ghost stepperBtn" type="button" aria-label="Уменьшить лимит swap после заполнения">−</button>
+                <div class="lbl">Лимит swap</div>
+              </div>
+            </div>
+
+            <div class="hint" id="settingsHint">
+              Ограничение: N должно быть не меньше 3 и не больше max(строки, столбцы).
+              Диагонали также учитываются.
+            </div>
+
+            <div class="buttons center" style="margin-top:12px;">
+              <button id="preset33" class="btn ghost" type="button">3×3, N=3</button>
+              <button id="preset55" class="btn ghost" type="button">5×5, N=4</button>
+              <button id="preset1010" class="btn ghost" type="button">10×10, N=5</button>
+              <button id="preset1515" class="btn ghost" type="button">15×15, N=5</button>
+            </div>
+
+            <div class="buttons center" style="margin-top:12px;">
+              <button id="startBtn" class="btn primary cta" type="button">Начать</button>
+            </div>
+
+            <div id="settingsToast" class="toast warn" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 2: Game -->
+    <section id="screenGame" class="screen">
+      <div class="content">
+        <div class="statusbar">
+          <div class="status">
+            <div class="line1">Ход игрока</div>
+            <div class="line2" id="turnLabel">X</div>
+          </div>
+
+          <div class="status">
+            <div class="line1">Ходов сделано</div>
+            <div class="line2" id="movesLabel">0</div>
+          </div>
+
+          <div class="status">
+            <div class="line1">Цель</div>
+            <div class="line2" id="goalLabel">N</div>
+          </div>
+
+          <div class="status" id="afterFullStatus" style="display:none;">
+            <div class="line1">Осталось swap до ничьи</div>
+            <div class="line2" id="afterFullLabel">X: — · O: —</div>
+          </div>
+
+          <div class="buttons">
+            <button id="drawBtn" class="btn ghost" title="Завершить как ничью">Ничья</button>
+            <button id="restartBtn" class="btn ghost" title="Вернуться в настройки">В настройки</button>
+          </div>
+        </div>
+
+        <div class="boardWrap">
+          <div id="board" class="board" aria-label="Игровое поле"></div>
+        </div>
+
+        <div id="gameToast" class="toast" style="margin-top:12px;">
+          Клик по пустой клетке — Place. Клик по занятой — Swap (затем по соседней, включая диагональ, с другой меткой).
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 3: Results -->
+    <section id="screenResults" class="screen">
+      <div class="content">
+        <div class="settingsCard">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap: 12px; flex-wrap: wrap;">
+            <div>
+              <div style="color: var(--muted); font-size: 12px;">Результат</div>
+              <div id="resultTitle" style="font-size: 18px; font-weight: 800; margin-top: 4px;">—</div>
+              <div id="resultSubtitle" class="hint" style="margin-top: 8px;">—</div>
+            </div>
+            <div class="buttons">
+              <button id="playAgainBtn" class="btn primary">Сыграть ещё</button>
+              <button id="backToSettingsBtn" class="btn ghost">В настройки</button>
+            </div>
+          </div>
+
+          <div class="resultsGrid">
+            <div class="kv"><span>Победитель</span><span id="winnerKV">—</span></div>
+            <div class="kv"><span>Ходов сделано</span><span id="movesKV">—</span></div>
+            <div class="kv"><span>Свапов сделано</span><span id="swapsKV">—</span></div>
+            <div class="kv"><span>Поле</span><span id="sizeKV">—</span></div>
+            <div class="kv"><span>Длина линии (N)</span><span id="winKV">—</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Примечание: swap делает игру потенциально циклической. В этой реализации ничью можно фиксировать вручную.
+    </div>
+  </div>
+  <footer class="footer">
+    <a href="/index.html">Главная</a>
+    <a href="https://github.com/Thisman/thisman.github.io" target="_blank">GitHub</a>
+  </footer>
+
+  <script src="./game.js" defer></script>
+  <script src="./bot.js" defer></script>
+</body>
+</html>
