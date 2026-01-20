@@ -501,7 +501,7 @@ function updateViewMode(count = 0, layout = "carousel") {
   swiperView.classList.add(`layout-${layout}`);
 
   if (layout === "carousel") {
-    initSwiper();
+    initSwiper(count);
     if (swiperInstance) {
       swiperInstance.update();
     }
@@ -512,15 +512,28 @@ function updateViewMode(count = 0, layout = "carousel") {
   }
 }
 
-function initSwiper() {
-  if (swiperInstance) return;
+function initSwiper(count = 0) {
+  const canLoop = shouldEnableLoop(count);
+  if (swiperInstance) {
+    if (swiperInstance.params.loop !== canLoop) {
+      if (canLoop) {
+        swiperInstance.params.loop = true;
+        swiperInstance.loopCreate();
+      } else {
+        swiperInstance.loopDestroy();
+        swiperInstance.params.loop = false;
+      }
+    }
+    return;
+  }
   swiperInstance = new Swiper(".swiper", {
     slidesPerView: 1.08,
     centeredSlides: true,
-    loop: true,
+    loop: canLoop,
     spaceBetween: 30,
     speed: 650,
     grabCursor: true,
+    watchOverflow: true,
     effect: "coverflow",
     coverflowEffect: {
       rotate: 0,
@@ -570,4 +583,8 @@ function orderHighlights(highlights, grouping) {
     );
   }
   return items;
+}
+
+function shouldEnableLoop(count) {
+  return count >= 4;
 }
