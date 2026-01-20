@@ -13,71 +13,100 @@ const swipeHint = document.querySelector(".swipe-hint");
 
 let swiperInstance = null;
 let hasData = false;
+let currentLayout = "carousel";
 
 const allowedCategories = [
   "learning",
   "work",
-  "health",
-  "creative",
-  "relationships",
   "tech",
+  "creative",
   "life",
   "culture",
+  "fun",
   "other",
 ];
 
-const allowedCardStyles = ["clean", "noir", "warm", "calm", "neon"];
+const allowedCardStyles = [
+  "light_clean",
+  "light_warm",
+  "light_calm",
+  "light_playful",
+  "light_fresh",
+];
 
 const allowedIcons = [
   "spark",
-  "brain",
-  "gear",
-  "graph",
-  "grid",
-  "book",
-  "map",
-  "wand",
+  "question",
+  "idea",
   "chat",
-  "bolt",
-  "shield",
+  "compass",
+  "smile",
+  "lightbulb",
+  "map",
   "flag",
 ];
 
 const allowedTones = [
-  "research",
-  "engineering",
+  "curious",
+  "playful",
   "creative",
   "pragmatic",
   "reflective",
-  "playful",
   "critical",
+  "optimistic",
   "supportive",
   "anxious",
-  "optimistic",
 ];
 
-const metricKeys = [
-  "energy",
-  "formality",
-  "novelty",
-  "pragmatism",
-  "humor",
-  "tension",
-];
+const metricKeys = ["energy", "formality", "novelty", "humor", "tension"];
 
 const iconLabels = {
   spark: "SPARK",
-  brain: "BRAIN",
-  gear: "GEAR",
-  graph: "GRAPH",
-  grid: "GRID",
-  book: "BOOK",
-  map: "MAP",
-  wand: "WAND",
+  question: "QUESTION",
+  idea: "IDEA",
   chat: "CHAT",
-  bolt: "BOLT",
-  shield: "SHIELD",
+  compass: "COMPASS",
+  smile: "SMILE",
+  lightbulb: "BULB",
+  map: "MAP",
   flag: "FLAG",
+};
+
+const allowedLayouts = ["carousel", "grid", "masonry"];
+const allowedGroupings = ["by_category", "by_tone", "chronological"];
+const allowedCtaActions = ["open_chat", "search_related", "continue_topic"];
+
+const cardStyleDefaults = {
+  light_clean: {
+    background_hex: "#f7f8ff",
+    secondary_hex: "#e3e6f6",
+    accent_hex: "#7aa2ff",
+    primary_hex: "#10131d",
+  },
+  light_warm: {
+    background_hex: "#fff4ea",
+    secondary_hex: "#f6dccb",
+    accent_hex: "#ff9b6a",
+    primary_hex: "#2a1c14",
+  },
+  light_calm: {
+    background_hex: "#eef5f7",
+    secondary_hex: "#d7e7ee",
+    accent_hex: "#6aa9c8",
+    primary_hex: "#0f2530",
+  },
+  light_playful: {
+    background_hex: "#f8f2ff",
+    secondary_hex: "#e7dbff",
+    accent_hex: "#b580ff",
+    primary_hex: "#1c1132",
+  },
+  light_fresh: {
+    background_hex: "#eefbf4",
+    secondary_hex: "#d4f2df",
+    accent_hex: "#5ecf8a",
+    primary_hex: "#0f2a1c",
+  },
 };
 
 openModalBtn.addEventListener("click", () => toggleModal(true));
@@ -88,7 +117,7 @@ renderBtn.addEventListener("click", handleRender);
 window.addEventListener("resize", () => {
   if (!swiperWrapper.dataset.count) return;
   const count = Number(swiperWrapper.dataset.count);
-  updateViewMode(count);
+  updateViewMode(count, currentLayout);
 });
 
 function toggleModal(show) {
@@ -124,7 +153,7 @@ function handleRender() {
   }
 
   showError([]);
-  renderHighlights(payload.highlights || []);
+  renderHighlights(payload.highlights || [], payload.ui_hints || {});
   toggleModal(false);
 }
 
@@ -150,9 +179,33 @@ function validatePayload(payload) {
   if (!payload.generated_at || typeof payload.generated_at !== "string") {
     errors.push("Root.generated_at must be a string.");
   }
+  if (!payload.language || typeof payload.language !== "string") {
+    errors.push("Root.language must be a string.");
+  }
   if (!Array.isArray(payload.highlights)) {
     errors.push("Root.highlights must be an array.");
     return { ok: errors.length === 0, errors };
+  }
+  if (payload.ui_hints && typeof payload.ui_hints !== "object") {
+    errors.push("Root.ui_hints must be an object if provided.");
+  } else if (payload.ui_hints) {
+    const { default_layout, grouping, cta } = payload.ui_hints;
+    if (default_layout && !allowedLayouts.includes(default_layout)) {
+      errors.push("ui_hints.default_layout is invalid.");
+    }
+    if (grouping && !allowedGroupings.includes(grouping)) {
+      errors.push("ui_hints.grouping is invalid.");
+    }
+    if (cta && typeof cta === "object") {
+      if (!cta.label || typeof cta.label !== "string") {
+        errors.push("ui_hints.cta.label must be a string.");
+      }
+      if (!allowedCtaActions.includes(cta.action)) {
+        errors.push("ui_hints.cta.action is invalid.");
+      }
+    } else if (cta) {
+      errors.push("ui_hints.cta must be an object.");
+    }
   }
 
   payload.highlights.forEach((item, index) => {
@@ -167,18 +220,22 @@ function validatePayload(payload) {
     }
     if (!item.title || typeof item.title !== "string") {
       errors.push(`${path}.title must be a string.`);
-    } else if (item.title.length > 52) {
-      errors.push(`${path}.title must be <= 52 chars.`);
+    } else if (item.title.length > 64) {
+      errors.push(`${path}.title must be <= 64 chars.`);
     }
     if (item.subtitle && typeof item.subtitle !== "string") {
       errors.push(`${path}.subtitle must be a string if provided.`);
-    } else if (item.subtitle && item.subtitle.length > 72) {
-      errors.push(`${path}.subtitle must be <= 72 chars.`);
+    } else if (item.subtitle && item.subtitle.length > 96) {
+      errors.push(`${path}.subtitle must be <= 96 chars.`);
     }
-    if (!item.summary || typeof item.summary !== "string") {
-      errors.push(`${path}.summary must be a string.`);
-    } else if (item.summary.length < 240 || item.summary.length > 420) {
-      errors.push(`${path}.summary must be 240-420 chars.`);
+    if (item.tags && !Array.isArray(item.tags)) {
+      errors.push(`${path}.tags must be an array if provided.`);
+    } else if (item.tags) {
+      item.tags.forEach((tag, tagIndex) => {
+        if (typeof tag !== "string") {
+          errors.push(`${path}.tags[${tagIndex}] must be a string.`);
+        }
+      });
     }
     if (!allowedCategories.includes(item.category)) {
       errors.push(`${path}.category is invalid.`);
@@ -217,10 +274,63 @@ function validatePayload(payload) {
         errors.push(`${path}.tone.metrics must be an object.`);
       }
     }
-    if (typeof item.confidence === "number") {
-      if (item.confidence < 0 || item.confidence > 1) {
-        errors.push(`${path}.confidence must be 0..1.`);
+    if (item.evidence && typeof item.evidence !== "object") {
+      errors.push(`${path}.evidence must be an object if provided.`);
+    } else if (item.evidence) {
+      const { chat_ids, message_ids, quotes } = item.evidence;
+      if (chat_ids && !Array.isArray(chat_ids)) {
+        errors.push(`${path}.evidence.chat_ids must be an array if provided.`);
+      } else if (chat_ids) {
+        chat_ids.forEach((chatId, chatIndex) => {
+          if (typeof chatId !== "string") {
+            errors.push(`${path}.evidence.chat_ids[${chatIndex}] must be a string.`);
+          }
+        });
       }
+      if (message_ids && !Array.isArray(message_ids)) {
+        errors.push(`${path}.evidence.message_ids must be an array if provided.`);
+      } else if (message_ids) {
+        message_ids.forEach((messageId, messageIndex) => {
+          if (typeof messageId !== "string") {
+            errors.push(
+              `${path}.evidence.message_ids[${messageIndex}] must be a string.`
+            );
+          }
+        });
+      }
+      if (quotes && !Array.isArray(quotes)) {
+        errors.push(`${path}.evidence.quotes must be an array if provided.`);
+      } else if (quotes) {
+        quotes.forEach((quote, quoteIndex) => {
+          if (typeof quote !== "string") {
+            errors.push(`${path}.evidence.quotes[${quoteIndex}] must be a string.`);
+          } else if (quote.length > 160) {
+            errors.push(
+              `${path}.evidence.quotes[${quoteIndex}] must be <= 160 chars.`
+            );
+          }
+        });
+      }
+    }
+    if (item.media && !Array.isArray(item.media)) {
+      errors.push(`${path}.media must be an array if provided.`);
+    } else if (item.media) {
+      item.media.forEach((mediaItem, mediaIndex) => {
+        const mediaPath = `${path}.media[${mediaIndex}]`;
+        if (!mediaItem || typeof mediaItem !== "object") {
+          errors.push(`${mediaPath} must be an object.`);
+          return;
+        }
+        if (!["image", "file", "none"].includes(mediaItem.type)) {
+          errors.push(`${mediaPath}.type is invalid.`);
+        }
+        if (mediaItem.ref && typeof mediaItem.ref !== "string") {
+          errors.push(`${mediaPath}.ref must be a string if provided.`);
+        }
+        if (mediaItem.caption && typeof mediaItem.caption !== "string") {
+          errors.push(`${mediaPath}.caption must be a string if provided.`);
+        }
+      });
     }
   });
 
@@ -231,7 +341,7 @@ function isHex(value) {
   return typeof value === "string" && /^#[0-9a-fA-F]{6}$/.test(value);
 }
 
-function renderHighlights(highlights) {
+function renderHighlights(highlights, uiHints) {
   swiperWrapper.innerHTML = "";
   swiperWrapper.dataset.count = String(highlights.length);
   hasData = highlights.length > 0;
@@ -248,7 +358,12 @@ function renderHighlights(highlights) {
   emptyState.classList.add("hidden");
   swiperView.classList.add("active");
 
-  highlights.forEach((item) => {
+  const orderedHighlights = orderHighlights(
+    highlights,
+    uiHints?.grouping || "chronological"
+  );
+
+  orderedHighlights.forEach((item) => {
     const slide = document.createElement("div");
     slide.className = "swiper-slide";
     const inner = document.createElement("div");
@@ -258,7 +373,8 @@ function renderHighlights(highlights) {
     swiperWrapper.appendChild(slide);
   });
 
-  updateViewMode(highlights.length);
+  currentLayout = uiHints?.default_layout || "carousel";
+  updateViewMode(highlights.length, currentLayout);
 }
 
 function updateAttentionState() {
@@ -268,11 +384,12 @@ function updateAttentionState() {
 function buildCard(item) {
   const card = document.createElement("article");
   card.className = `card ${item.card_style}`;
-  const palette = item.palette || {};
+  const palette = resolvePalette(item.card_style, item.palette);
 
-  card.style.setProperty("--card-bg", palette.background_hex || "#111826");
-  card.style.setProperty("--card-secondary", palette.secondary_hex || "#1e2c46");
-  card.style.setProperty("--card-accent", palette.accent_hex || "#7aa2ff");
+  card.style.setProperty("--card-bg", palette.background_hex);
+  card.style.setProperty("--card-secondary", palette.secondary_hex);
+  card.style.setProperty("--card-accent", palette.accent_hex);
+  card.style.setProperty("--card-text", palette.primary_hex);
 
   const header = document.createElement("div");
   header.className = "card-header";
@@ -341,12 +458,58 @@ function buildCard(item) {
     card.appendChild(tags);
   }
 
+  const evidenceQuotes = Array.isArray(item.evidence?.quotes)
+    ? item.evidence.quotes.filter(Boolean)
+    : [];
+  if (evidenceQuotes.length) {
+    const evidenceBlock = document.createElement("div");
+    evidenceBlock.className = "evidence";
+    evidenceQuotes.slice(0, 3).forEach((quote) => {
+      const quoteEl = document.createElement("div");
+      quoteEl.className = "quote";
+      quoteEl.textContent = `“${quote}”`;
+      evidenceBlock.appendChild(quoteEl);
+    });
+    card.appendChild(evidenceBlock);
+  }
+
+  const mediaItems = Array.isArray(item.media)
+    ? item.media.filter((mediaItem) => mediaItem && mediaItem.type !== "none")
+    : [];
+  if (mediaItems.length) {
+    const mediaBlock = document.createElement("div");
+    mediaBlock.className = "media";
+    mediaItems.slice(0, 2).forEach((mediaItem) => {
+      const mediaEntry = document.createElement("div");
+      mediaEntry.className = "media-item";
+      const label = document.createElement("span");
+      label.textContent = mediaItem.type.toUpperCase();
+      const meta = document.createElement("span");
+      meta.textContent = mediaItem.caption || mediaItem.ref || "";
+      mediaEntry.appendChild(label);
+      mediaEntry.appendChild(meta);
+      mediaBlock.appendChild(mediaEntry);
+    });
+    card.appendChild(mediaBlock);
+  }
+
   return card;
 }
 
-function updateViewMode(count = 0) {
-  initSwiper();
-  updateSwipeHint(count, true);
+function updateViewMode(count = 0, layout = "carousel") {
+  swiperView.classList.remove("layout-carousel", "layout-grid", "layout-masonry");
+  swiperView.classList.add(`layout-${layout}`);
+
+  if (layout === "carousel") {
+    initSwiper();
+    if (swiperInstance) {
+      swiperInstance.update();
+    }
+    updateSwipeHint(count, true);
+  } else {
+    destroySwiper();
+    updateSwipeHint(0, true);
+  }
 }
 
 function initSwiper() {
@@ -378,8 +541,33 @@ function destroySwiper() {
 
 function updateSwipeHint(count, isMobile) {
   if (!swipeHint) return;
-  const show = isMobile && count > 1;
+  const show =
+    swiperView.classList.contains("layout-carousel") && isMobile && count > 1;
   swipeHint.classList.toggle("hidden", !show);
 }
 
 updateAttentionState();
+
+function resolvePalette(cardStyle, palette = {}) {
+  const fallback = cardStyleDefaults[cardStyle] || cardStyleDefaults.light_clean;
+  return {
+    background_hex: palette.background_hex || fallback.background_hex,
+    primary_hex: palette.primary_hex || fallback.primary_hex,
+    secondary_hex: palette.secondary_hex || fallback.secondary_hex,
+    accent_hex: palette.accent_hex || fallback.accent_hex,
+  };
+}
+
+function orderHighlights(highlights, grouping) {
+  if (!Array.isArray(highlights)) return [];
+  const items = [...highlights];
+  if (grouping === "by_category") {
+    return items.sort((a, b) => String(a.category).localeCompare(b.category));
+  }
+  if (grouping === "by_tone") {
+    return items.sort((a, b) =>
+      String(a.tone?.tone_primary).localeCompare(b.tone?.tone_primary)
+    );
+  }
+  return items;
+}
