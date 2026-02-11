@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Будь моей валентинкой — Арканоид</title>
+  <link rel="stylesheet" href="./index.css" />
+</head>
+<body>
+  <main class="page">
+    <p class="subtitle">
+      Управление: стрелки ← → или клавиши A / D, пробел — запуск шарика. Отбей шар и разбей все блоки.
+    </p>
+
+    <section class="game-shell">
+      <div class="game-stage">
+        <div class="hud">
+          Жизни: <span id="livesCount">3</span>
+        </div>
+        <div id="valentineMessage" class="message" aria-hidden="true">
+          Будь моей валентинкой
+        </div>
+        <img
+          id="winImage"
+          class="win-image"
+          src="./heart.jpg"
+          alt="Валентинка"
+          aria-hidden="true"
+        />
+        <canvas id="gameCanvas" width="900" height="760" aria-label="Поле арканоида"></canvas>
+      </div>
+      <div class="controls">
+        <button id="restartBtn" type="button" class="btn">Перезапуск</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="./index.js"></script>
+</body>
+</html>
