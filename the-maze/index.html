@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dual Grid Puzzle</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="game"></canvas>
+
+      <div id="status" class="status">
+        <div id="status-level" class="status-level">Уровень 1</div>
+        <div id="status-steps" class="status-steps">0 шагов</div>
+      </div>
+
+      <div id="overlay" class="overlay hidden">
+        <div class="overlay-card">
+          <div id="overlay-title" class="overlay-title">Result</div>
+          <button id="overlay-button" class="overlay-button">Restart</button>
+        </div>
+      </div>
+
+      <div id="loading" class="loading hidden">Loading level...</div>
+
+      <div id="controls" class="controls">
+        <div class="controls-description">
+          Controls: Arrow keys or WASD
+        </div>
+        <button class="control-btn control-restart" data-command="restart">
+          Restart
+        </button>
+      </div>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

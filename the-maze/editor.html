@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dual Grid Editor</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="game"></canvas>
+
+      <div id="editor-status" class="status">Editor ready</div>
+
+      <div id="editor-panel" class="editor-panel">
+        <div class="panel-section">
+          <div class="panel-row">
+            <button id="save-btn" class="control-btn">Save JSON</button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-row">
+            <label class="panel-label" for="level-number">Level</label>
+            <input id="level-number" type="number" min="1" max="9999" value="1" />
+            <div class="panel-hint" id="level-filename">level_0001.json</div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-row">
+            <label class="panel-label" for="maps-count">Maps</label>
+            <select id="maps-count">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
+            <label class="panel-label" for="map-select">Active map</label>
+            <select id="map-select"></select>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-row panel-row-stack">
+            <div class="panel-label">Rotation</div>
+            <div id="map-rotations" class="map-rotations"></div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-row">
+            <label class="panel-label" for="width-input">Width</label>
+            <input id="width-input" type="number" min="2" max="20" value="4" />
+            <label class="panel-label" for="height-input">Height</label>
+            <input id="height-input" type="number" min="2" max="20" value="4" />
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-row">
+            <div class="panel-label">Cells</div>
+            <button id="obstacle-tool" class="cell-tool" type="button">
+              <span class="cell-swatch obstacle"></span>
+              <span class="cell-label">Obstacle</span>
+            </button>
+            <button id="start-tool" class="cell-tool" type="button">
+              <span class="cell-swatch start"></span>
+              <span class="cell-label">Start</span>
+            </button>
+            <button id="teleport-in-tool" class="cell-tool" type="button">
+              <span class="cell-swatch teleport-in"></span>
+              <span class="cell-label">Teleport In</span>
+            </button>
+            <button id="teleport-out-tool" class="cell-tool" type="button">
+              <span class="cell-swatch teleport-out"></span>
+              <span class="cell-label">Teleport Out</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-row">
+            <button id="record-btn" class="control-btn">Record</button>
+            <button id="record-reset-btn" class="control-btn">Reset</button>
+            <div class="panel-hint">Steps: <span id="steps-count">0</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/editor.js"></script>
+  </body>
+</html>

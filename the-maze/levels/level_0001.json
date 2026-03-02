@@ -1,0 +1,27 @@
+{
+  "format": "dualgrid-level@2",
+  "id": "level_0001",
+  "title": "Level 1",
+  "rules": {
+    "moveSet": "UDLR",
+    "collision": "bump",
+    "winOnExactT": true,
+    "mapsCount": 1
+  },
+  "T": 4,
+  "maps": [
+    {
+      "w": 4,
+      "h": 4,
+      "obstacles": [],
+      "A": [
+        0,
+        2
+      ],
+      "B": [
+        3,
+        1
+      ]
+    }
+  ]
+}

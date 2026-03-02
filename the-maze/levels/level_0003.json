@@ -1,0 +1,62 @@
+{
+  "format": "dualgrid-level@2",
+  "id": "level_0003",
+  "title": "Level 3",
+  "rules": {
+    "moveSet": "UDLR",
+    "collision": "bump",
+    "winOnExactT": true,
+    "mapsCount": 2
+  },
+  "T": 7,
+  "maps": [
+    {
+      "w": 4,
+      "h": 4,
+      "obstacles": [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "A": [
+        0,
+        2
+      ],
+      "B": [
+        1,
+        0
+      ]
+    },
+    {
+      "w": 4,
+      "h": 4,
+      "obstacles": [
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      "A": [
+        1,
+        0
+      ],
+      "B": [
+        2,
+        2
+      ]
+    }
+  ]
+}

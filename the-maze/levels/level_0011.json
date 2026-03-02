@@ -1,0 +1,154 @@
+{
+  "format": "dualgrid-level@2",
+  "id": "level_0001",
+  "title": "Level 1",
+  "rules": {
+    "moveSet": "UDLR",
+    "collision": "bump",
+    "winOnExactT": true,
+    "mapsCount": 4
+  },
+  "T": 10,
+  "maps": [
+    {
+      "w": 4,
+      "h": 4,
+      "obstacles": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          3
+        ]
+      ],
+      "A": [
+        2,
+        1
+      ],
+      "B": [
+        2,
+        2
+      ],
+      "rotation": 90,
+      "teleport": {
+        "in": [
+          2,
+          0
+        ],
+        "out": [
+          3,
+          2
+        ]
+      }
+    },
+    {
+      "w": 4,
+      "h": 4,
+      "obstacles": [
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      "A": [
+        1,
+        1
+      ],
+      "B": [
+        2,
+        3
+      ],
+      "rotation": 0,
+      "teleport": {
+        "in": null,
+        "out": null
+      }
+    },
+    {
+      "w": 4,
+      "h": 4,
+      "obstacles": [
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "A": [
+        3,
+        1
+      ],
+      "B": [
+        2,
+        3
+      ],
+      "rotation": 180,
+      "teleport": {
+        "in": null,
+        "out": null
+      }
+    },
+    {
+      "w": 4,
+      "h": 4,
+      "obstacles": [
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      "A": [
+        1,
+        1
+      ],
+      "B": [
+        2,
+        3
+      ],
+      "rotation": 270,
+      "teleport": {
+        "in": [
+          1,
+          0
+        ],
+        "out": [
+          1,
+          3
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "format": "dualgrid-level@2",
+  "id": "level_0008",
+  "title": "Level 8",
+  "rules": {
+    "moveSet": "UDLR",
+    "collision": "bump",
+    "winOnExactT": true,
+    "mapsCount": 2
+  },
+  "T": 6,
+  "maps": [
+    {
+      "w": 4,
+      "h": 4,
+      "obstacles": [
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      "A": [
+        1,
+        1
+      ],
+      "B": [
+        2,
+        3
+      ],
+      "teleport": {
+        "in": [
+          1,
+          0
+        ],
+        "out": [
+          3,
+          3
+        ]
+      }
+    },
+    {
+      "w": 4,
+      "h": 4,
+      "obstacles": [
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      "A": [
+        1,
+        1
+      ],
+      "B": [
+        0,
+        3
+      ],
+      "teleport": {
+        "in": null,
+        "out": null
+      }
+    }
+  ]
+}
