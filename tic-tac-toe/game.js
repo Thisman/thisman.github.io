@@ -301,7 +301,7 @@
 
       function updateHUD() {
         turnLabel.textContent = current;
-        turnLabel.style.color = (current === "X") ? 'var(--mark-x)' : 'var(--mark-o)';
+        turnLabel.style.color = (current === "X") ? 'var(--ttt-mark-x)' : 'var(--ttt-mark-o)';
         movesLabel.textContent = String(moves);
         goalLabel.textContent = `${R}×${C}, N=${K}`;
         updateBlockedSwapUI();
@@ -312,7 +312,7 @@
           if (full) {
             const rx = remainingSwapsAfterFull("X");
             const ro = remainingSwapsAfterFull("O");
-            afterFullLabel.innerHTML = `<span style="color:var(--mark-x)">X</span>: ${rx} · <span style="color:var(--mark-o)">O</span>: ${ro}`;
+            afterFullLabel.innerHTML = `<span style="color:var(--ttt-mark-x)">X</span>: ${rx} · <span style="color:var(--ttt-mark-o)">O</span>: ${ro}`;
           }
         }
       }

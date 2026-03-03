@@ -89,40 +89,6 @@ h1, h2, h3, h4, h5, h6 {
     padding: var(--container-padding);
 }
 
-/* Navigation links */
-.github-link,
-.main-link,
-.triangular-link {
-    width: 32px;
-    height: 32px;
-    display: block;
-    position: absolute;
-    top: 8px;
-    transition: transform var(--transition-normal);
-}
-
-.github-link {
-    right: 0;
-}
-
-.main-link,
-.triangular-link {
-    right: 50px;
-}
-
-.github-link:hover,
-.main-link:hover,
-.triangular-link:hover {
-    transform: scale(1.1);
-}
-
-.github-link img,
-.main-link img,
-.triangular-link img {
-    width: 100%;
-    height: 100%;
-}
-
 /* Buttons */
 .btn {
     padding: var(--spacing-md) var(--spacing-lg);
