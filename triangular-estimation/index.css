@@ -62,17 +62,6 @@
     color: var(--text-primary);
 }
 
-.graph-container {
-    margin-top: var(--spacing-lg);
-    width: 100%;
-}
-
-.graph-container canvas {
-    width: 100%;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-}
-
 /* Responsive design */
 @media (max-width: 750px) {
     .estimates-row {

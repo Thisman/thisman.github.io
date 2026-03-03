@@ -1,21 +1,40 @@
 /* Common styles for all pages */
 :root {
-    /* Colors */
-    --primary-color: #2196F3;
-    --primary-dark: #1976D2;
-    --primary-darker: #0D47A1;
-    --success-color: #009688;
-    --warning-color: #ff8f00;
-    --error-color: #f44336;
-    --danger-color: #b71c1c;
-    --text-primary: #333;
-    --text-secondary: #666;
-    --text-muted: #ddd;
-    --border-color: #ddd;
-    --background-light: #ffdddd;
+    /* === Backgrounds === */
+    --bg:        #f6f2ea;   /* page background — warm cream */
+    --surface:   #fffaf2;   /* cards, panels, inputs */
+    --surface-2: #f1e7db;   /* buttons, chips, secondary fills */
+
+    /* === Text === */
+    --text-primary:   #4b4a47;   /* primary */
+    --text-secondary: #6a6259;   /* labels, hints */
+    --text-muted:     #c0b5ac;   /* inactive / placeholder */
+
+    /* === Borders === */
+    --border-color:        rgba(190, 180, 170, 0.6);  /* default */
+    --border-color-strong: #cfc3b6;                   /* buttons, emphasis */
+
+    /* === Accent (dusty blue) === */
+    --primary-color:   #5a7896;
+    --primary-dark:    #49627c;
+    --primary-darker:  #384d60;
+    --accent-ring:     rgba(90, 120, 150, 0.2);
+
+    /* === Semantic === */
+    --success-color: #5a8a70;   /* muted sage */
+    --warning-color: #b88040;   /* warm amber */
+    --error-color:   #a85858;   /* muted terracotta */
+    --danger-color:  #7a4040;
+
+    /* === Legacy alias === */
+    --background-light: #f1e7db;
+
+    /* === Shadows === */
+    --shadow-color:        rgba(120, 110, 100, 0.14);
+    --shadow-color-strong: rgba(120, 110, 100, 0.22);
 
     /* Footer */
-    --footer-bg: #000;
+    --footer-bg: #3a3830;
     --footer-height: 40px;
     
     /* Typography */
@@ -52,6 +71,8 @@ body {
     padding: 0 0 var(--footer-height) 0;
     font-family: var(--font-primary);
     line-height: 1.5;
+    background: var(--bg);
+    color: var(--text-primary);
 }
 
 /* Typography */

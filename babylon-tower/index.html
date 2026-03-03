@@ -13,8 +13,8 @@
 
         body {
             overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1a1a2e;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f6f2ea;
         }
 
         #game-canvas {
@@ -36,20 +36,22 @@
         }
 
         #info {
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
+            background: rgba(255, 250, 242, 0.9);
+            color: #4b4a47;
             padding: 10px 24px;
             border-radius: 8px;
             font-size: 16px;
             font-weight: 500;
             letter-spacing: 0.5px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(190, 180, 170, 0.6);
+            box-shadow: 0 4px 16px rgba(120, 110, 100, 0.14);
         }
 
         #info.solved {
-            background: rgba(46, 204, 113, 0.8);
-            border-color: rgba(46, 204, 113, 0.5);
+            background: rgba(90, 138, 112, 0.88);
+            border-color: rgba(90, 138, 112, 0.5);
+            color: #fff;
         }
 
         .button-row {
@@ -60,9 +62,9 @@
         }
 
         .btn {
-            background: rgba(52, 73, 94, 0.9);
-            color: #ecf0f1;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: #f1e7db;
+            color: #4b4a47;
+            border: 1px solid #cfc3b6;
             padding: 10px 20px;
             border-radius: 6px;
             font-size: 14px;
@@ -73,9 +75,10 @@
         }
 
         .btn:hover {
-            background: rgba(52, 152, 219, 0.9);
-            border-color: rgba(52, 152, 219, 0.5);
+            background: #e4dcd0;
+            border-color: #bbaea2;
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(120, 110, 100, 0.18);
         }
 
         .btn:active {
@@ -83,50 +86,59 @@
         }
 
         .btn.action-btn {
-            background: rgba(44, 62, 80, 0.9);
+            background: #ede3d8;
         }
 
         .btn.action-btn:hover {
-            background: rgba(231, 76, 60, 0.8);
+            background: rgba(168, 88, 88, 0.88);
+            border-color: rgba(168, 88, 88, 0.5);
+            color: #fff;
         }
 
         .btn.scramble-btn:hover {
-            background: rgba(243, 156, 18, 0.8);
+            background: rgba(184, 128, 64, 0.88);
+            border-color: rgba(184, 128, 64, 0.5);
+            color: #fff;
         }
 
         .btn.reset-btn:hover {
-            background: rgba(46, 204, 113, 0.8);
+            background: rgba(90, 138, 112, 0.88);
+            border-color: rgba(90, 138, 112, 0.5);
+            color: #fff;
         }
 
         #last-move {
             position: fixed;
             top: 20px;
             left: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            color: #888;
+            background: rgba(255, 250, 242, 0.88);
+            color: #9a9088;
             padding: 8px 16px;
             border-radius: 6px;
             font-size: 13px;
             font-family: 'Courier New', monospace;
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(190, 180, 170, 0.5);
+            backdrop-filter: blur(8px);
         }
 
         #instructions {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            color: #aaa;
+            background: rgba(255, 250, 242, 0.88);
+            color: #6a6259;
             padding: 12px 16px;
             border-radius: 8px;
             font-size: 12px;
             line-height: 1.6;
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(190, 180, 170, 0.5);
+            backdrop-filter: blur(8px);
             max-width: 240px;
+            box-shadow: 0 4px 16px rgba(120, 110, 100, 0.14);
         }
 
         #instructions strong {
-            color: #fff;
+            color: #4b4a47;
         }
     </style>
 </head>

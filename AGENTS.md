@@ -2,10 +2,15 @@
 
 ## Обзор проекта
 
-Этот проект содержит три одностраничных веб-приложения для оценки и обучения:
-- **how-many-sp** - калькулятор сторипоинтов на основе трех критериев
-- **triangular-estimation** - оценка по трем точкам с визуализацией
+Этот проект содержит веб-приложения: инструменты для оценки задач, музыкальный тренажёр и браузерные игры.
+
+- **how-many-sp** - калькулятор сторипоинтов на основе трёх критериев
+- **triangular-estimation** - оценка по трём точкам (метод PERT) с визуализацией
 - **gamma-trainer** - тренажёр по ладовым гаммам и ступеням
+- **babylon-tower** - 3D-головоломка «Pentagonal Prism Slider» на Three.js
+- **my-valentine** - арканоид-игра с блоками в форме сердца
+- **tic-tac-toe** - Swap-Tac-Toe: крестики-нолики с механикой swap и ИИ
+- **the-maze** - Dual Grid Puzzle: головоломка с одновременным движением двух объектов
 
 ## Структура файлов
 
@@ -24,20 +29,19 @@ thisman.github.io/
 │   └── utils.js
 ├── styles/                    # Общие стили
 │   └── common.css
-├── gamma-trainer/            # Приложение "Лады и гаммы — тренажёр"
-│   ├── index.html
-│   ├── index.css
-│   ├── index.js
+├── gamma-trainer/             # Приложение "Лады и гаммы — тренажёр"
 │   └── AGENTS.md
-├── how-many-sp/              # Приложение "Сколько сториков?"
-│   ├── index.html
-│   ├── index.css
-│   ├── index.js
+├── how-many-sp/               # Приложение "Сколько сториков?"
 │   └── AGENTS.md
-└── triangular-estimation/    # Приложение "Оценка по трем точкам"
-    ├── index.html
-    ├── index.css
-    ├── index.js
+├── triangular-estimation/     # Приложение "Оценка по трём точкам"
+│   └── AGENTS.md
+├── babylon-tower/             # Игра "Pentagonal Prism Slider" (Three.js)
+│   └── AGENTS.md
+├── my-valentine/              # Игра "Арканоид-валентинка"
+│   └── AGENTS.md
+├── tic-tac-toe/               # Игра "Swap-Tac-Toe"
+│   └── AGENTS.md
+└── the-maze/                  # Игра "Dual Grid Puzzle"
     └── AGENTS.md
 ```
 
@@ -91,8 +95,11 @@ thisman.github.io/
 - **HTML5** - семантическая разметка
 - **CSS3** - стилизация и анимации
 - **Vanilla JavaScript** - интерактивность
-- **Chart.js** - визуализация графиков (для triangular-estimation)
+- **Canvas 2D API** - игровой рендеринг (my-valentine, the-maze)
+- **Three.js** - 3D-рендеринг WebGL (babylon-tower)
+- **Chart.js** - визуализация графиков (triangular-estimation)
 - **Google Fonts** - типографика
+- **Font Awesome** - иконки (the-maze)
 
 ## Разработка
 
