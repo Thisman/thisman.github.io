@@ -8,55 +8,43 @@
     "winOnExactT": true,
     "mapsCount": 2
   },
-  "T": 7,
+  "T": 6,
   "maps": [
     {
       "w": 4,
       "h": 4,
-      "obstacles": [
-        [
-          2,
-          1
-        ],
-        [
-          2,
-          2
-        ]
-      ],
+      "obstacles": [],
       "A": [
-        0,
-        2
+        3,
+        3
       ],
       "B": [
-        1,
-        0
-      ]
+        2,
+        1
+      ],
+      "rotation": 0,
+      "teleport": {
+        "in": null,
+        "out": null
+      }
     },
     {
       "w": 4,
       "h": 4,
-      "obstacles": [
-        [
-          1,
-          2
-        ],
-        [
-          1,
-          1
-        ],
-        [
-          2,
-          1
-        ]
-      ],
+      "obstacles": [],
       "A": [
+        1,
+        1
+      ],
+      "B": [
         1,
         0
       ],
-      "B": [
-        2,
-        2
-      ]
+      "rotation": 0,
+      "teleport": {
+        "in": null,
+        "out": null
+      }
     }
   ]
 }

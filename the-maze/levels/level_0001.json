@@ -8,20 +8,25 @@
     "winOnExactT": true,
     "mapsCount": 1
   },
-  "T": 4,
+  "T": 3,
   "maps": [
     {
       "w": 4,
       "h": 4,
       "obstacles": [],
       "A": [
-        0,
+        1,
         2
       ],
       "B": [
         3,
         1
-      ]
+      ],
+      "rotation": 0,
+      "teleport": {
+        "in": null,
+        "out": null
+      }
     }
   ]
 }

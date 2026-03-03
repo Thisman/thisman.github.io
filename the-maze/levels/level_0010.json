@@ -1,70 +1,26 @@
 {
   "format": "dualgrid-level@2",
-  "id": "level_0001",
-  "title": "Level 1",
+  "id": "level_0010",
+  "title": "Level 10",
   "rules": {
     "moveSet": "UDLR",
     "collision": "bump",
     "winOnExactT": true,
-    "mapsCount": 2
+    "mapsCount": 1
   },
-  "T": 9,
+  "T": 6,
   "maps": [
     {
-      "w": 5,
-      "h": 5,
-      "obstacles": [
-        [
-          2,
-          3
-        ],
-        [
-          3,
-          2
-        ],
-        [
-          2,
-          2
-        ],
-        [
-          3,
-          1
-        ]
-      ],
+      "w": 4,
+      "h": 4,
+      "obstacles": [],
       "A": [
+        1,
+        2
+      ],
+      "B": [
         2,
-        1
-      ],
-      "B": [
-        4,
-        0
-      ],
-      "rotation": 0,
-      "teleport": {
-        "in": null,
-        "out": null
-      }
-    },
-    {
-      "w": 5,
-      "h": 5,
-      "obstacles": [
-        [
-          2,
-          2
-        ],
-        [
-          2,
-          0
-        ]
-      ],
-      "A": [
-        3,
         3
-      ],
-      "B": [
-        4,
-        0
       ],
       "rotation": 90,
       "teleport": {
