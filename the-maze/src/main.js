@@ -186,6 +186,7 @@ function tick(now) {
       if (anim.progress >= 1) {
         anim = null;
         if (game.state === "won") {
+          ym(107098559, 'reachGoal', 'level_complete', { level: currentLevelNumber });
           setOverlay(true, "Level Complete", "Next", "next");
         } else if (game.state === "lost") {
           setOverlay(true, "Try Again", "Restart", "restart");
