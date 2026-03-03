@@ -1,4 +1,4 @@
-import { DOMUtils, ValidationUtils, PluralizationUtils, ErrorUtils } from '../js/utils.js';
+import { DOMUtils, ValidationUtils, PluralizationUtils, ErrorUtils } from '../shared/utils.js';
 
 /**
  * PERT Estimation Calculator

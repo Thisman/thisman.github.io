@@ -1,4 +1,4 @@
-import { DOMUtils, ErrorUtils, COLORS } from '../js/utils.js';
+import { DOMUtils, ErrorUtils, COLORS } from '../shared/utils.js';
 
 /**
  * Story Points Calculator

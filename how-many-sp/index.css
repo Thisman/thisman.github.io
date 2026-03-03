@@ -8,41 +8,6 @@ h4 {
     margin: var(--spacing-md) auto;
 }
 
-.task-property {
-    margin-bottom: 32px;
-}
-
-.task-property-name {
-    font-size: 20px;
-    margin-bottom: 16px;
-    font-family: var(--font-secondary);
-}
-
-.task-property-values {
-    display: flex;
-    justify-content: space-between;
-}
-
-.task-property-value {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: color var(--transition-normal);
-}
-
-.task-property-value input {
-    display: none;
-}
-
-.task-property-value span {
-    font-size: 30px;
-    user-select: none;
-}
-
-.task-property-value input:checked + span {
-    color: var(--text-primary);
-}
 
 .sp-count-description {
     font-size: 15px;
