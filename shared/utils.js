@@ -2,20 +2,20 @@
  * Common utilities and constants for the project
  */
 
-// Color constants
+// Color constants (cozy warm palette)
 export const COLORS = {
-    PRIMARY: '#2196F3',
-    PRIMARY_DARK: '#1976D2',
-    PRIMARY_DARKER: '#0D47A1',
-    SUCCESS: '#009688',
-    WARNING: '#ff8f00',
-    ERROR: '#f44336',
-    DANGER: '#b71c1c',
-    TEXT_PRIMARY: '#333',
-    TEXT_SECONDARY: '#666',
-    TEXT_MUTED: '#ddd',
-    BORDER: '#ddd',
-    BACKGROUND_LIGHT: '#ffdddd'
+    PRIMARY: '#5a7896',
+    PRIMARY_DARK: '#49627c',
+    PRIMARY_DARKER: '#384d60',
+    SUCCESS: '#5a8a70',
+    WARNING: '#b88040',
+    ERROR: '#a85858',
+    DANGER: '#a85858',
+    TEXT_PRIMARY: '#4b4a47',
+    TEXT_SECONDARY: '#6a6259',
+    TEXT_MUTED: '#c0b5ac',
+    BORDER: 'rgba(190, 180, 170, 0.6)',
+    BACKGROUND_LIGHT: '#f1e7db'
 };
 
 // DOM utilities
@@ -153,46 +153,6 @@ export class PluralizationUtils {
         }
 
         return unitForms.many;
-    }
-}
-
-// Performance utilities
-export class PerformanceUtils {
-    /**
-     * Debounce function calls
-     * @param {Function} func - Function to debounce
-     * @param {number} wait - Wait time in milliseconds
-     * @returns {Function} Debounced function
-     */
-    static debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    /**
-     * Throttle function calls
-     * @param {Function} func - Function to throttle
-     * @param {number} limit - Time limit in milliseconds
-     * @returns {Function} Throttled function
-     */
-    static throttle(func, limit) {
-        let inThrottle;
-        return function() {
-            const args = arguments;
-            const context = this;
-            if (!inThrottle) {
-                func.apply(context, args);
-                inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
-            }
-        };
     }
 }
 

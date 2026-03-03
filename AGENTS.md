@@ -5,7 +5,7 @@
 Этот проект содержит веб-приложения: инструменты для оценки задач, музыкальный тренажёр и браузерные игры.
 
 - **how-many-sp** - калькулятор сторипоинтов на основе трёх критериев
-- **triangular-estimation** - оценка по трём точкам (метод PERT) с визуализацией
+- **triangular-estimation** - оценка по трём точкам (метод PERT)
 - **gamma-trainer** - тренажёр по ладовым гаммам и ступеням
 - **babylon-tower** - 3D-головоломка «Pentagonal Prism Slider» на Three.js
 - **my-valentine** - арканоид-игра с блоками в форме сердца
@@ -25,10 +25,9 @@ thisman.github.io/
 │   ├── demo.png
 │   ├── github-icon.png
 │   └── main-icon.png
-├── js/                        # Общие утилиты JavaScript
-│   └── utils.js
-├── styles/                    # Общие стили
-│   └── common.css
+├── shared/                    # Общие ресурсы (CSS + JS)
+│   ├── common.css             # Дизайн-система: токены, кнопки, футер
+│   └── utils.js               # JS-утилиты: DOMUtils, ValidationUtils, ErrorUtils и др.
 ├── gamma-trainer/             # Приложение "Лады и гаммы — тренажёр"
 │   └── AGENTS.md
 ├── how-many-sp/               # Приложение "Сколько сториков?"
@@ -97,7 +96,6 @@ thisman.github.io/
 - **Vanilla JavaScript** - интерактивность
 - **Canvas 2D API** - игровой рендеринг (my-valentine, the-maze)
 - **Three.js** - 3D-рендеринг WebGL (babylon-tower)
-- **Chart.js** - визуализация графиков (triangular-estimation)
 - **Google Fonts** - типографика
 - **Font Awesome** - иконки (the-maze)
 
