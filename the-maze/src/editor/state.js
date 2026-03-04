@@ -380,8 +380,14 @@ export function createEditorState({ onChange, onStatus } = {}) {
   }
 
   function resetIdleState() {
-    resetToDefaults();
+    levelSpec.maps = levelSpec.maps.map((map) => createEmptyMapSpec(map.w, map.h));
+    syncRules();
     activeTool = null;
+    recordMode = "build";
+    recordSteps = 0;
+    levelSpec.T = 1;
+    positions = levelSpec.maps.map(() => ({ x: 0, y: 0 }));
+    resetDynamicState();
     updateRuntime();
     return true;
   }
