@@ -1,16 +1,12 @@
-const KEY_TO_ACTION = {
+const CODE_TO_ACTION = {
   ArrowUp: "U",
   ArrowDown: "D",
   ArrowLeft: "L",
   ArrowRight: "R",
-  w: "U",
-  s: "D",
-  a: "L",
-  d: "R",
-  W: "U",
-  S: "D",
-  A: "L",
-  D: "R",
+  KeyW: "U",
+  KeyS: "D",
+  KeyA: "L",
+  KeyD: "R",
 };
 
 export function bindInput({
@@ -21,17 +17,17 @@ export function bindInput({
   canInput,
 }) {
   function handleKeydown(event) {
-    if (event.key === "r" || event.key === "R") {
+    if (event.code === "KeyR") {
       event.preventDefault();
       onRestart();
       return;
     }
-    if (event.key === "n" || event.key === "N") {
+    if (event.code === "KeyN") {
       event.preventDefault();
       onSkip();
       return;
     }
-    const action = KEY_TO_ACTION[event.key];
+    const action = CODE_TO_ACTION[event.code];
     if (!action) {
       return;
     }
