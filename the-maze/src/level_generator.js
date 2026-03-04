@@ -123,35 +123,43 @@ function isFree(wallsSet, w, h, x, y) {
 // ─── Walk with effects ──────────────────────────────────────────────────────
 
 /**
- * Walks T steps from `start` on a grid with `wallsSet`.
- * Along the way, places special cells from `availableCells`.
- * Returns { finalPos, actions, specialCells } or null if walk fails (fell in hole, etc).
+ * Walks T steps from `start`, building up a workingMap with special cells.
+ * All cells are placed at the DESTINATION (nx,ny) before calling stepOne,
+ * so the walk physics exactly match the real game physics.
+ * Returns { finalPos, pathKeys, workingMap } or null on failure.
  */
 function walkWithEffects(start, wallsSet, w, h, T, availableCells, rng) {
+  const wallsGrid = wallsSetToGrid(w, h, wallsSet);
+
+  // Working map grows as we inject cells — mirrors the real runtime map
+  const workingMap = {
+    w, h,
+    walls: wallsGrid,
+    teleport: null,
+    springs: [],
+    swamp: [],
+    crumbles: [],
+    arrows: [],
+    ice: [],
+    holes: [],
+    button: null,
+    door: null,
+  };
+
   let pos = { x: start.x, y: start.y };
-  const pathKeys = new Set([pos.y * w + pos.x]);
-
-  const actions = [];
-
-  // Special cells collected during walk
-  let teleport = null;   // { in: [x,y], out: [x,y] }
-  const springs = [];    // [x, y]
-  const swampCells = []; // [x, y]
-  const crumbleCells = [];
-  const collapsedCrumbles = new Set(); // cells that have crumbled already
-  const arrowCells = [];  // [x, y, dir]
-
+  const collapsedCrumbles = new Set();
   let stuckInSwamp = false;
+  const pathKeys = new Set([pos.y * w + pos.x]);
+  const actions = [];
 
   for (let step = 0; step < T; step += 1) {
     if (stuckInSwamp) {
-      // Stuck: consume a step without moving, use any action
-      actions.push(choice(rng, ACTIONS));
       stuckInSwamp = false;
+      actions.push(choice(rng, ACTIONS));
       continue;
     }
 
-    // Pick a direction
+    // Pick a direction (anti-reversal bias)
     const last = actions.length > 0 ? actions[actions.length - 1] : null;
     let opts = ACTIONS;
     if (last && rng() < 0.7) {
@@ -159,128 +167,114 @@ function walkWithEffects(start, wallsSet, w, h, T, availableCells, rng) {
     }
     const action = choice(rng, opts);
     const dir = DIRS[action];
-    actions.push(action);
-
     const nx = pos.x + dir.x;
     const ny = pos.y + dir.y;
 
-    // ── Special cell placement (before normal move) ──────────────────────
+    // Can we even reach nx,ny? (wall / bounds / collapsed crumble)
+    const destKey = ny * w + nx;
+    const canReach = inBounds(nx, ny, w, h)
+      && !isWallAt(wallsSet, w, nx, ny)
+      && !(collapsedCrumbles.has(destKey) && workingMap.crumbles.some((c) => c[0] === nx && c[1] === ny));
 
-    // TELEPORT: if no teleport yet and cell is available
-    if (
-      !teleport &&
-      availableCells.includes("teleport") &&
-      rng() < CELL_PROB.teleport
-    ) {
-      // Pick a free out-position not on the path
-      const candidates = [];
-      for (let cy = 0; cy < h; cy += 1) {
-        for (let cx = 0; cx < w; cx += 1) {
-          const key = cy * w + cx;
-          if (!wallsSet.has(key) && !pathKeys.has(key) && !(cx === pos.x && cy === pos.y)) {
-            candidates.push({ x: cx, y: cy });
+    // ── Inject a special cell at the destination ─────────────────────────
+    // Only if destination is reachable and currently "plain"
+    if (canReach) {
+      const destOccupied =
+        workingMap.springs.some((s) => s[0] === nx && s[1] === ny) ||
+        workingMap.swamp.some((s) => s[0] === nx && s[1] === ny) ||
+        workingMap.crumbles.some((c) => c[0] === nx && c[1] === ny) ||
+        workingMap.arrows.some((a) => a[0] === nx && a[1] === ny) ||
+        (workingMap.teleport !== null && (
+          (workingMap.teleport.in[0] === nx && workingMap.teleport.in[1] === ny) ||
+          (workingMap.teleport.out[0] === nx && workingMap.teleport.out[1] === ny)
+        ));
+
+      if (!destOccupied) {
+        // Try each relevant cell type with its probability
+        const roll = rng();
+        let cumulative = 0;
+
+        if (!workingMap.teleport && availableCells.includes("teleport")) {
+          cumulative += CELL_PROB.teleport;
+          if (roll < cumulative && !(nx === start.x && ny === start.y)) {
+            // Pick out-position: free, not on path, not start, not nx/ny
+            const candidates = [];
+            for (let cy = 0; cy < h; cy += 1) {
+              for (let cx = 0; cx < w; cx += 1) {
+                const k = cy * w + cx;
+                if (!wallsSet.has(k) && !pathKeys.has(k)
+                    && !(cx === nx && cy === ny)
+                    && !(cx === start.x && cy === start.y)) {
+                  candidates.push({ x: cx, y: cy });
+                }
+              }
+            }
+            if (candidates.length > 0) {
+              const out = choice(rng, candidates);
+              workingMap.teleport = { in: [nx, ny], out: [out.x, out.y] };
+            }
+          }
+        }
+
+        if (!destOccupied && workingMap.springs.length === 0 && availableCells.includes("spring")) {
+          cumulative += CELL_PROB.spring;
+          if (roll < cumulative) {
+            // Spring at nx,ny → player lands at nx+dir,ny+dir
+            const s2x = nx + dir.x;
+            const s2y = ny + dir.y;
+            if (isFree(wallsSet, w, h, s2x, s2y) && !collapsedCrumbles.has(s2y * w + s2x)) {
+              workingMap.springs.push([nx, ny]);
+            }
+          }
+        }
+
+        if (!destOccupied && workingMap.swamp.length === 0 && availableCells.includes("swamp")) {
+          cumulative += CELL_PROB.swamp;
+          if (roll < cumulative) {
+            workingMap.swamp.push([nx, ny]);
+          }
+        }
+
+        if (!destOccupied && workingMap.crumbles.length < 2 && availableCells.includes("crumble")) {
+          cumulative += CELL_PROB.crumble;
+          if (roll < cumulative) {
+            workingMap.crumbles.push([nx, ny]);
+          }
+        }
+
+        if (!destOccupied && availableCells.includes("arrow")) {
+          cumulative += CELL_PROB.arrow;
+          if (roll < cumulative) {
+            workingMap.arrows.push([nx, ny, action]);
           }
         }
       }
-      if (candidates.length > 0) {
-        const out = choice(rng, candidates);
-        teleport = { in: [pos.x, pos.y], out: [out.x, out.y] };
-        pos = { x: out.x, y: out.y };
-        pathKeys.add(out.y * w + out.x);
-        continue;
-      }
     }
 
-    // SPRING: if next and next+1 in same dir are free
-    if (
-      availableCells.includes("spring") &&
-      rng() < CELL_PROB.spring
-    ) {
-      const s2x = pos.x + dir.x * 2;
-      const s2y = pos.y + dir.y * 2;
-      if (
-        isFree(wallsSet, w, h, nx, ny) &&
-        isFree(wallsSet, w, h, s2x, s2y) &&
-        !collapsedCrumbles.has(ny * w + nx) &&
-        !collapsedCrumbles.has(s2y * w + s2x)
-      ) {
-        springs.push([pos.x, pos.y]);
-        pos = { x: s2x, y: s2y };
-        pathKeys.add(s2y * w + s2x);
-        continue;
-      }
-    }
+    // ── Move using the real stepOne (same physics as the game) ───────────
+    const result = stepOne(pos, action, workingMap, { collapsedCrumbles, doorOpen: false });
 
-    // SWAMP: place on nextPos (before actually moving there)
-    if (
-      availableCells.includes("swamp") &&
-      rng() < CELL_PROB.swamp &&
-      isFree(wallsSet, w, h, nx, ny) &&
-      !collapsedCrumbles.has(ny * w + nx)
-    ) {
-      swampCells.push([nx, ny]);
-      pos = { x: nx, y: ny };
-      pathKeys.add(ny * w + nx);
+    // Fell in a hole — holes aren't placed during walk, so this shouldn't happen
+    if (result.fell) return null;
+
+    pos = { x: result.x, y: result.y };
+    pathKeys.add(pos.y * w + pos.x);
+    actions.push(action);
+
+    // Update dynamic state exactly like session.js
+    const landedKey = pos.y * w + pos.x;
+    if (workingMap.crumbles.some((c) => c[0] === pos.x && c[1] === pos.y)
+        && !collapsedCrumbles.has(landedKey)) {
+      collapsedCrumbles.add(landedKey);
+    }
+    if (workingMap.swamp.some((s) => s[0] === pos.x && s[1] === pos.y)) {
       stuckInSwamp = true;
-      continue;
     }
-
-    // CRUMBLE: place at current pos, then move normally
-    if (
-      availableCells.includes("crumble") &&
-      rng() < CELL_PROB.crumble &&
-      crumbleCells.length < 2 // limit to 2 per map for manageable BFS state
-    ) {
-      const key = pos.y * w + pos.x;
-      const alreadyCrumble = crumbleCells.some((c) => c[0] === pos.x && c[1] === pos.y);
-      if (!alreadyCrumble && !collapsedCrumbles.has(key)) {
-        crumbleCells.push([pos.x, pos.y]);
-        collapsedCrumbles.add(key); // crumbles after standing on it
-      }
-    }
-
-    // ARROW: place at current pos with current action direction
-    if (
-      availableCells.includes("arrow") &&
-      rng() < CELL_PROB.arrow &&
-      !arrowCells.some((a) => a[0] === pos.x && a[1] === pos.y)
-    ) {
-      arrowCells.push([pos.x, pos.y, action]);
-    }
-
-    // ── Normal move ──────────────────────────────────────────────────────
-    // Check if can move (wall, bounds, collapsed crumble)
-    if (
-      !inBounds(nx, ny, w, h) ||
-      isWallAt(wallsSet, w, nx, ny) ||
-      collapsedCrumbles.has(ny * w + nx)
-    ) {
-      // Bump — stay in place (action was still consumed)
-      continue;
-    }
-
-    pos = { x: nx, y: ny };
-    pathKeys.add(ny * w + nx);
   }
 
-  // Fell into a hole? Not possible during walk — holes are placed after.
-  // finalPos must differ from start
-  if (pos.x === start.x && pos.y === start.y) {
-    return null;
-  }
+  if (pos.x === start.x && pos.y === start.y) return null;
 
-  return {
-    finalPos: pos,
-    actions,
-    pathKeys,
-    specialCells: {
-      teleport,
-      springs,
-      swampCells,
-      crumbleCells,
-      arrowCells,
-    },
-  };
+  return { finalPos: pos, pathKeys, workingMap };
 }
 
 // ─── Ice placement ──────────────────────────────────────────────────────────
@@ -289,14 +283,29 @@ function walkWithEffects(start, wallsSet, w, h, T, availableCells, rng) {
  * Place ice cells on free cells NOT on the solution path.
  * Ice is added after the walk (doesn't affect path construction).
  */
-function placeIceCells(wallsSet, w, h, pathKeys, specialCells, rng) {
+function buildOccupiedSet(pathKeys, workingMap, wallsSet) {
+  const occupied = new Set(wallsSet);
+  for (const key of pathKeys) occupied.add(key);
+  const { w } = workingMap;
+  if (workingMap.teleport) {
+    if (workingMap.teleport.in)  occupied.add(workingMap.teleport.in[1]  * w + workingMap.teleport.in[0]);
+    if (workingMap.teleport.out) occupied.add(workingMap.teleport.out[1] * w + workingMap.teleport.out[0]);
+  }
+  for (const [x, y] of workingMap.springs) occupied.add(y * w + x);
+  for (const [x, y] of workingMap.swamp)   occupied.add(y * w + x);
+  for (const [x, y] of workingMap.crumbles) occupied.add(y * w + x);
+  for (const [x, y] of workingMap.arrows)  occupied.add(y * w + x);
+  return occupied;
+}
+
+function placeIceCells(wallsSet, w, h, pathKeys, workingMap, rng) {
   const count = randInt(rng, 1, 3);
   const ice = [];
-  const occupied = buildOccupiedSet(w, h, pathKeys, specialCells, wallsSet);
+  const occupied = buildOccupiedSet(pathKeys, workingMap, wallsSet);
   for (let cy = 0; cy < h; cy += 1) {
     for (let cx = 0; cx < w; cx += 1) {
       const key = cy * w + cx;
-      if (!occupied.has(key) && !wallsSet.has(key)) {
+      if (!occupied.has(key)) {
         ice.push([cx, cy]);
         if (ice.length >= count) break;
       }
@@ -306,15 +315,11 @@ function placeIceCells(wallsSet, w, h, pathKeys, specialCells, rng) {
   return ice;
 }
 
-/**
- * Place hole cells near the path — adjacent to path but NOT on it.
- */
-function placeHoleCells(wallsSet, w, h, pathKeys, specialCells, rng) {
+function placeHoleCells(wallsSet, w, h, pathKeys, workingMap, rng) {
   const count = randInt(rng, 1, 2);
   const holes = [];
-  const occupied = buildOccupiedSet(w, h, pathKeys, specialCells, wallsSet);
+  const occupied = buildOccupiedSet(pathKeys, workingMap, wallsSet);
 
-  // Collect candidate cells: adjacent to path cells
   const candidates = new Set();
   for (const key of pathKeys) {
     const x = key % w;
@@ -324,15 +329,12 @@ function placeHoleCells(wallsSet, w, h, pathKeys, specialCells, rng) {
       const cy = y + dir.y;
       if (inBounds(cx, cy, w, h)) {
         const ck = cy * w + cx;
-        if (!occupied.has(ck) && !wallsSet.has(ck)) {
-          candidates.add(ck);
-        }
+        if (!occupied.has(ck)) candidates.add(ck);
       }
     }
   }
 
   const list = [...candidates];
-  // shuffle
   for (let i = list.length - 1; i > 0; i -= 1) {
     const j = randInt(rng, 0, i);
     [list[i], list[j]] = [list[j], list[i]];
@@ -341,26 +343,6 @@ function placeHoleCells(wallsSet, w, h, pathKeys, specialCells, rng) {
     holes.push([list[i] % w, Math.floor(list[i] / w)]);
   }
   return holes;
-}
-
-function buildOccupiedSet(w, h, pathKeys, specialCells, wallsSet) {
-  const occupied = new Set(wallsSet);
-  for (const key of pathKeys) occupied.add(key);
-  if (specialCells.teleport) {
-    if (specialCells.teleport.in) {
-      const [tx, ty] = specialCells.teleport.in;
-      occupied.add(ty * w + tx);
-    }
-    if (specialCells.teleport.out) {
-      const [tx, ty] = specialCells.teleport.out;
-      occupied.add(ty * w + tx);
-    }
-  }
-  for (const [x, y] of specialCells.springs) occupied.add(y * w + x);
-  for (const [x, y] of specialCells.swampCells) occupied.add(y * w + x);
-  for (const [x, y] of specialCells.crumbleCells) occupied.add(y * w + x);
-  for (const [x, y] of specialCells.arrowCells) occupied.add(y * w + x);
-  return occupied;
 }
 
 // ─── BFS with dynamic state ─────────────────────────────────────────────────
@@ -386,28 +368,38 @@ function allAtGoals(positions, maps) {
   return true;
 }
 
-const BFS_MAX_VISITED = 150_000;
+const BFS_MAX_VISITED = 500_000;
 
-function hasShorterSolution(runtimeLevel, T) {
+/**
+ * BFS checking whether the level has a solution in EXACTLY T steps.
+ * State includes depth so "be at goal early and wander back" paths are found.
+ * Returns true if a T-step solution exists, false otherwise (or if BFS cap hit).
+ */
+function hasSolution(runtimeLevel, T) {
   const maps = runtimeLevel.maps;
-  // Reject only if solvable in ≤60% of T steps (lenient for small grids/early tiers)
-  const maxDepth = Math.max(1, Math.floor(T * 0.6));
-  if (maxDepth <= 0) return false;
-
   const startPositions = maps.map((m) => ({ x: m.A[0], y: m.A[1] }));
   const startCollapsed = maps.map(() => new Set());
   const startStuck = maps.map(() => false);
 
-  if (allAtGoals(startPositions, maps)) return true;
+  function encodeWithDepth(positions, collapsed, stuck, depth) {
+    let key = `${depth}|`;
+    for (let i = 0; i < positions.length; i += 1) {
+      key += `${positions[i].x},${positions[i].y}|`;
+      const sorted = [...collapsed[i]].sort((a, b) => a - b).join(",");
+      key += `[${sorted}]|${stuck[i] ? "1" : "0"}|`;
+    }
+    return key;
+  }
+
+  if (allAtGoals(startPositions, maps) && T === 0) return true;
 
   const queue = [{ positions: startPositions, collapsed: startCollapsed, stuck: startStuck, depth: 0 }];
-  const visited = new Set([encodeState(startPositions, startCollapsed, startStuck)]);
+  const visited = new Set([encodeWithDepth(startPositions, startCollapsed, startStuck, 0)]);
 
   for (let head = 0; head < queue.length; head += 1) {
-    // If BFS is getting too large, conservatively say no shorter solution
     if (visited.size > BFS_MAX_VISITED) return false;
     const { positions, collapsed, stuck, depth } = queue[head];
-    if (depth >= maxDepth) continue;
+    if (depth >= T) continue;
 
     for (const action of ACTIONS) {
       const nextPositions = [];
@@ -418,7 +410,6 @@ function hasShorterSolution(runtimeLevel, T) {
 
       for (let i = 0; i < maps.length; i += 1) {
         if (stuck[i]) {
-          // Stuck in swamp this turn
           nextPositions.push({ ...positions[i] });
           nextStuck[i] = false;
         } else {
@@ -451,10 +442,10 @@ function hasShorterSolution(runtimeLevel, T) {
       }
 
       const nextDepth = depth + 1;
-      if (allAtGoals(nextPositions, maps)) return true;
+      if (allAtGoals(nextPositions, maps) && nextDepth === T) return true;
       if (nextDepth >= T) continue;
 
-      const key = encodeState(nextPositions, nextCollapsed, nextStuck);
+      const key = encodeWithDepth(nextPositions, nextCollapsed, nextStuck, nextDepth);
       if (visited.has(key)) continue;
       visited.add(key);
       queue.push({ positions: nextPositions, collapsed: nextCollapsed, stuck: nextStuck, depth: nextDepth });
@@ -466,30 +457,26 @@ function hasShorterSolution(runtimeLevel, T) {
 
 // ─── Level spec builder ─────────────────────────────────────────────────────
 
-function buildMapSpec(w, h, wallsSet, start, finalPos, specialCells, holes, iceCells, rotation) {
+function buildMapSpec(wallsSet, start, finalPos, workingMap, rotation) {
+  const { w, h } = workingMap;
   const obstacles = [];
   for (const key of wallsSet) {
     obstacles.push([key % w, Math.floor(key / w)]);
   }
 
   const spec = {
-    w,
-    h,
-    rotation,
-    obstacles,
+    w, h, rotation, obstacles,
     A: [start.x, start.y],
     B: [finalPos.x, finalPos.y],
   };
 
-  if (specialCells.teleport) {
-    spec.teleport = specialCells.teleport;
-  }
-  if (iceCells && iceCells.length > 0) spec.ice = iceCells;
-  if (holes && holes.length > 0) spec.holes = holes;
-  if (specialCells.springs.length > 0) spec.springs = specialCells.springs;
-  if (specialCells.swampCells.length > 0) spec.swamp = specialCells.swampCells;
-  if (specialCells.crumbleCells.length > 0) spec.crumbles = specialCells.crumbleCells;
-  if (specialCells.arrowCells.length > 0) spec.arrows = specialCells.arrowCells;
+  if (workingMap.teleport)             spec.teleport = workingMap.teleport;
+  if (workingMap.ice.length > 0)       spec.ice      = workingMap.ice;
+  if (workingMap.holes.length > 0)     spec.holes    = workingMap.holes;
+  if (workingMap.springs.length > 0)   spec.springs  = workingMap.springs;
+  if (workingMap.swamp.length > 0)     spec.swamp    = workingMap.swamp;
+  if (workingMap.crumbles.length > 0)  spec.crumbles = workingMap.crumbles;
+  if (workingMap.arrows.length > 0)    spec.arrows   = workingMap.arrows;
 
   return spec;
 }
@@ -505,22 +492,16 @@ function buildSingleMap(w, h, T, availableCells, rotation, rng) {
     const walkResult = walkWithEffects(start, wallsSet, w, h, T, availableCells, rng);
     if (!walkResult) continue;
 
-    const { finalPos, pathKeys, specialCells } = walkResult;
+    const { finalPos, pathKeys, workingMap } = walkResult;
 
-    // Place holes (only if 'hole' in available)
-    let holes = [];
     if (availableCells.includes("hole")) {
-      holes = placeHoleCells(wallsSet, w, h, pathKeys, specialCells, rng);
+      workingMap.holes = placeHoleCells(wallsSet, w, h, pathKeys, workingMap, rng);
     }
-
-    // Place ice (only if 'ice' in available)
-    let iceCells = [];
     if (availableCells.includes("ice")) {
-      iceCells = placeIceCells(wallsSet, w, h, pathKeys, specialCells, rng);
+      workingMap.ice = placeIceCells(wallsSet, w, h, pathKeys, workingMap, rng);
     }
 
-    const mapSpec = buildMapSpec(w, h, wallsSet, start, finalPos, specialCells, holes, iceCells, rotation);
-    return mapSpec;
+    return buildMapSpec(wallsSet, start, finalPos, workingMap, rotation);
   }
   return null;
 }
@@ -589,7 +570,7 @@ export function generateLevel(levelNumber, seed) {
     }
 
     const runtimeLevel = buildRuntimeLevel(levelSpec);
-    if (hasShorterSolution(runtimeLevel, T)) continue;
+    if (!hasSolution(runtimeLevel, T)) continue;
 
     return levelSpec;
   }
