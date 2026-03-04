@@ -149,7 +149,7 @@ function updateUiState() {
   recordBtn.disabled =
     toolActive || saved || (!recording && !state.canStartRecording());
   recordResetBtn.disabled = toolActive;
-  setRotationButtonsDisabled(inputsDisabled);
+  setRotationButtonsDisabled(recording || toolActive);
 }
 
 function refreshMapSelect() {
@@ -343,6 +343,8 @@ function saveLevel() {
   URL.revokeObjectURL(url);
   setStatus("Saved level file");
   resetAfterSave();
+  levelNumberInput.value = String(clamp(parseInt(levelNumberInput.value, 10) + 1, 1, 9999));
+  applyLevelNumber();
 }
 
 function resetAfterSave() {
