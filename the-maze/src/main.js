@@ -1,8 +1,9 @@
 import { createGameSession } from "./game/session.js";
 import { createRenderer } from "./renderer_canvas.js";
 import { bindInput } from "./input.js";
-import { buildRuntimeLevel, validateLevelSpec } from "./core/level.js";
+import { buildRuntimeLevel } from "./core/level.js";
 import { normalizeRotation, rotateVector } from "./rotation.js";
+import { generateLevel } from "./level_generator.js";
 
 const canvas = document.getElementById("game");
 const statusEl = document.getElementById("status");
@@ -12,6 +13,51 @@ const overlayEl = document.getElementById("overlay");
 const overlayTitleEl = document.getElementById("overlay-title");
 const overlayButtonEl = document.getElementById("overlay-button");
 const loadingEl = document.getElementById("loading");
+const gameoverOverlayEl = document.getElementById("gameover-overlay");
+const skipBtnEl = document.getElementById("skip-btn");
+const skipCounterEl = document.getElementById("skip-counter");
+const helpBtnEl = document.getElementById("help-btn");
+const helpOverlayEl = document.getElementById("help-overlay");
+const helpCloseEl = document.getElementById("help-close");
+const statusTimerEl = document.getElementById("status-timer");
+
+const MAX_SKIPS = 3;
+let skipsLeft = MAX_SKIPS;
+
+// ── Timer ──────────────────────────────────────────────────────────────────
+let timerStartMs = 0;
+let timerRafId = null;
+
+function formatTime(ms) {
+  const totalSec = Math.floor(ms / 1000);
+  const mm = String(Math.floor(totalSec / 60)).padStart(2, "0");
+  const ss = String(totalSec % 60).padStart(2, "0");
+  return `${mm}:${ss}`;
+}
+
+function tickTimer() {
+  if (!statusTimerEl) return;
+  statusTimerEl.textContent = formatTime(Date.now() - timerStartMs);
+  timerRafId = requestAnimationFrame(tickTimer);
+}
+
+function startTimer() {
+  stopTimer();
+  timerStartMs = Date.now();
+  if (statusTimerEl) statusTimerEl.textContent = "00:00";
+  timerRafId = requestAnimationFrame(tickTimer);
+}
+
+function stopTimer() {
+  if (timerRafId !== null) {
+    cancelAnimationFrame(timerRafId);
+    timerRafId = null;
+  }
+}
+
+function elapsedTime() {
+  return Date.now() - timerStartMs;
+}
 
 const renderer = createRenderer(canvas);
 
@@ -33,7 +79,7 @@ if (appEl) {
   appEl.append(tooltipEl);
 }
 
-function setOverlay(visible, title, buttonText, buttonCommand) {
+function setOverlay(visible, title, buttonText, buttonCommand, timeMs = null) {
   if (!overlayEl) {
     return;
   }
@@ -41,6 +87,18 @@ function setOverlay(visible, title, buttonText, buttonCommand) {
   overlayTitleEl.textContent = title;
   overlayButtonEl.textContent = buttonText;
   overlayButtonEl.dataset.command = buttonCommand;
+
+  let timeEl = overlayEl.querySelector(".overlay-time");
+  if (visible && timeMs !== null) {
+    if (!timeEl) {
+      timeEl = document.createElement("p");
+      timeEl.className = "overlay-time";
+      overlayTitleEl.after(timeEl);
+    }
+    timeEl.textContent = `Время: ${formatTime(timeMs)}`;
+  } else if (timeEl) {
+    timeEl.remove();
+  }
 }
 
 function setLoading(visible, message = "Loading level...") {
@@ -53,6 +111,7 @@ function setLoading(visible, message = "Loading level...") {
   if (canvas) {
     canvas.style.visibility = visible ? "hidden" : "visible";
   }
+  updateSkipBtn();
 }
 
 function updateStatus() {
@@ -107,6 +166,7 @@ function onRestart() {
   anim = null;
   updateStatus();
   setOverlay(false, "", "", "");
+  startTimer();
 }
 
 async function onNext() {
@@ -121,12 +181,34 @@ async function onNext() {
   }
 }
 
-async function fetchJson(path) {
-  const response = await fetch(path);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${path}`);
+function updateSkipBtn() {
+  if (!skipCounterEl || !skipBtnEl) return;
+  skipCounterEl.textContent = skipsLeft;
+  skipBtnEl.disabled = skipsLeft <= 0 || isLoading;
+}
+
+async function onSkip() {
+  if (isLoading || skipsLeft <= 0) return;
+  skipsLeft -= 1;
+  updateSkipBtn();
+  if (skipsLeft <= 0) {
+    if (gameoverOverlayEl) gameoverOverlayEl.classList.remove("hidden");
+    return;
   }
-  return response.json();
+  setOverlay(false, "", "", "");
+  try {
+    await loadLevelByNumber(currentLevelNumber + 1);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function openHelp() {
+  if (helpOverlayEl) helpOverlayEl.classList.remove("hidden");
+}
+
+function closeHelp() {
+  if (helpOverlayEl) helpOverlayEl.classList.add("hidden");
 }
 
 function delay(ms) {
@@ -135,16 +217,27 @@ function delay(ms) {
   });
 }
 
+function generateLevelAsync(number) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        resolve(generateLevel(number));
+      } catch (e) {
+        reject(e);
+      }
+    }, 0);
+  });
+}
+
 async function loadLevelByNumber(number) {
   const loadingStart = performance.now();
+  stopTimer();
   setLoading(true, "Loading level...");
   setOverlay(false, "", "", "");
   let level = loadedLevels.get(number) || null;
   try {
     if (!level) {
-      const filePath = `levels/level_${String(number).padStart(4, "0")}.json`;
-      const levelSpec = await fetchJson(filePath);
-      validateLevelSpec(levelSpec);
+      const levelSpec = await generateLevelAsync(number);
       level = buildRuntimeLevel(levelSpec);
       loadedLevels.set(number, level);
     }
@@ -159,6 +252,7 @@ async function loadLevelByNumber(number) {
       await delay(MIN_LOADING_MS - elapsed);
     }
     setLoading(false);
+    startTimer();
   }
 }
 
@@ -186,9 +280,12 @@ function tick(now) {
       if (anim.progress >= 1) {
         anim = null;
         if (game.state === "won") {
+          const elapsed = elapsedTime();
+          stopTimer();
           ym(107098559, 'reachGoal', 'level_complete', { level: currentLevelNumber });
-          setOverlay(true, "Level Complete", "Next", "next");
+          setOverlay(true, "Level Complete", "Next", "next", elapsed);
         } else if (game.state === "lost") {
+          stopTimer();
           setOverlay(true, "Try Again", "Restart", "restart");
         }
       }
@@ -396,8 +493,9 @@ function updateHoverState(event) {
 }
 
 async function init() {
+  updateSkipBtn();
   await loadLevelByNumber(1);
-  bindInput({ onAction, onRestart, onNext, canInput });
+  bindInput({ onAction, onRestart, onNext, onSkip, canInput });
   overlayButtonEl.addEventListener("click", () => {
     const command = overlayButtonEl.dataset.command;
     if (command === "next") {
@@ -406,6 +504,20 @@ async function init() {
       onRestart();
     }
   });
+  if (skipBtnEl) {
+    skipBtnEl.addEventListener("click", onSkip);
+  }
+  if (helpBtnEl) {
+    helpBtnEl.addEventListener("click", openHelp);
+  }
+  if (helpCloseEl) {
+    helpCloseEl.addEventListener("click", closeHelp);
+  }
+  if (helpOverlayEl) {
+    helpOverlayEl.addEventListener("click", (e) => {
+      if (e.target === helpOverlayEl) closeHelp();
+    });
+  }
   canvas.addEventListener("pointermove", updateHoverState);
   canvas.addEventListener("pointerleave", () => {
     hoverCell = null;

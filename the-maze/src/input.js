@@ -17,9 +17,20 @@ export function bindInput({
   onAction,
   onRestart,
   onNext,
+  onSkip,
   canInput,
 }) {
   function handleKeydown(event) {
+    if (event.key === "r" || event.key === "R") {
+      event.preventDefault();
+      onRestart();
+      return;
+    }
+    if (event.key === "n" || event.key === "N") {
+      event.preventDefault();
+      onSkip();
+      return;
+    }
     const action = KEY_TO_ACTION[event.key];
     if (!action) {
       return;

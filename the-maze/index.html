@@ -30,7 +30,12 @@
       <div id="status" class="status">
         <div id="status-level" class="status-level">Уровень 1</div>
         <div id="status-steps" class="status-steps">0 шагов</div>
+        <div id="status-timer" class="status-timer">00:00</div>
       </div>
+
+      <button id="help-btn" class="help-chip" aria-label="Правила">
+        Правила <i class="fa-regular fa-circle-question"></i>
+      </button>
 
       <div id="overlay" class="overlay hidden">
         <div class="overlay-card">
@@ -39,15 +44,159 @@
         </div>
       </div>
 
+      <div id="gameover-overlay" class="overlay hidden">
+        <div class="overlay-card">
+          <div class="overlay-title">Пропуски закончились</div>
+          <p class="overlay-subtitle">Вы использовали все 3 пропуска</p>
+          <button class="overlay-button" onclick="location.reload()">В начало</button>
+        </div>
+      </div>
+
       <div id="loading" class="loading hidden">Loading level...</div>
 
       <div id="controls" class="controls">
-        <div class="controls-description">
-          Controls: Arrow keys or WASD
-        </div>
         <button class="control-btn control-restart" data-command="restart">
           Restart
         </button>
+        <button id="skip-btn" class="control-btn control-skip" data-command="skip">
+          <i class="fa-solid fa-forward-step"></i>
+          Пропустить
+          <span id="skip-counter" class="skip-counter">3</span>
+        </button>
+      </div>
+
+      <!-- Help popup -->
+      <div id="help-overlay" class="help-overlay hidden">
+        <div class="help-panel">
+          <div class="help-header">
+            <span class="help-title">Как играть</span>
+            <button id="help-close" class="help-close" aria-label="Закрыть">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="help-body">
+
+            <section class="help-section">
+              <h3 class="help-section-title">Управление</h3>
+              <div class="help-row">
+                <div class="help-keys">
+                  <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd>
+                </div>
+                <span class="help-desc">или <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> — ход</span>
+              </div>
+              <div class="help-row">
+                <kbd>R</kbd>
+                <span class="help-desc">Перезапустить уровень</span>
+              </div>
+              <div class="help-row">
+                <kbd>N</kbd>
+                <span class="help-desc">Пропустить уровень (макс. 3 раза)</span>
+              </div>
+            </section>
+
+            <section class="help-section">
+              <h3 class="help-section-title">Цель</h3>
+              <p class="help-text">
+                Приведите всех игроков на финишные клетки <em>ровно за T шагов</em>.
+                Все игроки движутся одновременно по одной команде.
+                Шаги считаются всегда, даже если игрок упёрся в стену.
+              </p>
+            </section>
+
+            <section class="help-section">
+              <h3 class="help-section-title">Клетки</h3>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#b7c9e4;"></div>
+                <div class="cell-info">
+                  <strong>Старт</strong>
+                  <span>Начальная позиция игрока.</span>
+                </div>
+              </div>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#b9d6c5;"></div>
+                <div class="cell-info">
+                  <strong>Финиш</strong>
+                  <span>Сюда нужно прийти за T шагов.</span>
+                </div>
+              </div>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#d1b9aa;"></div>
+                <div class="cell-info">
+                  <strong>Стена</strong>
+                  <span>Непроходимая. Игрок остаётся на месте, шаг тратится.</span>
+                </div>
+              </div>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#cbb9e6;"></div>
+                <div class="cell-info">
+                  <strong>Телепорт (вход)</strong>
+                  <span>Войдите — и мгновенно окажетесь у выхода телепорта.</span>
+                </div>
+              </div>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#b5a4dc;"></div>
+                <div class="cell-info">
+                  <strong>Телепорт (выход)</strong>
+                  <span>Точка выхода телепорта.</span>
+                </div>
+              </div>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#c8e8f0;"></div>
+                <div class="cell-info">
+                  <strong>Лёд</strong>
+                  <span>Игрок скользит до первой стены или края.</span>
+                </div>
+              </div>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#3d3830; border:1px solid #888;"></div>
+                <div class="cell-info">
+                  <strong>Яма</strong>
+                  <span>Провалиться — поражение.</span>
+                </div>
+              </div>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#8ed84a;"></div>
+                <div class="cell-info">
+                  <strong>Пружина</strong>
+                  <span>Перебрасывает на одну клетку дальше в том же направлении.</span>
+                </div>
+              </div>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#4a7040;"></div>
+                <div class="cell-info">
+                  <strong>Болото</strong>
+                  <span>Следующий ход игрок пропускает.</span>
+                </div>
+              </div>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#c49a3c;"></div>
+                <div class="cell-info">
+                  <strong>Рассыпающийся пол</strong>
+                  <span>После первого прохода клетка рушится — не пройти снова.</span>
+                </div>
+              </div>
+
+              <div class="cell-entry">
+                <div class="cell-dot" style="background:#e8d4b0;"></div>
+                <div class="cell-info">
+                  <strong>Стрелка</strong>
+                  <span>Пройти можно только в направлении стрелки.</span>
+                </div>
+              </div>
+
+            </section>
+          </div>
+        </div>
       </div>
     </div>
 
