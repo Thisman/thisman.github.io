@@ -17,7 +17,7 @@ export function bindInput({
   canInput,
 }) {
   function handleKeydown(event) {
-    if (event.code === "KeyR") {
+    if (event.code === "KeyF") {
       event.preventDefault();
       onRestart();
       return;
