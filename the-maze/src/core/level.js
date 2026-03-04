@@ -226,6 +226,14 @@ export function buildRuntimeLevel(
       B,
       rotation: normalizeRotation(map.rotation),
       teleport: teleportRuntime,
+      ice: Array.isArray(map.ice) ? map.ice : [],
+      arrows: Array.isArray(map.arrows) ? map.arrows : [],
+      holes: Array.isArray(map.holes) ? map.holes : [],
+      springs: Array.isArray(map.springs) ? map.springs : [],
+      button: isPoint(map.button) ? map.button : null,
+      door: isPoint(map.door) ? map.door : null,
+      crumbles: Array.isArray(map.crumbles) ? map.crumbles : [],
+      swamp: Array.isArray(map.swamp) ? map.swamp : [],
     };
   });
 

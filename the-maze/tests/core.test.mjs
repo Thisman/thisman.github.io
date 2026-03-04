@@ -51,6 +51,7 @@ test("stepOne bumps on walls and bounds", () => {
     bump: true,
     teleported: false,
     teleportEntry: null,
+    fell: false,
   });
 
   const hitEdge = stepOne({ x: 0, y: 0 }, "U", map);

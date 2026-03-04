@@ -196,6 +196,7 @@ function tick(now) {
     renderer.render(game.level, game.positions, anim, {
       showRotationBadge: true,
       hoverCell,
+      dynamicState: game.getDynamicState(),
     });
   }
   requestAnimationFrame(tick);
@@ -277,6 +278,14 @@ function getCellType(map, x, y) {
       return "teleport-out";
     }
   }
+  if ((map.ice || []).some((p) => p[0] === x && p[1] === y)) return "ice";
+  if ((map.holes || []).some((p) => p[0] === x && p[1] === y)) return "hole";
+  if ((map.springs || []).some((p) => p[0] === x && p[1] === y)) return "spring";
+  if ((map.swamp || []).some((p) => p[0] === x && p[1] === y)) return "swamp";
+  if ((map.crumbles || []).some((p) => p[0] === x && p[1] === y)) return "crumble";
+  if ((map.arrows || []).some((p) => p[0] === x && p[1] === y)) return "arrow";
+  if (map.button && map.button[0] === x && map.button[1] === y) return "button";
+  if (map.door && map.door[0] === x && map.door[1] === y) return "door";
   return null;
 }
 
@@ -292,6 +301,22 @@ function getTypeLabel(type) {
       return "Телепорт (вход)";
     case "teleport-out":
       return "Телепорт (выход)";
+    case "ice":
+      return "Лёд";
+    case "hole":
+      return "Яма";
+    case "spring":
+      return "Пружина";
+    case "swamp":
+      return "Болото";
+    case "crumble":
+      return "Рассыпающийся пол";
+    case "arrow":
+      return "Стрелка";
+    case "button":
+      return "Кнопка";
+    case "door":
+      return "Дверь";
     default:
       return "";
   }

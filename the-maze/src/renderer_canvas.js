@@ -19,6 +19,16 @@ const TELEPORT_IN_COLOR = "#cbb9e6";
 const TELEPORT_OUT_COLOR = "#b5a4dc";
 const WALL_COLOR = "#d1b9aa";
 const HIGHLIGHT_COLOR = "rgba(170, 160, 150, 0.25)";
+const ICE_COLOR = "#c8e8f0";
+const ARROW_COLOR = "#e8d4b0";
+const ARROW_SYMBOL_COLOR = "#7a6a50";
+const HOLE_COLOR = "#3d3830";
+const SPRING_COLOR = "#c0d898";
+const BUTTON_COLOR = "#f0c870";
+const DOOR_COLOR_CLOSED = "#b09070";
+const DOOR_COLOR_OPEN = "#d4b898";
+const CRUMBLE_COLOR = "#c4a890";
+const SWAMP_COLOR = "#8aab78";
 const ROTATION_ICON_CLASSES = "fa-solid fa-arrow-rotate-right";
 const ROTATION_ICON_COLOR = "#6b655d";
 const ROTATION_ICON_SIZE = 16;
@@ -275,6 +285,94 @@ function drawHighlights(ctx, viewport, map, tileSize, hoverCell) {
   );
   ctx.restore();
 }
+function drawIce(ctx, viewport, map, tileSize) {
+  ctx.fillStyle = ICE_COLOR;
+  for (const [x, y] of (map.ice || [])) {
+    ctx.fillRect(viewport.x + x * tileSize, viewport.y + y * tileSize, tileSize, tileSize);
+  }
+}
+
+function drawHoles(ctx, viewport, map, tileSize) {
+  ctx.fillStyle = HOLE_COLOR;
+  for (const [x, y] of (map.holes || [])) {
+    ctx.fillRect(viewport.x + x * tileSize, viewport.y + y * tileSize, tileSize, tileSize);
+  }
+}
+
+function drawSprings(ctx, viewport, map, tileSize) {
+  ctx.fillStyle = SPRING_COLOR;
+  for (const [x, y] of (map.springs || [])) {
+    ctx.fillRect(viewport.x + x * tileSize, viewport.y + y * tileSize, tileSize, tileSize);
+  }
+}
+
+function drawSwamp(ctx, viewport, map, tileSize) {
+  ctx.fillStyle = SWAMP_COLOR;
+  for (const [x, y] of (map.swamp || [])) {
+    ctx.fillRect(viewport.x + x * tileSize, viewport.y + y * tileSize, tileSize, tileSize);
+  }
+}
+
+function drawArrows(ctx, viewport, map, tileSize) {
+  for (const [ax, ay, dir] of (map.arrows || [])) {
+    ctx.fillStyle = ARROW_COLOR;
+    ctx.fillRect(viewport.x + ax * tileSize, viewport.y + ay * tileSize, tileSize, tileSize);
+    const cx = viewport.x + ax * tileSize + tileSize / 2;
+    const cy = viewport.y + ay * tileSize + tileSize / 2;
+    const s = tileSize * 0.3;
+    ctx.fillStyle = ARROW_SYMBOL_COLOR;
+    ctx.beginPath();
+    switch (dir) {
+      case "U":
+        ctx.moveTo(cx, cy - s);
+        ctx.lineTo(cx - s * 0.7, cy + s * 0.5);
+        ctx.lineTo(cx + s * 0.7, cy + s * 0.5);
+        break;
+      case "D":
+        ctx.moveTo(cx, cy + s);
+        ctx.lineTo(cx - s * 0.7, cy - s * 0.5);
+        ctx.lineTo(cx + s * 0.7, cy - s * 0.5);
+        break;
+      case "L":
+        ctx.moveTo(cx - s, cy);
+        ctx.lineTo(cx + s * 0.5, cy - s * 0.7);
+        ctx.lineTo(cx + s * 0.5, cy + s * 0.7);
+        break;
+      case "R":
+        ctx.moveTo(cx + s, cy);
+        ctx.lineTo(cx - s * 0.5, cy - s * 0.7);
+        ctx.lineTo(cx - s * 0.5, cy + s * 0.7);
+        break;
+      default:
+        break;
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+function drawButton(ctx, viewport, map, tileSize) {
+  if (!map.button) return;
+  const [bx, by] = map.button;
+  ctx.fillStyle = BUTTON_COLOR;
+  ctx.fillRect(viewport.x + bx * tileSize, viewport.y + by * tileSize, tileSize, tileSize);
+}
+
+function drawDoor(ctx, viewport, map, tileSize, doorOpen) {
+  if (!map.door) return;
+  const [dx, dy] = map.door;
+  ctx.fillStyle = doorOpen ? DOOR_COLOR_OPEN : DOOR_COLOR_CLOSED;
+  ctx.fillRect(viewport.x + dx * tileSize, viewport.y + dy * tileSize, tileSize, tileSize);
+}
+
+function drawCrumbles(ctx, viewport, map, tileSize, collapsedSet) {
+  for (const [cx, cy] of (map.crumbles || [])) {
+    const key = cy * map.w + cx;
+    ctx.fillStyle = (collapsedSet && collapsedSet.has(key)) ? WALL_COLOR : CRUMBLE_COLOR;
+    ctx.fillRect(viewport.x + cx * tileSize, viewport.y + cy * tileSize, tileSize, tileSize);
+  }
+}
+
 function drawWalls(ctx, viewport, map, tileSize) {
   ctx.fillStyle = WALL_COLOR;
   for (let y = 0; y < map.h; y += 1) {
@@ -403,6 +501,9 @@ export function createRenderer(canvas) {
     const maps = level.maps;
     const showRotationBadge = Boolean(options.showRotationBadge);
     const hoverCell = options.hoverCell || null;
+    const dynamicState = options.dynamicState || {};
+    const dynCollapsedCrumbles = dynamicState.collapsedCrumbles || [];
+    const dynDoorOpen = dynamicState.doorOpen || [];
     resizeIfNeeded(maps);
     const { viewports } = lastLayout;
     const width = canvas.getBoundingClientRect().width;
@@ -415,8 +516,18 @@ export function createRenderer(canvas) {
     for (let i = 0; i < maps.length; i += 1) {
       const viewport = viewports[i];
       const map = { ...maps[i], index: i };
+      const collapsedSet = dynCollapsedCrumbles[i] || null;
+      const doorOpen = dynDoorOpen[i] || false;
       withMapTransform(ctx, viewport, map, (localViewport) => {
         drawWalls(ctx, localViewport, map, localViewport.tileSize);
+        drawCrumbles(ctx, localViewport, map, localViewport.tileSize, collapsedSet);
+        drawIce(ctx, localViewport, map, localViewport.tileSize);
+        drawHoles(ctx, localViewport, map, localViewport.tileSize);
+        drawSwamp(ctx, localViewport, map, localViewport.tileSize);
+        drawSprings(ctx, localViewport, map, localViewport.tileSize);
+        drawArrows(ctx, localViewport, map, localViewport.tileSize);
+        drawButton(ctx, localViewport, map, localViewport.tileSize);
+        drawDoor(ctx, localViewport, map, localViewport.tileSize, doorOpen);
         drawTeleport(ctx, localViewport, map, localViewport.tileSize);
         drawStart(ctx, localViewport, map, localViewport.tileSize, START_COLOR);
         drawGoal(ctx, localViewport, map, localViewport.tileSize, GOAL_COLOR);

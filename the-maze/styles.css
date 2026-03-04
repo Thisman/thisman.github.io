@@ -294,6 +294,38 @@ body {
   background: #b5a4dc;
 }
 
+.cell-swatch.ice {
+  background: #c8e8f0;
+}
+
+.cell-swatch.hole {
+  background: #3d3830;
+}
+
+.cell-swatch.spring {
+  background: #c0d898;
+}
+
+.cell-swatch.swamp {
+  background: #8aab78;
+}
+
+.cell-swatch.crumble {
+  background: #c4a890;
+}
+
+.cell-swatch.arrow {
+  background: #e8d4b0;
+}
+
+.cell-swatch.button {
+  background: #f0c870;
+}
+
+.cell-swatch.door {
+  background: #b09070;
+}
+
 .cell-label {
   font-size: 14px;
 }

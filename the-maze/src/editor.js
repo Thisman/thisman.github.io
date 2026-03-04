@@ -17,6 +17,17 @@ const obstacleToolBtn = document.getElementById("obstacle-tool");
 const startToolBtn = document.getElementById("start-tool");
 const teleportInToolBtn = document.getElementById("teleport-in-tool");
 const teleportOutToolBtn = document.getElementById("teleport-out-tool");
+const iceToolBtn = document.getElementById("ice-tool");
+const holeToolBtn = document.getElementById("hole-tool");
+const springToolBtn = document.getElementById("spring-tool");
+const swampToolBtn = document.getElementById("swamp-tool");
+const crumbleToolBtn = document.getElementById("crumble-tool");
+const arrowUToolBtn = document.getElementById("arrow-u-tool");
+const arrowDToolBtn = document.getElementById("arrow-d-tool");
+const arrowLToolBtn = document.getElementById("arrow-l-tool");
+const arrowRToolBtn = document.getElementById("arrow-r-tool");
+const buttonToolBtn = document.getElementById("button-tool");
+const doorToolBtn = document.getElementById("door-tool");
 const recordBtn = document.getElementById("record-btn");
 const recordResetBtn = document.getElementById("record-reset-btn");
 const stepsCountEl = document.getElementById("steps-count");
@@ -87,6 +98,17 @@ function syncToolButtons() {
   startToolBtn.classList.toggle("active", activeTool === "start");
   teleportInToolBtn.classList.toggle("active", activeTool === "teleportIn");
   teleportOutToolBtn.classList.toggle("active", activeTool === "teleportOut");
+  iceToolBtn.classList.toggle("active", activeTool === "ice");
+  holeToolBtn.classList.toggle("active", activeTool === "hole");
+  springToolBtn.classList.toggle("active", activeTool === "spring");
+  swampToolBtn.classList.toggle("active", activeTool === "swamp");
+  crumbleToolBtn.classList.toggle("active", activeTool === "crumble");
+  arrowUToolBtn.classList.toggle("active", activeTool === "arrowU");
+  arrowDToolBtn.classList.toggle("active", activeTool === "arrowD");
+  arrowLToolBtn.classList.toggle("active", activeTool === "arrowL");
+  arrowRToolBtn.classList.toggle("active", activeTool === "arrowR");
+  buttonToolBtn.classList.toggle("active", activeTool === "button");
+  doorToolBtn.classList.toggle("active", activeTool === "door");
 }
 
 function setRecordButtonLabel() {
@@ -109,10 +131,19 @@ function updateUiState() {
   heightInput.disabled = inputsDisabled;
   obstacleToolBtn.disabled = recording || saved || (toolActive && activeTool !== "obstacle");
   startToolBtn.disabled = recording || saved || (toolActive && activeTool !== "start");
-  teleportInToolBtn.disabled =
-    recording || saved || (toolActive && activeTool !== "teleportIn");
-  teleportOutToolBtn.disabled =
-    recording || saved || (toolActive && activeTool !== "teleportOut");
+  teleportInToolBtn.disabled = recording || saved || (toolActive && activeTool !== "teleportIn");
+  teleportOutToolBtn.disabled = recording || saved || (toolActive && activeTool !== "teleportOut");
+  iceToolBtn.disabled = recording || saved || (toolActive && activeTool !== "ice");
+  holeToolBtn.disabled = recording || saved || (toolActive && activeTool !== "hole");
+  springToolBtn.disabled = recording || saved || (toolActive && activeTool !== "spring");
+  swampToolBtn.disabled = recording || saved || (toolActive && activeTool !== "swamp");
+  crumbleToolBtn.disabled = recording || saved || (toolActive && activeTool !== "crumble");
+  arrowUToolBtn.disabled = recording || saved || (toolActive && activeTool !== "arrowU");
+  arrowDToolBtn.disabled = recording || saved || (toolActive && activeTool !== "arrowD");
+  arrowLToolBtn.disabled = recording || saved || (toolActive && activeTool !== "arrowL");
+  arrowRToolBtn.disabled = recording || saved || (toolActive && activeTool !== "arrowR");
+  buttonToolBtn.disabled = recording || saved || (toolActive && activeTool !== "button");
+  doorToolBtn.disabled = recording || saved || (toolActive && activeTool !== "door");
 
   saveBtn.disabled = toolActive || !canSaveNow;
   recordBtn.disabled =
@@ -280,7 +311,10 @@ function tick(now) {
         anim = null;
       }
     }
-    renderer.render(runtimeLevel, positions, anim, { showRotationBadge: false });
+    renderer.render(runtimeLevel, positions, anim, {
+      showRotationBadge: false,
+      dynamicState: state.getEditorDynamicState(),
+    });
   }
   requestAnimationFrame(tick);
 }
@@ -365,6 +399,18 @@ teleportInToolBtn.addEventListener("click", () => {
 teleportOutToolBtn.addEventListener("click", () => {
   state.toggleTool("teleportOut");
 });
+
+iceToolBtn.addEventListener("click", () => { state.toggleTool("ice"); });
+holeToolBtn.addEventListener("click", () => { state.toggleTool("hole"); });
+springToolBtn.addEventListener("click", () => { state.toggleTool("spring"); });
+swampToolBtn.addEventListener("click", () => { state.toggleTool("swamp"); });
+crumbleToolBtn.addEventListener("click", () => { state.toggleTool("crumble"); });
+arrowUToolBtn.addEventListener("click", () => { state.toggleTool("arrowU"); });
+arrowDToolBtn.addEventListener("click", () => { state.toggleTool("arrowD"); });
+arrowLToolBtn.addEventListener("click", () => { state.toggleTool("arrowL"); });
+arrowRToolBtn.addEventListener("click", () => { state.toggleTool("arrowR"); });
+buttonToolBtn.addEventListener("click", () => { state.toggleTool("button"); });
+doorToolBtn.addEventListener("click", () => { state.toggleTool("door"); });
 
 recordBtn.addEventListener("click", () => {
   if (state.getRecordMode() === "recording") {

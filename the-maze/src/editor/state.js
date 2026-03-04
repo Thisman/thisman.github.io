@@ -2,10 +2,35 @@ import { buildRuntimeLevel } from "../core/level.js";
 import { stepOne } from "../core/movement.js";
 import { normalizeRotation } from "../rotation.js";
 
-const TOOL_TYPES = ["obstacle", "start", "teleportIn", "teleportOut"];
+const TOOL_TYPES = [
+  "obstacle", "start", "teleportIn", "teleportOut",
+  "ice", "hole", "spring", "swamp", "crumble",
+  "arrowU", "arrowD", "arrowL", "arrowR",
+  "button", "door",
+];
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
+}
+
+function createEmptyMapSpec(width, height) {
+  return {
+    w: width,
+    h: height,
+    obstacles: [],
+    A: null,
+    B: null,
+    rotation: 0,
+    teleport: { in: null, out: null },
+    ice: [],
+    arrows: [],
+    holes: [],
+    springs: [],
+    button: null,
+    door: null,
+    crumbles: [],
+    swamp: [],
+  };
 }
 
 function createEmptyLevel() {
@@ -23,15 +48,7 @@ function createEmptyLevel() {
       mapsCount,
     },
     T: 1,
-    maps: Array.from({ length: mapsCount }, () => ({
-      w: width,
-      h: height,
-      obstacles: [],
-      A: null,
-      B: null,
-      rotation: 0,
-      teleport: { in: null, out: null },
-    })),
+    maps: Array.from({ length: mapsCount }, () => createEmptyMapSpec(width, height)),
   };
 }
 
@@ -43,6 +60,10 @@ export function createEditorState({ onChange, onStatus } = {}) {
   let activeTool = null;
   let recordMode = "build";
   let recordSteps = 0;
+
+  // Dynamic state for recording
+  let editorCollapsedCrumbles = runtimeLevel.maps.map(() => new Set());
+  let editorStuckInSwamp = runtimeLevel.maps.map(() => false);
 
   function notify() {
     if (typeof onChange === "function") {
@@ -78,6 +99,12 @@ export function createEditorState({ onChange, onStatus } = {}) {
     }
   }
 
+  function resetDynamicState() {
+    const count = levelSpec.maps.length;
+    editorCollapsedCrumbles = Array.from({ length: count }, () => new Set());
+    editorStuckInSwamp = Array.from({ length: count }, () => false);
+  }
+
   function updateRuntime() {
     runtimeLevel = buildRuntimeLevel(levelSpec, { allowMissingEndpoints: true });
     ensurePositions();
@@ -97,6 +124,7 @@ export function createEditorState({ onChange, onStatus } = {}) {
     recordSteps = 0;
     levelSpec.T = 1;
     positions = levelSpec.maps.map(() => ({ x: 0, y: 0 }));
+    resetDynamicState();
   }
 
   function onStructureChange() {
@@ -120,6 +148,15 @@ export function createEditorState({ onChange, onStatus } = {}) {
     );
   }
 
+  function toggleInArray(arr, x, y) {
+    const idx = arr.findIndex((p) => p[0] === x && p[1] === y);
+    if (idx === -1) {
+      arr.push([x, y]);
+    } else {
+      arr.splice(idx, 1);
+    }
+  }
+
   function setObstacle(mapIndex, x, y, mode) {
     const map = levelSpec.maps[mapIndex];
     const idx = map.obstacles.findIndex(
@@ -139,6 +176,85 @@ export function createEditorState({ onChange, onStatus } = {}) {
       map.obstacles.splice(idx, 1);
     }
     onStructureChange();
+  }
+
+  function setIce(mapIndex, x, y) {
+    const map = levelSpec.maps[mapIndex];
+    if (!map.ice) map.ice = [];
+    toggleInArray(map.ice, x, y);
+    onStructureChange();
+    return true;
+  }
+
+  function setHole(mapIndex, x, y) {
+    const map = levelSpec.maps[mapIndex];
+    if (!map.holes) map.holes = [];
+    toggleInArray(map.holes, x, y);
+    onStructureChange();
+    return true;
+  }
+
+  function setSpring(mapIndex, x, y) {
+    const map = levelSpec.maps[mapIndex];
+    if (!map.springs) map.springs = [];
+    toggleInArray(map.springs, x, y);
+    onStructureChange();
+    return true;
+  }
+
+  function setSwamp(mapIndex, x, y) {
+    const map = levelSpec.maps[mapIndex];
+    if (!map.swamp) map.swamp = [];
+    toggleInArray(map.swamp, x, y);
+    onStructureChange();
+    return true;
+  }
+
+  function setCrumble(mapIndex, x, y) {
+    const map = levelSpec.maps[mapIndex];
+    if (!map.crumbles) map.crumbles = [];
+    toggleInArray(map.crumbles, x, y);
+    onStructureChange();
+    return true;
+  }
+
+  function setArrow(mapIndex, x, y, dir) {
+    const map = levelSpec.maps[mapIndex];
+    if (!map.arrows) map.arrows = [];
+    const idx = map.arrows.findIndex((p) => p[0] === x && p[1] === y);
+    if (idx !== -1) {
+      if (map.arrows[idx][2] === dir) {
+        map.arrows.splice(idx, 1);
+      } else {
+        map.arrows[idx][2] = dir;
+      }
+    } else {
+      map.arrows.push([x, y, dir]);
+    }
+    onStructureChange();
+    return true;
+  }
+
+  function setButton(mapIndex, x, y) {
+    const map = levelSpec.maps[mapIndex];
+    if (map.button && map.button[0] === x && map.button[1] === y) {
+      map.button = null;
+    } else {
+      map.button = [x, y];
+    }
+    onStructureChange();
+    return true;
+  }
+
+  function setDoor(mapIndex, x, y) {
+    const map = levelSpec.maps[mapIndex];
+    if (map.door && map.door[0] === x && map.door[1] === y) {
+      map.door = null;
+    } else {
+      map.door = [x, y];
+    }
+    onStructureChange();
+    return true;
   }
 
   function setStartPoint(mapIndex, x, y) {
@@ -218,6 +334,7 @@ export function createEditorState({ onChange, onStatus } = {}) {
       x: map.A[0],
       y: map.A[1],
     }));
+    resetDynamicState();
   }
 
   function startRecording() {
@@ -269,12 +386,17 @@ export function createEditorState({ onChange, onStatus } = {}) {
     return true;
   }
 
+  function getEditorDoorOpen(i) {
+    const map = runtimeLevel.maps[i];
+    const pos = positions[i];
+    return !!(map.button && pos.x === map.button[0] && pos.y === map.button[1]);
+  }
+
   function applyPaintCell(cell) {
     if (recordMode === "recording" || !cell) {
       return false;
     }
     if (activeTool === "obstacle") {
-      const map = levelSpec.maps[cell.mapIndex];
       if (isProtectedCell(cell.mapIndex, cell.x, cell.y)) {
         setStatus("Cell is protected");
         return false;
@@ -291,6 +413,17 @@ export function createEditorState({ onChange, onStatus } = {}) {
     if (activeTool === "teleportOut") {
       return setTeleportPoint(cell.mapIndex, cell.x, cell.y, "out");
     }
+    if (activeTool === "ice") return setIce(cell.mapIndex, cell.x, cell.y);
+    if (activeTool === "hole") return setHole(cell.mapIndex, cell.x, cell.y);
+    if (activeTool === "spring") return setSpring(cell.mapIndex, cell.x, cell.y);
+    if (activeTool === "swamp") return setSwamp(cell.mapIndex, cell.x, cell.y);
+    if (activeTool === "crumble") return setCrumble(cell.mapIndex, cell.x, cell.y);
+    if (activeTool === "arrowU") return setArrow(cell.mapIndex, cell.x, cell.y, "U");
+    if (activeTool === "arrowD") return setArrow(cell.mapIndex, cell.x, cell.y, "D");
+    if (activeTool === "arrowL") return setArrow(cell.mapIndex, cell.x, cell.y, "L");
+    if (activeTool === "arrowR") return setArrow(cell.mapIndex, cell.x, cell.y, "R");
+    if (activeTool === "button") return setButton(cell.mapIndex, cell.x, cell.y);
+    if (activeTool === "door") return setDoor(cell.mapIndex, cell.x, cell.y);
     return false;
   }
 
@@ -303,15 +436,48 @@ export function createEditorState({ onChange, onStatus } = {}) {
     const bumps = [];
     const teleports = [];
     const teleportEntries = [];
+    const wasStuck = [];
+
     for (let i = 0; i < runtimeLevel.maps.length; i += 1) {
       const map = runtimeLevel.maps[i];
-      const next = stepOne(prevPositions[i], action, map);
-      nextPositions.push({ x: next.x, y: next.y });
-      bumps.push(next.bump);
-      teleports.push(Boolean(next.teleported));
-      teleportEntries.push(next.teleportEntry);
+      if (editorStuckInSwamp[i]) {
+        wasStuck[i] = true;
+        nextPositions.push({ x: prevPositions[i].x, y: prevPositions[i].y });
+        bumps.push(false);
+        teleports.push(false);
+        teleportEntries.push(null);
+        editorStuckInSwamp[i] = false;
+      } else {
+        wasStuck[i] = false;
+        const next = stepOne(prevPositions[i], action, map, {
+          collapsedCrumbles: editorCollapsedCrumbles[i],
+          doorOpen: getEditorDoorOpen(i),
+        });
+        nextPositions.push({ x: next.x, y: next.y });
+        bumps.push(next.bump);
+        teleports.push(Boolean(next.teleported));
+        teleportEntries.push(next.teleportEntry);
+      }
     }
+
     positions = nextPositions;
+
+    // Update crumble/swamp state for players who moved
+    for (let i = 0; i < runtimeLevel.maps.length; i += 1) {
+      if (!wasStuck[i]) {
+        const map = runtimeLevel.maps[i];
+        const pos = positions[i];
+        const key = pos.y * map.w + pos.x;
+        if ((map.crumbles || []).some((p) => p[0] === pos.x && p[1] === pos.y) &&
+            !editorCollapsedCrumbles[i].has(key)) {
+          editorCollapsedCrumbles[i].add(key);
+        }
+        if ((map.swamp || []).some((p) => p[0] === pos.x && p[1] === pos.y)) {
+          editorStuckInSwamp[i] = true;
+        }
+      }
+    }
+
     recordSteps += 1;
     notify();
     return {
@@ -340,15 +506,7 @@ export function createEditorState({ onChange, onStatus } = {}) {
     if (nextCount > current) {
       const base = levelSpec.maps[0];
       for (let i = current; i < nextCount; i += 1) {
-        levelSpec.maps.push({
-          w: base.w,
-          h: base.h,
-          obstacles: [],
-          A: null,
-          B: null,
-          rotation: 0,
-          teleport: { in: null, out: null },
-        });
+        levelSpec.maps.push(createEmptyMapSpec(base.w, base.h));
       }
     } else {
       levelSpec.maps = levelSpec.maps.slice(0, nextCount);
@@ -367,19 +525,21 @@ export function createEditorState({ onChange, onStatus } = {}) {
         (point) => point[0] < nextWidth && point[1] < nextHeight
       );
       if (map.teleport) {
-        if (Array.isArray(map.teleport.in) && map.teleport.in[0] >= nextWidth) {
+        if (Array.isArray(map.teleport.in) && (map.teleport.in[0] >= nextWidth || map.teleport.in[1] >= nextHeight)) {
           map.teleport.in = null;
         }
-        if (Array.isArray(map.teleport.out) && map.teleport.out[0] >= nextWidth) {
-          map.teleport.out = null;
-        }
-        if (Array.isArray(map.teleport.in) && map.teleport.in[1] >= nextHeight) {
-          map.teleport.in = null;
-        }
-        if (Array.isArray(map.teleport.out) && map.teleport.out[1] >= nextHeight) {
+        if (Array.isArray(map.teleport.out) && (map.teleport.out[0] >= nextWidth || map.teleport.out[1] >= nextHeight)) {
           map.teleport.out = null;
         }
       }
+      if (map.ice) map.ice = map.ice.filter((p) => p[0] < nextWidth && p[1] < nextHeight);
+      if (map.arrows) map.arrows = map.arrows.filter((p) => p[0] < nextWidth && p[1] < nextHeight);
+      if (map.holes) map.holes = map.holes.filter((p) => p[0] < nextWidth && p[1] < nextHeight);
+      if (map.springs) map.springs = map.springs.filter((p) => p[0] < nextWidth && p[1] < nextHeight);
+      if (map.crumbles) map.crumbles = map.crumbles.filter((p) => p[0] < nextWidth && p[1] < nextHeight);
+      if (map.swamp) map.swamp = map.swamp.filter((p) => p[0] < nextWidth && p[1] < nextHeight);
+      if (map.button && (map.button[0] >= nextWidth || map.button[1] >= nextHeight)) map.button = null;
+      if (map.door && (map.door[0] >= nextWidth || map.door[1] >= nextHeight)) map.door = null;
     });
     onStructureChange();
   }
@@ -445,19 +605,22 @@ export function createEditorState({ onChange, onStatus } = {}) {
   function isProtectedCell(mapIndex, x, y) {
     const map = levelSpec.maps[mapIndex];
     const pos = positions[mapIndex];
-    if (pos.x === x && pos.y === y) {
-      return true;
-    }
-    if (Array.isArray(map.A) && map.A[0] === x && map.A[1] === y) {
-      return true;
-    }
-    if (Array.isArray(map.B) && map.B[0] === x && map.B[1] === y) {
-      return true;
-    }
-    if (hasTeleportPoint(map, x, y)) {
-      return true;
-    }
+    if (pos.x === x && pos.y === y) return true;
+    if (Array.isArray(map.A) && map.A[0] === x && map.A[1] === y) return true;
+    if (Array.isArray(map.B) && map.B[0] === x && map.B[1] === y) return true;
+    if (hasTeleportPoint(map, x, y)) return true;
+    if ((map.holes || []).some((p) => p[0] === x && p[1] === y)) return true;
+    if (map.button && map.button[0] === x && map.button[1] === y) return true;
+    if (map.door && map.door[0] === x && map.door[1] === y) return true;
     return false;
+  }
+
+  function getEditorDynamicState() {
+    return {
+      collapsedCrumbles: editorCollapsedCrumbles,
+      stuckInSwamp: editorStuckInSwamp,
+      doorOpen: runtimeLevel.maps.map((_, i) => getEditorDoorOpen(i)),
+    };
   }
 
   function getSnapshot() {
@@ -513,10 +676,19 @@ export function createEditorState({ onChange, onStatus } = {}) {
     setStartPoint,
     setTeleportPoint,
     setObstacle,
+    setIce,
+    setHole,
+    setSpring,
+    setSwamp,
+    setCrumble,
+    setArrow,
+    setButton,
+    setDoor,
     startRecording,
     stopRecording,
     resetRecordingProgress,
     resetIdleState,
     step,
+    getEditorDynamicState,
   };
 }
