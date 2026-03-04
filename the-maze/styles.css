@@ -303,15 +303,15 @@ body {
 }
 
 .cell-swatch.spring {
-  background: #c0d898;
+  background: #8ed84a;
 }
 
 .cell-swatch.swamp {
-  background: #8aab78;
+  background: #4a7040;
 }
 
 .cell-swatch.crumble {
-  background: #c4a890;
+  background: #c49a3c;
 }
 
 .cell-swatch.arrow {
@@ -323,7 +323,7 @@ body {
 }
 
 .cell-swatch.door {
-  background: #b09070;
+  background: #7a5040;
 }
 
 .cell-label {
