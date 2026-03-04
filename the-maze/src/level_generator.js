@@ -368,38 +368,27 @@ function allAtGoals(positions, maps) {
   return true;
 }
 
-const BFS_MAX_VISITED = 500_000;
+const BFS_MAX_VISITED = 150_000;
 
 /**
- * BFS checking whether the level has a solution in EXACTLY T steps.
- * State includes depth so "be at goal early and wander back" paths are found.
- * Returns true if a T-step solution exists, false otherwise (or if BFS cap hit).
+ * BFS finding the minimum number of steps to solve the level for all maps simultaneously.
+ * Returns the step count, or null if no solution found within maxT (or BFS cap hit).
  */
-function hasSolution(runtimeLevel, T) {
+function findMinSolution(runtimeLevel, maxT) {
   const maps = runtimeLevel.maps;
   const startPositions = maps.map((m) => ({ x: m.A[0], y: m.A[1] }));
   const startCollapsed = maps.map(() => new Set());
   const startStuck = maps.map(() => false);
 
-  function encodeWithDepth(positions, collapsed, stuck, depth) {
-    let key = `${depth}|`;
-    for (let i = 0; i < positions.length; i += 1) {
-      key += `${positions[i].x},${positions[i].y}|`;
-      const sorted = [...collapsed[i]].sort((a, b) => a - b).join(",");
-      key += `[${sorted}]|${stuck[i] ? "1" : "0"}|`;
-    }
-    return key;
-  }
-
-  if (allAtGoals(startPositions, maps) && T === 0) return true;
+  if (allAtGoals(startPositions, maps)) return 0;
 
   const queue = [{ positions: startPositions, collapsed: startCollapsed, stuck: startStuck, depth: 0 }];
-  const visited = new Set([encodeWithDepth(startPositions, startCollapsed, startStuck, 0)]);
+  const visited = new Set([encodeState(startPositions, startCollapsed, startStuck)]);
 
   for (let head = 0; head < queue.length; head += 1) {
-    if (visited.size > BFS_MAX_VISITED) return false;
+    if (visited.size > BFS_MAX_VISITED) return null;
     const { positions, collapsed, stuck, depth } = queue[head];
-    if (depth >= T) continue;
+    if (depth >= maxT) continue;
 
     for (const action of ACTIONS) {
       const nextPositions = [];
@@ -427,7 +416,6 @@ function hasSolution(runtimeLevel, T) {
 
       if (fell) continue;
 
-      // Update crumble/swamp state
       for (let i = 0; i < maps.length; i += 1) {
         if (stuck[i]) continue;
         const map = maps[i];
@@ -442,17 +430,16 @@ function hasSolution(runtimeLevel, T) {
       }
 
       const nextDepth = depth + 1;
-      if (allAtGoals(nextPositions, maps) && nextDepth === T) return true;
-      if (nextDepth >= T) continue;
+      if (allAtGoals(nextPositions, maps)) return nextDepth;
 
-      const key = encodeWithDepth(nextPositions, nextCollapsed, nextStuck, nextDepth);
+      const key = encodeState(nextPositions, nextCollapsed, nextStuck);
       if (visited.has(key)) continue;
       visited.add(key);
       queue.push({ positions: nextPositions, collapsed: nextCollapsed, stuck: nextStuck, depth: nextDepth });
     }
   }
 
-  return false;
+  return null;
 }
 
 // ─── Level spec builder ─────────────────────────────────────────────────────
@@ -520,7 +507,7 @@ export function generateLevel(levelNumber, seed) {
 
   const w = randInt(rng, tier.wRange[0], tier.wRange[1]);
   const h = randInt(rng, tier.hRange[0], tier.hRange[1]);
-  const T = randInt(rng, tier.TRange[0], tier.TRange[1]);
+  const Twalk = randInt(rng, tier.TRange[0], tier.TRange[1]);
   const mapsCount = modifier.mapsCount;
   const availableCells = tier.cells;
 
@@ -533,7 +520,7 @@ export function generateLevel(levelNumber, seed) {
 
     for (let mi = 0; mi < mapsCount; mi += 1) {
       const rotation = getRotation(modifier.rotMode, rng);
-      const mapSpec = buildSingleMap(w, h, T, availableCells, rotation, rng);
+      const mapSpec = buildSingleMap(w, h, Twalk, availableCells, rotation, rng);
       if (!mapSpec) {
         failed = true;
         break;
@@ -553,7 +540,7 @@ export function generateLevel(levelNumber, seed) {
         winOnExactT: true,
         mapsCount,
       },
-      T,
+      T: Twalk,
       maps,
       meta: {
         generator: "runtime-level-generator",
@@ -570,8 +557,10 @@ export function generateLevel(levelNumber, seed) {
     }
 
     const runtimeLevel = buildRuntimeLevel(levelSpec);
-    if (!hasSolution(runtimeLevel, T)) continue;
+    const minT = findMinSolution(runtimeLevel, tier.TRange[1]);
+    if (minT === null || minT < 2) continue;
 
+    levelSpec.T = minT;
     return levelSpec;
   }
 
