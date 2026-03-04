@@ -1,72 +1,53 @@
 {
   "format": "dualgrid-level@2",
-  "id": "level_0010",
-  "title": "Level 10",
+  "id": "level_0011",
+  "title": "Level 11",
   "rules": {
     "moveSet": "UDLR",
     "collision": "bump",
     "winOnExactT": true,
-    "mapsCount": 2
+    "mapsCount": 1
   },
-  "T": 8,
+  "T": 1,
   "maps": [
     {
-      "w": 4,
-      "h": 4,
-      "obstacles": [
-        [
-          2,
-          1
-        ],
-        [
-          1,
-          2
-        ],
-        [
-          1,
-          1
-        ]
-      ],
+      "w": 5,
+      "h": 5,
+      "obstacles": [],
       "A": [
-        3,
-        0
+        0,
+        2
       ],
       "B": [
-        0,
-        1
-      ],
-      "rotation": 180,
-      "teleport": {
-        "in": null,
-        "out": null
-      }
-    },
-    {
-      "w": 4,
-      "h": 4,
-      "obstacles": [
-        [
-          1,
-          2
-        ],
-        [
-          1,
-          1
-        ]
-      ],
-      "A": [
-        2,
-        1
-      ],
-      "B": [
-        0,
-        1
+        4,
+        2
       ],
       "rotation": 0,
       "teleport": {
         "in": null,
         "out": null
-      }
+      },
+      "ice": [
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      "arrows": [],
+      "holes": [],
+      "springs": [],
+      "button": null,
+      "door": null,
+      "crumbles": [],
+      "swamp": []
     }
   ]
 }

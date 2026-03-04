@@ -6,27 +6,179 @@
     "moveSet": "UDLR",
     "collision": "bump",
     "winOnExactT": true,
-    "mapsCount": 1
+    "mapsCount": 4
   },
-  "T": 6,
+  "T": 14,
   "maps": [
     {
-      "w": 4,
-      "h": 4,
-      "obstacles": [],
+      "w": 5,
+      "h": 5,
+      "obstacles": [
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "A": [
+        0,
+        0
+      ],
+      "B": [
+        3,
+        4
+      ],
+      "rotation": 180,
+      "teleport": {
+        "in": [
+          0,
+          1
+        ],
+        "out": [
+          4,
+          4
+        ]
+      },
+      "ice": [],
+      "arrows": [],
+      "holes": [],
+      "springs": [],
+      "button": null,
+      "door": null,
+      "crumbles": [],
+      "swamp": []
+    },
+    {
+      "w": 5,
+      "h": 5,
+      "obstacles": [
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          0
+        ]
+      ],
       "A": [
         1,
         2
       ],
       "B": [
-        2,
-        3
+        0,
+        4
       ],
       "rotation": 90,
       "teleport": {
         "in": null,
         "out": null
-      }
+      },
+      "ice": [],
+      "arrows": [],
+      "holes": [],
+      "springs": [],
+      "button": null,
+      "door": null,
+      "crumbles": [],
+      "swamp": []
+    },
+    {
+      "w": 5,
+      "h": 5,
+      "obstacles": [
+        [
+          3,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ]
+      ],
+      "A": [
+        2,
+        2
+      ],
+      "B": [
+        4,
+        2
+      ],
+      "rotation": 0,
+      "teleport": {
+        "in": [
+          2,
+          3
+        ],
+        "out": [
+          4,
+          0
+        ]
+      },
+      "ice": [],
+      "arrows": [],
+      "holes": [],
+      "springs": [],
+      "button": null,
+      "door": null,
+      "crumbles": [],
+      "swamp": []
+    },
+    {
+      "w": 5,
+      "h": 5,
+      "obstacles": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          1
+        ]
+      ],
+      "A": [
+        2,
+        2
+      ],
+      "B": [
+        3,
+        4
+      ],
+      "rotation": 270,
+      "teleport": {
+        "in": [
+          1,
+          0
+        ],
+        "out": [
+          4,
+          4
+        ]
+      },
+      "ice": [],
+      "arrows": [],
+      "holes": [],
+      "springs": [],
+      "button": null,
+      "door": null,
+      "crumbles": [],
+      "swamp": []
     }
   ]
 }
