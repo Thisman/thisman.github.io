@@ -2,6 +2,7 @@ import { createGameSession } from "./game/session.js";
 import { createRenderer } from "./renderer_canvas.js";
 import { bindInput } from "./input.js";
 import { buildRuntimeLevel } from "./core/level.js";
+import { stepOne } from "./core/movement.js";
 import { normalizeRotation, rotateVector } from "./rotation.js";
 import { generateLevel } from "./level_generator.js";
 
@@ -543,3 +544,92 @@ init().catch((error) => {
 });
 
 window.startFromLevel = startFromLevel;
+
+window.solve = function () {
+  if (!game) {
+    console.warn("No active game");
+    return null;
+  }
+
+  const maps = game.level.maps;
+  const T = game.level.T;
+  const ACTIONS = ["U", "D", "L", "R"];
+
+  function encodeState(positions, collapsed, stuck) {
+    let k = "";
+    for (let i = 0; i < positions.length; i++) {
+      k += `${positions[i].x},${positions[i].y}|${[...collapsed[i]].sort((a, b) => a - b).join(",")}|${stuck[i] ? 1 : 0}|`;
+    }
+    return k;
+  }
+
+  function allAtGoals(positions) {
+    return maps.every((m, i) => positions[i].x === m.B[0] && positions[i].y === m.B[1]);
+  }
+
+  const startPos = maps.map((m) => ({ x: m.A[0], y: m.A[1] }));
+  const startCollapsed = maps.map(() => new Set());
+  const startStuck = maps.map(() => false);
+  const startKey = encodeState(startPos, startCollapsed, startStuck);
+
+  const queue = [{ positions: startPos, collapsed: startCollapsed, stuck: startStuck, depth: 0 }];
+  const prev = new Map([[startKey, null]]); // key → { parentKey, action }
+
+  for (let head = 0; head < queue.length; head++) {
+    const { positions, collapsed, stuck, depth } = queue[head];
+    if (depth >= T) continue;
+
+    for (const action of ACTIONS) {
+      const nextPos = [];
+      const nextCollapsed = collapsed.map((s) => new Set(s));
+      const nextStuck = [...stuck];
+      let fell = false;
+
+      for (let i = 0; i < maps.length; i++) {
+        if (stuck[i]) {
+          nextPos.push({ ...positions[i] });
+          nextStuck[i] = false;
+        } else {
+          const r = stepOne(positions[i], action, maps[i], {
+            collapsedCrumbles: collapsed[i],
+            doorOpen: false,
+          });
+          nextPos.push({ x: r.x, y: r.y });
+          if (r.fell) { fell = true; break; }
+        }
+      }
+      if (fell) continue;
+
+      for (let i = 0; i < maps.length; i++) {
+        if (stuck[i]) continue;
+        const map = maps[i], pos = nextPos[i], key = pos.y * map.w + pos.x;
+        if ((map.crumbles || []).some((c) => c[0] === pos.x && c[1] === pos.y)) nextCollapsed[i].add(key);
+        if ((map.swamp || []).some((s) => s[0] === pos.x && s[1] === pos.y)) nextStuck[i] = true;
+      }
+
+      const nextKey = encodeState(nextPos, nextCollapsed, nextStuck);
+      if (prev.has(nextKey)) continue;
+      const parentKey = encodeState(positions, collapsed, stuck);
+      prev.set(nextKey, { parentKey, action });
+
+      if (allAtGoals(nextPos)) {
+        // Reconstruct path
+        const path = [];
+        let cur = nextKey;
+        while (prev.get(cur) !== null) {
+          const { parentKey: pk, action: a } = prev.get(cur);
+          path.unshift(a);
+          cur = pk;
+        }
+        const solution = path.join("");
+        console.log(`Solution (${path.length} moves): ${solution}`);
+        return solution;
+      }
+
+      queue.push({ positions: nextPos, collapsed: nextCollapsed, stuck: nextStuck, depth: depth + 1 });
+    }
+  }
+
+  console.warn("No solution found within T moves");
+  return null;
+};
