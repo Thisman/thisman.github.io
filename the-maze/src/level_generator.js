@@ -10,6 +10,8 @@ const DIRS = {
 const OPPOSITE = { U: "D", D: "U", L: "R", R: "L" };
 
 const MAX_ATTEMPTS = 300;
+const MIN_PATH_CELLS = 3;
+const MIN_SOLUTION_STEPS = 2;
 
 // Tier 0 = tier 1 (levels 1-8), tier 6 = tier 7 (levels 49+, repeating)
 const TIERS = [
@@ -120,6 +122,10 @@ function isFree(wallsSet, w, h, x, y) {
   return inBounds(x, y, w, h) && !isWallAt(wallsSet, w, x, y);
 }
 
+function manhattanDistance(a, b) {
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
 // ─── Walk with effects ──────────────────────────────────────────────────────
 
 /**
@@ -193,8 +199,9 @@ function walkWithEffects(start, wallsSet, w, h, T, availableCells, rng) {
         // Try each relevant cell type with its probability
         const roll = rng();
         let cumulative = 0;
+        let cellPlaced = false;
 
-        if (!workingMap.teleport && availableCells.includes("teleport")) {
+        if (!cellPlaced && !workingMap.teleport && availableCells.has("teleport")) {
           cumulative += CELL_PROB.teleport;
           if (roll < cumulative && !(nx === start.x && ny === start.y)) {
             // Pick out-position: free, not on path, not start, not nx/ny
@@ -212,11 +219,12 @@ function walkWithEffects(start, wallsSet, w, h, T, availableCells, rng) {
             if (candidates.length > 0) {
               const out = choice(rng, candidates);
               workingMap.teleport = { in: [nx, ny], out: [out.x, out.y] };
+              cellPlaced = true;
             }
           }
         }
 
-        if (!destOccupied && workingMap.springs.length === 0 && availableCells.includes("spring")) {
+        if (!cellPlaced && workingMap.springs.length === 0 && availableCells.has("spring")) {
           cumulative += CELL_PROB.spring;
           if (roll < cumulative) {
             // Spring at nx,ny → player lands at nx+dir,ny+dir
@@ -224,28 +232,32 @@ function walkWithEffects(start, wallsSet, w, h, T, availableCells, rng) {
             const s2y = ny + dir.y;
             if (isFree(wallsSet, w, h, s2x, s2y) && !collapsedCrumbles.has(s2y * w + s2x)) {
               workingMap.springs.push([nx, ny]);
+              cellPlaced = true;
             }
           }
         }
 
-        if (!destOccupied && workingMap.swamp.length === 0 && availableCells.includes("swamp")) {
+        if (!cellPlaced && workingMap.swamp.length === 0 && availableCells.has("swamp")) {
           cumulative += CELL_PROB.swamp;
           if (roll < cumulative) {
             workingMap.swamp.push([nx, ny]);
+            cellPlaced = true;
           }
         }
 
-        if (!destOccupied && workingMap.crumbles.length < 2 && availableCells.includes("crumble")) {
+        if (!cellPlaced && workingMap.crumbles.length < 2 && availableCells.has("crumble")) {
           cumulative += CELL_PROB.crumble;
           if (roll < cumulative) {
             workingMap.crumbles.push([nx, ny]);
+            cellPlaced = true;
           }
         }
 
-        if (!destOccupied && availableCells.includes("arrow")) {
+        if (!cellPlaced && availableCells.has("arrow")) {
           cumulative += CELL_PROB.arrow;
           if (roll < cumulative) {
             workingMap.arrows.push([nx, ny, action]);
+            cellPlaced = true;
           }
         }
       }
@@ -295,6 +307,7 @@ function buildOccupiedSet(pathKeys, workingMap, wallsSet) {
   for (const [x, y] of workingMap.swamp)   occupied.add(y * w + x);
   for (const [x, y] of workingMap.crumbles) occupied.add(y * w + x);
   for (const [x, y] of workingMap.arrows)  occupied.add(y * w + x);
+  for (const [x, y] of workingMap.holes)   occupied.add(y * w + x);
   return occupied;
 }
 
@@ -302,19 +315,27 @@ function placeIceCells(wallsSet, w, h, pathKeys, workingMap, rng) {
   const count = randInt(rng, 1, 3);
   const ice = [];
   const occupied = buildOccupiedSet(pathKeys, workingMap, wallsSet);
+  const candidates = [];
+
   for (let cy = 0; cy < h; cy += 1) {
     for (let cx = 0; cx < w; cx += 1) {
       const key = cy * w + cx;
-      if (!occupied.has(key)) {
-        ice.push([cx, cy]);
-        if (ice.length >= count) break;
-      }
+      if (!occupied.has(key)) candidates.push(key);
     }
-    if (ice.length >= count) break;
   }
+
+  for (let i = candidates.length - 1; i > 0; i -= 1) {
+    const j = randInt(rng, 0, i);
+    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+  }
+
+  for (let i = 0; i < Math.min(count, candidates.length); i += 1) {
+    const key = candidates[i];
+    ice.push([key % w, Math.floor(key / w)]);
+  }
+
   return ice;
 }
-
 function placeHoleCells(wallsSet, w, h, pathKeys, workingMap, rng) {
   const count = randInt(rng, 1, 2);
   const holes = [];
@@ -480,11 +501,12 @@ function buildSingleMap(w, h, T, availableCells, rotation, rng) {
     if (!walkResult) continue;
 
     const { finalPos, pathKeys, workingMap } = walkResult;
+    if (manhattanDistance(start, finalPos) < MIN_PATH_CELLS) continue;
 
-    if (availableCells.includes("hole")) {
+    if (availableCells.has("hole")) {
       workingMap.holes = placeHoleCells(wallsSet, w, h, pathKeys, workingMap, rng);
     }
-    if (availableCells.includes("ice")) {
+    if (availableCells.has("ice")) {
       workingMap.ice = placeIceCells(wallsSet, w, h, pathKeys, workingMap, rng);
     }
 
@@ -509,7 +531,7 @@ export function generateLevel(levelNumber, seed) {
   const h = randInt(rng, tier.hRange[0], tier.hRange[1]);
   const Twalk = randInt(rng, tier.TRange[0], tier.TRange[1]);
   const mapsCount = modifier.mapsCount;
-  const availableCells = tier.cells;
+  const availableCells = new Set(tier.cells);
 
   const id = `level_${String(levelNumber).padStart(4, "0")}`;
   const title = `Level ${levelNumber}`;
@@ -558,7 +580,7 @@ export function generateLevel(levelNumber, seed) {
 
     const runtimeLevel = buildRuntimeLevel(levelSpec);
     const minT = findMinSolution(runtimeLevel, tier.TRange[1]);
-    if (minT === null || minT < 2) continue;
+    if (minT === null || minT < MIN_SOLUTION_STEPS) continue;
 
     levelSpec.T = minT;
     return levelSpec;
@@ -566,3 +588,18 @@ export function generateLevel(levelNumber, seed) {
 
   throw new Error(`Failed to generate level ${levelNumber} after ${MAX_ATTEMPTS} outer attempts`);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

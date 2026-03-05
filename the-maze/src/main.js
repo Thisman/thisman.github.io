@@ -339,8 +339,7 @@ function getCellFromPoint(x, y, level) {
       const centerY = viewport.y + viewport.height / 2;
       const localX = x - centerX;
       const localY = y - centerY;
-      const inverseRotation = (360 - rotation) % 360;
-      const unrotated = rotateVector(localX, localY, inverseRotation);
+      const unrotated = rotateVector(localX, localY, rotation);
       const mapWidth = map.w * viewport.tileSize;
       const mapHeight = map.h * viewport.tileSize;
       const mapX = unrotated.x + mapWidth / 2;
@@ -444,7 +443,7 @@ function updateHoverState(event) {
   const y = event.clientY - rect.top;
   const layout = renderer.getLayout();
   if (!layout) {
-    hoverType = null;
+    hoverCell = null;
     hideTooltip();
     return;
   }
@@ -633,3 +632,7 @@ window.solve = function () {
   console.warn("No solution found within T moves");
   return null;
 };
+
+
+
+

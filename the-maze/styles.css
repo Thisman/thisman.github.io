@@ -63,7 +63,7 @@ body {
 
 .help-chip {
   position: absolute;
-  top: 90px;
+  top: 102px;
   left: 50%;
   transform: translateX(-50%);
   appearance: none;
@@ -394,4 +394,5 @@ kbd {
   white-space: nowrap;
   box-shadow: 0 6px 16px rgba(120, 110, 100, 0.2);
 }
+
 
