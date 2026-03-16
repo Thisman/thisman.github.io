@@ -1,70 +1,49 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Drop It Not</title>
   <meta
     name="description"
-    content="Drop It Not - mobile reaction game with rebounds and timed taps."
-  >
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    content="Drop It Not — mobile-first игра на canvas с переключением шара между двумя стенами."
+  />
+  <meta name="theme-color" content="#ffe066" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap"
     rel="stylesheet"
-  >
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  >
-  <link rel="stylesheet" href="./index.css">
+  />
+  <link rel="stylesheet" href="./index.css" />
 </head>
 <body>
-  <main class="app-shell">
-    <section class="phone-stage" aria-label="Игровое поле Drop It Not">
-      <canvas id="game" aria-label="Игровое поле"></canvas>
-
-      <div class="hud">
-        <div class="score-readout" id="score-display">Очки - 0/0 · Комбо - 0/10</div>
-      </div>
-
-      <div class="score-popups" id="score-popups" aria-hidden="true"></div>
-
-      <div class="menu-overlay" id="menu-overlay">
-        <div class="menu-card">
-          <h1 class="menu-title">Drop It Not</h1>
-          <div class="menu-actions">
-            <button class="menu-action menu-action-primary" id="start-btn" type="button">Начало</button>
-            <button class="menu-action menu-action-secondary" id="rules-btn" type="button">Правила</button>
-          </div>
+  <main class="app-shell" data-screen="menu">
+    <section class="screen screen--menu" aria-labelledby="menu-title">
+      <div class="menu-backdrop" aria-hidden="true"></div>
+      <div class="menu-panel">
+        <h1 class="menu-title" id="menu-title">Drop It Not</h1>
+        <p class="menu-copy">Переключай шар между стенами и держись как можно дольше.</p>
+        <div class="stats" aria-label="Игровая статистика">
+          <article class="stat-card">
+            <span class="stat-label">Лучшее время</span>
+            <strong class="stat-value" id="recordValue">0.0с</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Комбо</span>
+            <strong class="stat-value" id="comboValue">—</strong>
+          </article>
         </div>
+        <button class="start-button" id="startButton" type="button">Начать</button>
       </div>
+    </section>
 
-      <div class="rules-modal hidden" id="rules-modal" role="dialog" aria-modal="true" aria-labelledby="rules-title">
-        <div class="rules-card" id="rules-sheet">
-          <div class="rules-handle" aria-hidden="true"></div>
-          <h2 id="rules-title">Правила</h2>
-          <ul class="rules-list">
-            <li>Нажми на шар в центре, чтобы запустить движение.</li>
-            <li>На траектории появится цель.</li>
-            <li>Когда шар войдет в цель, нажми по шару или по самой цели.</li>
-            <li>Ранний, поздний или случайный тап завершает попытку.</li>
-            <li>Чем точнее тап, тем больше очков за попадание.</li>
-          </ul>
-        </div>
+    <section class="screen screen--game" aria-label="Игровой экран">
+      <div class="game-hud" aria-hidden="true">
+        <div class="score-readout" id="comboHud">Комбо —</div>
+        <div class="score-readout" id="scoreHud">Время 0.0с</div>
       </div>
-
-      <div class="tutorial-overlay hidden" id="tutorial-overlay" aria-hidden="true">
-        <div class="tutorial-hand" id="tutorial-hand">
-          <i class="fa-solid fa-hand-pointer tutorial-hand-icon"></i>
-        </div>
-        <div class="tutorial-label" id="tutorial-label">Нажми</div>
-      </div>
-
-      <div class="toast hidden" id="toast"></div>
+      <canvas id="gameCanvas" aria-label="Игровое поле"></canvas>
     </section>
   </main>
 
