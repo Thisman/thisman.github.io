@@ -1,25 +1,141 @@
-# Vibe & Code
+<div align="center">
 
-Набор небольших веб‑приложений на чистом HTML, CSS и JavaScript.
+# ✦ Vibe & Code
 
-## Планирование
+**Небольшие веб‑приложения, сделанные с душой.**
+Чистый HTML, CSS и JavaScript — без фреймворков, без сборщиков, без лишнего.
 
-- [how-many-sp](./how-many-sp) — калькулятор сторипоинтов по трём критериям: неопределённость, сложность, объём.
-- [triangular-estimation](./triangular-estimation) — оценка задачи по методу PERT: три точки, итог по формуле `(O + 4R + P) / 6`.
+[![Live](https://img.shields.io/badge/🌐_Live-thisman.github.io-5a7896?style=for-the-badge)](https://thisman.github.io)
+[![Stars](https://img.shields.io/github/stars/Thisman/thisman.github.io?style=for-the-badge&color=5a8a70)](https://github.com/Thisman/thisman.github.io/stargazers)
+[![Forks](https://img.shields.io/github/forks/Thisman/thisman.github.io?style=for-the-badge&color=b88040)](https://github.com/Thisman/thisman.github.io/network)
 
-## Музыка
+</div>
 
-- [gamma-trainer](./gamma-trainer) — тренажёр ладов и гамм: ступени, трезвучия, родственные тональности.
+---
 
-## Игры
+## 📋 Планирование
 
-- [babylon-tower](./babylon-tower) — 3D‑головоломка на пятиугольной призме: скользи фишки, вращай слои (Three.js).
-- [tic-tac-toe](./tic-tac-toe) — Swap‑Tac‑Toe: крестики‑нолики с механикой swap и режимом против компьютера.
-- [the-maze](./the-maze) — Dual Grid Puzzle: управляй двумя объектами одновременно и достигни цели за нужное число шагов.
+<table>
+<tr>
+<td width="50%" valign="top">
 
-## Стек
+### 🎯 Сколько сториков?
+**[→ Открыть](https://thisman.github.io/how-many-sp)**
 
-Vanilla HTML / CSS / JavaScript. Без сборщиков и фреймворков.
-Внешние зависимости только там, где без них не обойтись: Three.js в `babylon-tower`, Font Awesome в `the-maze`.
+Устал угадывать сторипоинты на планинге? Этот калькулятор делает оценку воспроизводимой.
 
-Каждое приложение автономно и открывается напрямую через `index.html`. Общие стили — `styles/common.css`.
+Выбери три параметра — **неопределённость**, **сложность**, **объём** — и получи ответ по матрице: от 1 до 21.
+
+`Uncertainty × Complexity × Effort → SP`
+
+</td>
+<td width="50%" valign="top">
+
+### 📐 Треугольная оценка
+**[→ Открыть](https://thisman.github.io/triangular-estimation)**
+
+Классический метод PERT в одном экране.
+
+Введи оптимистичную, реалистичную и пессимистичную оценки — получи взвешенный результат по формуле:
+
+`⌈(O + 4R + P) / 6⌉`
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🎵 Музыка
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🎸 Тренажёр гамм
+**[→ Открыть](https://thisman.github.io/gamma-trainer)**
+
+Для тех, кто хочет понять музыкальную теорию, а не просто заучить паттерны.
+
+Выбери лад — увидишь ступени, трезвучия и родственные тональности. Удобно для гитаристов и всех, кто разбирается в гармонии.
+
+`Лады · Гаммы · Трезвучия · Тональности`
+
+</td>
+<td width="50%" valign="top">
+</td>
+</tr>
+</table>
+
+---
+
+## 🎮 Игры
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🏛️ Вавилонская башня
+**[→ Открыть](https://thisman.github.io/babylon-tower)**
+
+3D‑головоломка прямо в браузере. Пятиугольная призма, фишки, слои — верти, скользи, решай.
+
+Сделано на Three.js, но запускается без установки чего‑либо.
+
+`Three.js · 3D · Puzzle`
+
+</td>
+<td width="50%" valign="top">
+
+### ❌ Swap‑Tac‑Toe
+**[→ Открыть](https://thisman.github.io/tic-tac-toe)**
+
+Крестики‑нолики, но с твистом: когда поле заполнено — можно **свапнуть** любую свою фишку.
+
+Режим против компьютера с ИИ-ботом. Простые правила, неочевидная глубина.
+
+`2-player · vs AI · Swap mechanic`
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 🌀 Dual Grid Puzzle
+**[→ Открыть](https://thisman.github.io/the-maze)**
+
+Управляй **двумя объектами одновременно** — одним движением. Доведи оба до цели.
+
+Уровни генерируются, есть редактор, тесты, CI. Самый технически насыщенный проект коллекции.
+
+`ES6 Modules · Level editor · Tests`
+
+</td>
+<td width="50%" valign="top">
+</td>
+</tr>
+</table>
+
+---
+
+## 🛠️ Стек
+
+```
+HTML · CSS · Vanilla JavaScript
+```
+
+Никаких фреймворков. Никаких сборщиков. Каждое приложение — автономный `index.html`.
+
+Внешние зависимости только там, где без них не обойтись:
+- **Three.js** — в `babylon-tower` для 3D‑рендеринга
+- **Font Awesome** — в `the-maze` для иконок
+
+Общая дизайн‑система живёт в `styles/common.css` — тёплая, матовая палитра с [`--bg: #f6f2ea`](./styles/common.css).
+
+---
+
+<div align="center">
+
+Сделано с удовольствием · [thisman.github.io](https://thisman.github.io)
+
+</div>
