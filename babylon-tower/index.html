@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pentagonal Prism Slider</title>
+    <title>Babylon Tower</title>
+    <meta name="theme-color" content="#f5f5f5" />
+    <script src="/shared/theme.js"></script>
+    <link rel="stylesheet" href="/shared/common.css" />
     <style>
         * {
             margin: 0;
@@ -13,8 +16,10 @@
 
         body {
             overflow: hidden;
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #f6f2ea;
+            padding-bottom: 0;
+            background: var(--page-bg);
+            color: var(--text-primary);
+            font-family: var(--font-primary);
         }
 
         #game-canvas {
@@ -23,35 +28,91 @@
             height: 100vh;
         }
 
+        .topbar {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 110;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-width: calc(100vw - 36px);
+        }
+
+        #last-move,
+        #instructions,
+        #info {
+            border: 1px solid var(--border);
+            background: var(--floating-surface);
+        }
+
+        #last-move {
+            position: fixed;
+            top: 72px;
+            left: 18px;
+            z-index: 100;
+            min-height: 40px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: var(--caption);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        #instructions {
+            position: fixed;
+            top: 72px;
+            right: 18px;
+            z-index: 100;
+            max-width: 280px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            color: var(--text-secondary);
+            font-size: var(--body-sm);
+            line-height: 1.65;
+        }
+
+        #instructions strong {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-display);
+            font-family: var(--font-mono);
+            font-size: var(--caption);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
         #hud {
             position: fixed;
-            bottom: 20px;
+            bottom: 18px;
             left: 50%;
             transform: translateX(-50%);
+            z-index: 100;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            z-index: 100;
+            width: min(100vw - 36px, 520px);
         }
 
         #info {
-            background: rgba(255, 250, 242, 0.9);
-            color: #4b4a47;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(190, 180, 170, 0.6);
-            box-shadow: 0 4px 16px rgba(120, 110, 100, 0.14);
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 18px;
+            border-radius: 999px;
+            color: var(--text-display);
+            font-family: var(--font-mono);
+            font-size: var(--caption);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-align: center;
         }
 
         #info.solved {
-            background: rgba(90, 138, 112, 0.88);
-            border-color: rgba(90, 138, 112, 0.5);
-            color: #fff;
+            border-color: var(--success);
+            color: var(--success);
         }
 
         .button-row {
@@ -61,121 +122,77 @@
             gap: 8px;
         }
 
-        .btn {
-            background: #f1e7db;
-            color: #4b4a47;
-            border: 1px solid #cfc3b6;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn:hover {
-            background: #e4dcd0;
-            border-color: #bbaea2;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(120, 110, 100, 0.18);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
         .btn.action-btn {
-            background: #ede3d8;
+            background: transparent;
+            color: var(--text-primary);
+            border-color: var(--border-visible);
         }
 
         .btn.action-btn:hover {
-            background: rgba(168, 88, 88, 0.88);
-            border-color: rgba(168, 88, 88, 0.5);
-            color: #fff;
+            background: var(--surface-raised);
+            border-color: var(--text-display);
         }
 
         .btn.scramble-btn:hover {
-            background: rgba(184, 128, 64, 0.88);
-            border-color: rgba(184, 128, 64, 0.5);
-            color: #fff;
+            border-color: var(--warning);
+            color: var(--warning);
         }
 
         .btn.reset-btn:hover {
-            background: rgba(90, 138, 112, 0.88);
-            border-color: rgba(90, 138, 112, 0.5);
-            color: #fff;
+            border-color: var(--success);
+            color: var(--success);
         }
 
-        #last-move {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(255, 250, 242, 0.88);
-            color: #9a9088;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-family: 'Courier New', monospace;
-            border: 1px solid rgba(190, 180, 170, 0.5);
-            backdrop-filter: blur(8px);
-        }
+        @media (max-width: 760px) {
+            #instructions {
+                top: 72px;
+                max-width: 220px;
+                font-size: 0.75rem;
+            }
 
-        #instructions {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 250, 242, 0.88);
-            color: #6a6259;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            line-height: 1.6;
-            border: 1px solid rgba(190, 180, 170, 0.5);
-            backdrop-filter: blur(8px);
-            max-width: 240px;
-            box-shadow: 0 4px 16px rgba(120, 110, 100, 0.14);
-        }
-
-        #instructions strong {
-            color: #4b4a47;
+            #last-move {
+                top: 128px;
+            }
         }
     </style>
-    <!-- Yandex.Metrika counter -->
+
     <script type="text/javascript">
         (function(m,e,t,r,i,k,a){
             m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
             m[i].l=1*new Date();
             for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a);
         })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107098559', 'ym');
 
         ym(107098559, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/107098559" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
 </head>
 <body>
     <canvas id="game-canvas"></canvas>
-    
-    <div id="last-move">Last: -</div>
-    
-    <div id="instructions">
-        <strong>Controls:</strong><br>
-        🖱️ Drag to rotate view<br>
-        🔍 Scroll to zoom<br>
-        👆 Click chip → click target to slide<br>
-        🔵 Top buttons: rotate CW<br>
-        🔴 Bottom buttons: rotate CCW<br>
-        ⎋ Esc to deselect
+
+    <div class="topbar">
+        <a class="nav-chip" href="/index.html">Back</a>
+        <a class="nav-chip" href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer">Repository</a>
     </div>
-    
+
+    <div id="last-move">Last move —</div>
+
+    <div id="instructions">
+        <strong>Controls</strong>
+        Drag to rotate the view.<br>
+        Scroll to zoom.<br>
+        Click a chip, then a target cell, to slide.<br>
+        Arrow buttons around the prism rotate layers.<br>
+        Press <kbd>Esc</kbd> to clear selection.
+    </div>
+
     <div id="hud">
-        <div id="info">Moves: 0 | Not Solved</div>
+        <div id="info">Moves: 0 / Not solved</div>
         <div class="button-row">
-            <button class="btn action-btn reset-btn" id="reset-btn">Reset</button>
-            <button class="btn action-btn scramble-btn" id="scramble-btn">Scramble</button>
-            <button class="btn action-btn" id="undo-btn">Undo</button>
+            <button class="btn action-btn reset-btn" id="reset-btn" type="button">Reset</button>
+            <button class="btn action-btn scramble-btn" id="scramble-btn" type="button">Scramble</button>
+            <button class="btn action-btn" id="undo-btn" type="button">Undo</button>
         </div>
     </div>
 

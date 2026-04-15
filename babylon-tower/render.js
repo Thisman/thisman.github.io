@@ -27,16 +27,19 @@ const PRISM_HEIGHT = CELL_STEP * LAYERS;
 
 // Color palette
 const COLORS = {
-    [C1]: 0xe74c3c,  // Red
-    [C2]: 0x3498db,  // Blue
-    [C3]: 0x2ecc71,  // Green
-    [C4]: 0xf39c12,  // Orange
-    slot: 0x34495e,  // Dark slot background
-    slotBorder: 0x2c3e50,
-    facePanel: 0x1e2a36,  // Face background
-    cap: 0x151c24,  // Top/bottom cap color
-    background: 0x1a1a2e,
-    highlight: 0xffffff   // White highlight for valid moves
+    [C1]: 0xd71921,
+    [C2]: 0x000000,
+    [C3]: 0x4a9e5c,
+    [C4]: 0xd4a843,
+    slot: 0xe4e4e4,
+    slotBorder: 0xc8c8c8,
+    facePanel: 0xf7f7f7,
+    cap: 0xebebeb,
+    background: 0xf5f5f5,
+    highlight: 0xd71921,
+    uiUp: 0x000000,
+    uiDown: 0xd71921,
+    uiArrowText: '#f5f5f5'
 };
 
 // Module state
@@ -48,6 +51,10 @@ let facePanels = [];    // Background panels for each face
 let highlightMeshes = []; // Meshes for highlighting valid moves
 let prismGroup;         // Main group for the entire prism (for horizontal orientation)
 let controlButtons = []; // 3D control buttons
+let slotMaterial = null;
+let borderMaterial = null;
+let panelMaterial = null;
+let capMaterial = null;
 
 // Selection state
 let selectedChip = null;
@@ -60,6 +67,67 @@ let selectionAnimationId = null;  // For selection hover animation
 
 // Dirty flag for optimized rendering - prevents unnecessary renders
 let needsRender = true;
+
+function readCssColor(varName, fallback) {
+    const value = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    return value || fallback;
+}
+
+function readThemeColors() {
+    COLORS[C1] = new THREE.Color(readCssColor('--tower-chip-1', '#d71921')).getHex();
+    COLORS[C2] = new THREE.Color(readCssColor('--tower-chip-2', '#000000')).getHex();
+    COLORS[C3] = new THREE.Color(readCssColor('--tower-chip-3', '#4a9e5c')).getHex();
+    COLORS[C4] = new THREE.Color(readCssColor('--tower-chip-4', '#d4a843')).getHex();
+    COLORS.slot = new THREE.Color(readCssColor('--tower-slot', '#e4e4e4')).getHex();
+    COLORS.slotBorder = new THREE.Color(readCssColor('--tower-slot-border', '#c8c8c8')).getHex();
+    COLORS.facePanel = new THREE.Color(readCssColor('--tower-face-panel', '#f7f7f7')).getHex();
+    COLORS.cap = new THREE.Color(readCssColor('--tower-cap', '#ebebeb')).getHex();
+    COLORS.background = new THREE.Color(readCssColor('--tower-background', '#f5f5f5')).getHex();
+    COLORS.highlight = new THREE.Color(readCssColor('--tower-highlight', '#d71921')).getHex();
+    COLORS.uiUp = new THREE.Color(readCssColor('--tower-ui-up', '#000000')).getHex();
+    COLORS.uiDown = new THREE.Color(readCssColor('--tower-ui-down', '#d71921')).getHex();
+    COLORS.uiArrowText = readCssColor('--tower-ui-arrow-text', '#f5f5f5');
+}
+
+function applyThemeToScene() {
+    readThemeColors();
+
+    if (scene) {
+        scene.background = new THREE.Color(COLORS.background);
+    }
+    if (slotMaterial) {
+        slotMaterial.color.setHex(COLORS.slot);
+    }
+    if (borderMaterial) {
+        borderMaterial.color.setHex(COLORS.slotBorder);
+    }
+    if (panelMaterial) {
+        panelMaterial.color.setHex(COLORS.facePanel);
+    }
+    if (capMaterial) {
+        capMaterial.color.setHex(COLORS.cap);
+    }
+
+    for (const chip of chipGroup?.children || []) {
+        const chipColor = COLORS[chip.userData.chipValue];
+        if (chip.material && typeof chipColor === 'number') {
+            chip.material.color.setHex(chipColor);
+        }
+    }
+
+    for (const highlight of highlightMeshes) {
+        if (highlight.material) {
+            highlight.material.color.setHex(COLORS.highlight);
+        }
+    }
+
+    for (const button of controlButtons) {
+        const color = button.userData.direction === 1 ? COLORS.uiUp : COLORS.uiDown;
+        updateArrowButtonTexture(button, button.userData.direction, color);
+    }
+
+    markDirty();
+}
 
 /**
  * Mark scene as needing a render
@@ -81,6 +149,7 @@ export function consumeRenderFlag() {
  * Initialize the Three.js scene
  */
 export function initScene(canvas) {
+    readThemeColors();
     // Scene
     scene = new THREE.Scene();
     scene.background = new THREE.Color(COLORS.background);
@@ -104,16 +173,18 @@ export function initScene(canvas) {
     renderer.setSize(window.innerWidth, window.innerHeight);
     
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.55);
     directionalLight.position.set(5, 10, 7);
     scene.add(directionalLight);
     
-    const backLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    const backLight = new THREE.DirectionalLight(0xffffff, 0.22);
     backLight.position.set(-5, 5, -5);
     scene.add(backLight);
+
+    document.addEventListener('app-themechange', applyThemeToScene);
     
     // Handle resize
     window.addEventListener('resize', onWindowResize);
@@ -197,19 +268,19 @@ function createPentagonShape() {
 function createCaps() {
     const shape = createPentagonShape();
     const geometry = new THREE.ShapeGeometry(shape);
-    const material = new THREE.MeshBasicMaterial({
+    capMaterial = new THREE.MeshBasicMaterial({
         color: COLORS.cap,
         side: THREE.DoubleSide
     });
     
     // Bottom cap (left side when horizontal)
-    const bottomCap = new THREE.Mesh(geometry, material);
+    const bottomCap = new THREE.Mesh(geometry, capMaterial);
     bottomCap.rotation.x = Math.PI / 2;
     bottomCap.position.y = -PRISM_HEIGHT / 2 - CELL_GAP / 2;
     prismGroup.add(bottomCap);
     
     // Top cap (right side when horizontal)
-    const topCap = new THREE.Mesh(geometry.clone(), material);
+    const topCap = new THREE.Mesh(geometry.clone(), capMaterial);
     topCap.rotation.x = -Math.PI / 2;
     topCap.rotation.z = Math.PI;
     topCap.position.y = PRISM_HEIGHT / 2 + CELL_GAP / 2;
@@ -224,7 +295,7 @@ function createFacePanels() {
     const panelWidth = FACE_WIDTH;
     
     const panelGeometry = new THREE.PlaneGeometry(panelWidth, panelHeight);
-    const panelMaterial = new THREE.MeshBasicMaterial({
+    panelMaterial = new THREE.MeshBasicMaterial({
         color: COLORS.facePanel,
         side: THREE.FrontSide
     });
@@ -256,12 +327,12 @@ export function createSlots() {
     createFacePanels();
     
     const slotGeometry = new THREE.BoxGeometry(CELL_SIZE, CELL_SIZE, 0.02);
-    const slotMaterial = new THREE.MeshBasicMaterial({
+    slotMaterial = new THREE.MeshBasicMaterial({
         color: COLORS.slot
     });
     
     const borderGeometry = new THREE.BoxGeometry(CELL_SIZE + 0.04, CELL_SIZE + 0.04, 0.01);
-    const borderMaterial = new THREE.MeshBasicMaterial({
+    borderMaterial = new THREE.MeshBasicMaterial({
         color: COLORS.slotBorder
     });
     
@@ -788,7 +859,46 @@ export function getSceneObjects() {
 /**
  * Create a button with arrow texture
  */
-function createArrowButton(arrowDirection, color) {
+function getArrowContrastColors(backgroundHex) {
+    const r = (backgroundHex >> 16) & 255;
+    const g = (backgroundHex >> 8) & 255;
+    const b = backgroundHex & 255;
+    const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+    return luminance > 0.55
+        ? { fill: '#111111', outline: 'rgba(255, 255, 255, 0.55)' }
+        : { fill: '#f5f5f5', outline: 'rgba(0, 0, 0, 0.4)' };
+}
+
+function drawArrowIcon(ctx, arrowDirection, backgroundHex) {
+    const { fill, outline } = getArrowContrastColors(backgroundHex);
+
+    ctx.save();
+    ctx.translate(64, 64);
+    if (arrowDirection !== 1) {
+        ctx.rotate(Math.PI);
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(0, -30);
+    ctx.lineTo(22, -6);
+    ctx.lineTo(10, -6);
+    ctx.lineTo(10, 28);
+    ctx.lineTo(-10, 28);
+    ctx.lineTo(-10, -6);
+    ctx.lineTo(-22, -6);
+    ctx.closePath();
+
+    ctx.fillStyle = fill;
+    ctx.strokeStyle = outline;
+    ctx.lineWidth = 6;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+    ctx.fill();
+    ctx.restore();
+}
+
+function updateArrowButtonTexture(sprite, arrowDirection, color) {
     const canvas = document.createElement('canvas');
     canvas.width = 128;
     canvas.height = 128;
@@ -800,24 +910,33 @@ function createArrowButton(arrowDirection, color) {
     ctx.fillStyle = color;
     ctx.fill();
     
-    // Draw arrow
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 70px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(arrowDirection === 1 ? '↑' : '↓', 64, 64);
+    // Draw a centered vector arrow with contrast derived from the button color.
+    drawArrowIcon(ctx, arrowDirection, color);
     
     const texture = new THREE.CanvasTexture(canvas);
     texture.needsUpdate = true;
-    
-    const spriteMaterial = new THREE.SpriteMaterial({ 
+    texture.colorSpace = THREE.SRGBColorSpace;
+
+    if (sprite) {
+        if (sprite.material?.map) {
+            sprite.material.map.dispose();
+        }
+        sprite.material.map = texture;
+        sprite.material.needsUpdate = true;
+        return sprite;
+    }
+
+    const spriteMaterial = new THREE.SpriteMaterial({
         map: texture,
         transparent: true
     });
-    const sprite = new THREE.Sprite(spriteMaterial);
-    sprite.scale.set(0.8, 0.8, 1);
-    
-    return sprite;
+    const nextSprite = new THREE.Sprite(spriteMaterial);
+    nextSprite.scale.set(0.8, 0.8, 1);
+    return nextSprite;
+}
+
+function createArrowButton(arrowDirection, color) {
+    return updateArrowButtonTexture(null, arrowDirection, color);
 }
 
 /**
@@ -830,14 +949,14 @@ export function createRotationControls() {
         const xPos = -((layer - (LAYERS - 1) / 2) * CELL_STEP);
         
         // Top button (clockwise = up arrow)
-        const topButton = createArrowButton(1, '#4a90d9');
+        const topButton = createArrowButton(1, COLORS.uiUp);
         topButton.position.set(xPos, buttonOffset, 0);
         topButton.userData = { type: 'rotateButton', layer, direction: 1 };
         controlButtons.push(topButton);
         scene.add(topButton);
         
         // Bottom button (counter-clockwise = down arrow)
-        const bottomButton = createArrowButton(-1, '#d94a4a');
+        const bottomButton = createArrowButton(-1, COLORS.uiDown);
         bottomButton.position.set(xPos, -buttonOffset, 0);
         bottomButton.userData = { type: 'rotateButton', layer, direction: -1 };
         controlButtons.push(bottomButton);

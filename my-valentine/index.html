@@ -1,53 +1,66 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Будь моей валентинкой — Арканоид</title>
-  <link rel="stylesheet" href="./index.css" />
-  <!-- Yandex.Metrika counter -->
-  <script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-      m[i].l=1*new Date();
-      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107098559', 'ym');
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Valentine — арканоид</title>
+    <meta name="theme-color" content="#f5f5f5" />
+    <script src="/shared/theme.js"></script>
+    <link rel="stylesheet" href="/shared/common.css" />
+    <link rel="stylesheet" href="./index.css" />
 
-    ym(107098559, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
-  </script>
-  <noscript><div><img src="https://mc.yandex.ru/watch/107098559" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-  <!-- /Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a);
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107098559', 'ym');
+
+        ym(107098559, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/107098559" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 </head>
 <body>
-  <main class="page">
-    <p class="subtitle">
-      Управление: стрелки ← → или клавиши A / D, пробел — запуск шарика. Отбей шар и разбей все блоки.
-    </p>
+    <main class="main-container valentine-page">
+        <header class="page-header">
+            <div class="nav-row">
+                <a class="nav-chip" href="/index.html">Back</a>
+                <span class="nav-chip">Arcade</span>
+            </div>
+            <div class="page-kicker">Brick Heart</div>
+            <h1 class="page-title">MY VALENTINE</h1>
+            <p class="page-summary">
+                Лёгкий арканоид: разбей все блоки в форме сердца и открой финальную валентинку.
+                Управление — стрелки или <strong>A / D</strong>, запуск шара — <strong>пробел</strong>.
+            </p>
+        </header>
 
-    <section class="game-shell">
-      <div class="game-stage">
-        <div class="hud">
-          Жизни: <span id="livesCount">3</span>
-        </div>
-        <div id="valentineMessage" class="message" aria-hidden="true">
-          Будь моей валентинкой
-        </div>
-        <img
-          id="winImage"
-          class="win-image"
-          src="./heart.jpg"
-          alt="Валентинка"
-          aria-hidden="true"
-        />
-        <canvas id="gameCanvas" width="900" height="760" aria-label="Поле арканоида"></canvas>
-      </div>
-      <div class="controls">
-        <button id="restartBtn" type="button" class="btn">Перезапуск</button>
-      </div>
-    </section>
-  </main>
+        <section class="game-shell">
+            <div class="game-stage">
+                <div class="hud">Lives <span id="livesCount">3</span></div>
+                <div id="valentineMessage" class="message" aria-hidden="true">Будь моей валентинкой</div>
+                <img
+                    id="winImage"
+                    class="win-image"
+                    src="./heart.jpg"
+                    alt="Валентинка"
+                    aria-hidden="true"
+                />
+                <canvas id="gameCanvas" width="900" height="760" aria-label="Поле арканоида"></canvas>
+            </div>
 
-  <script src="./index.js"></script>
+            <div class="controls">
+                <button id="restartBtn" type="button" class="btn ghost">Перезапуск</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <a href="/index.html">Home</a>
+        <a href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer">Repository</a>
+    </footer>
+
+    <script src="./index.js"></script>
 </body>
 </html>

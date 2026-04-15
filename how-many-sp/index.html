@@ -1,168 +1,145 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-    <!-- Primary Meta Tags -->
-    <title>Калькулятор сторипоинтов - Оценка задач по трем критериям</title>
-    <meta name="title" content="Калькулятор сторипоинтов - Оценка задач по трем критериям">
-    <meta name="description" content="Онлайн калькулятор для расчета сторипоинтов задач. Оценка по трем критериям: неопределенность, сложность и объем. Бесплатный инструмент для Agile и Scrum команд.">
-    <meta name="keywords" content="сторипоинты, story points, agile, scrum, оценка задач, планирование, неопределенность, сложность, объем, uncertainty, complexity, effort, калькулятор">
-    <meta name="author" content="Thisman">
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="Russian">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://thisman.github.io/how-many-sp/">
-    <meta property="og:title" content="Калькулятор сторипоинтов - Оценка задач по трем критериям">
-    <meta property="og:description" content="Онлайн калькулятор для расчета сторипоинтов задач. Оценка по трем критериям: неопределенность, сложность и объем. Бесплатный инструмент для Agile и Scrum команд.">
-    <meta property="og:image" content="https://thisman.github.io/images/demo.png">
-    <meta property="og:site_name" content="Калькулятор сторипоинтов">
-    <meta property="og:locale" content="ru_RU">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://thisman.github.io/how-many-sp/">
-    <meta property="twitter:title" content="Калькулятор сторипоинтов - Оценка задач по трем критериям">
-    <meta property="twitter:description" content="Онлайн калькулятор для расчета сторипоинтов задач. Оценка по трем критериям: неопределенность, сложность и объем. Бесплатный инструмент для Agile и Scrum команд.">
-    <meta property="twitter:image" content="https://thisman.github.io/images/demo.png">
-    
-    <!-- Additional SEO Meta Tags -->
-    <meta name="theme-color" content="#009688">
-    <meta name="msapplication-TileColor" content="#009688">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Калькулятор сторипоинтов">
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://thisman.github.io/how-many-sp/">
-    
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Калькулятор сторипоинтов",
-        "description": "Онлайн калькулятор для расчета сторипоинтов задач по трем критериям",
-        "url": "https://thisman.github.io/how-many-sp/",
-        "applicationCategory": "ProductivityApplication",
-        "operatingSystem": "Web Browser",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-        },
-        "author": {
-            "@type": "Person",
-            "name": "Thisman"
-        },
-        "featureList": [
-            "Оценка по неопределенности",
-            "Оценка по сложности", 
-            "Оценка по объему",
-            "Автоматический расчет сторипоинтов",
-            "Визуальная обратная связь"
-        ]
-    }
-    </script>
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="/shared/common.css">
-    <link rel="stylesheet" href="./index.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Yandex.Metrika counter -->
+    <title>Сколько сториков? — оценка по трём критериям</title>
+    <meta name="title" content="Сколько сториков? — оценка по трём критериям" />
+    <meta name="description" content="Story points по трём осям: неопределённость, сложность и объём работы." />
+    <meta name="keywords" content="story points, agile, scrum, оценка задач, planning poker" />
+    <meta name="author" content="Thisman" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Russian" />
+    <meta name="theme-color" content="#f5f5f5" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thisman.github.io/how-many-sp/" />
+    <meta property="og:title" content="Сколько сториков? — оценка по трём критериям" />
+    <meta property="og:description" content="Быстрый калькулятор story points по неопределённости, сложности и объёму работы." />
+    <meta property="og:image" content="https://thisman.github.io/images/demo.png" />
+    <meta property="og:locale" content="ru_RU" />
+
+    <link rel="canonical" href="https://thisman.github.io/how-many-sp/" />
+    <script src="/shared/theme.js"></script>
+    <link rel="stylesheet" href="/shared/common.css" />
+    <link rel="stylesheet" href="./index.css" />
+
     <script type="text/javascript">
         (function(m,e,t,r,i,k,a){
             m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
             m[i].l=1*new Date();
             for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a);
         })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107098559', 'ym');
 
         ym(107098559, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/107098559" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
 </head>
 <body>
-    <div class="main-container">
-        <div class="description">
-            <h4>Сайт позволяет посчитать количество сторипоинтов для оценки задачи.</h4>
-            Оценка строится из трех шагов:
-            <ol>
-                <li>Оценить кол-во информации, которое известно о задаче и её решении <i>uncertainty</i></li>
-                <li>Оценить сложность решения задачи. Насколько легко или трудно реализовать задачу, когда о ней всё известно? <i>complexity</i></li>
-                <li>Оценить объем решения задачи. Сколько обязательных шагов подразумевает решение задачи? <i>effort</i></li>
-            </ol>
-            <br />
-            Чтобы получить оценку задачи, выбери ниже для каждого критерия значение.
-        </div>
-        <hr />
-        <div class="task-properties-container" id="task-properties">
-            <div class="radio-group">
-                <div class="radio-group-name">Какая неопределенность у задачи? <i>uncertainty</i></div>
-                <div class="radio-group-values">
-                    <label class="radio-group-value">
-                        <input type="radio" value="low" name="uncertainty" checked />
-                        <span>Низкая</span>
-                    </label>
-                    <label class="radio-group-value">
-                        <input type="radio" value="medium" name="uncertainty" />
-                        <span>Средняя</span>
-                    </label>
-                    <label class="radio-group-value">
-                        <input type="radio" value="high" name="uncertainty" />
-                        <span>Высокая</span>
-                    </label>
+    <main class="main-container estimator-page">
+        <header class="page-header">
+            <div class="nav-row">
+                <a class="nav-chip" href="/index.html">Back</a>
+                <span class="nav-chip">Story Points</span>
+            </div>
+            <div class="page-kicker">Three Signals</div>
+            <h1 class="page-title">HOW MANY<br />STORY POINTS?</h1>
+            <p class="page-summary">
+                Оцени задачу по трём независимым признакам. На выходе получится одно число,
+                которое удобно использовать как стартовую точку для планирования и декомпозиции.
+            </p>
+        </header>
+
+        <section class="hero-grid">
+            <article class="panel intro-panel">
+                <div class="panel-header">
+                    <div class="page-kicker">Как читать шкалу</div>
+                    <h2 class="section-title">One Choice Per Signal</h2>
+                </div>
+                <ol class="intro-list">
+                    <li><strong>Неопределённость</strong> показывает, насколько задача понятна заранее.</li>
+                    <li><strong>Сложность</strong> отражает инженерную трудность реализации.</li>
+                    <li><strong>Объём</strong> описывает количество обязательных шагов и связанного труда.</li>
+                </ol>
+            </article>
+
+            <aside class="panel metric-panel result-panel">
+                <div class="metric-label">Текущий результат</div>
+                <div class="result" id="sp-count">1 sp</div>
+                <div class="sp-count-description" id="sp-description"></div>
+            </aside>
+        </section>
+
+        <section class="panel controls-panel">
+            <div class="panel-header compact-header">
+                <div class="page-kicker">Input</div>
+                <h2 class="section-title">Pick The Task Profile</h2>
+            </div>
+
+            <div class="task-properties-container" id="task-properties">
+                <div class="radio-group">
+                    <div class="radio-group-name">Неопределённость / uncertainty</div>
+                    <div class="radio-group-values">
+                        <label class="radio-group-value">
+                            <input type="radio" value="low" name="uncertainty" checked />
+                            <span>Низкая</span>
+                        </label>
+                        <label class="radio-group-value">
+                            <input type="radio" value="medium" name="uncertainty" />
+                            <span>Средняя</span>
+                        </label>
+                        <label class="radio-group-value">
+                            <input type="radio" value="high" name="uncertainty" />
+                            <span>Высокая</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="radio-group">
+                    <div class="radio-group-name">Сложность / complexity</div>
+                    <div class="radio-group-values">
+                        <label class="radio-group-value">
+                            <input type="radio" value="low" name="complexity" checked />
+                            <span>Низкая</span>
+                        </label>
+                        <label class="radio-group-value">
+                            <input type="radio" value="medium" name="complexity" />
+                            <span>Средняя</span>
+                        </label>
+                        <label class="radio-group-value">
+                            <input type="radio" value="high" name="complexity" />
+                            <span>Высокая</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="radio-group">
+                    <div class="radio-group-name">Объём / effort</div>
+                    <div class="radio-group-values">
+                        <label class="radio-group-value">
+                            <input type="radio" value="low" name="effort" checked />
+                            <span>Низкий</span>
+                        </label>
+                        <label class="radio-group-value">
+                            <input type="radio" value="medium" name="effort" />
+                            <span>Средний</span>
+                        </label>
+                        <label class="radio-group-value">
+                            <input type="radio" value="high" name="effort" />
+                            <span>Высокий</span>
+                        </label>
+                    </div>
                 </div>
             </div>
-            <div class="radio-group">
-                <div class="radio-group-name">Какая сложность у решения задачи? <i>complexity</i></div>
-                <div class="radio-group-values">
-                    <label class="radio-group-value">
-                        <input type="radio" value="low" name="complexity" checked />
-                        <span>Низкая</span>
-                    </label>
-                    <label class="radio-group-value">
-                        <input type="radio" value="medium" name="complexity" />
-                        <span>Средняя</span>
-                    </label>
-                    <label class="radio-group-value">
-                        <input type="radio" value="high" name="complexity" />
-                        <span>Высокая</span>
-                    </label>
-                </div>
-            </div>
-            <div class="radio-group">
-                <div class="radio-group-name">Какой объем у решения задачи? <i>effort</i></div>
-                <div class="radio-group-values">
-                    <label class="radio-group-value">
-                        <input type="radio" value="low" name="effort" checked />
-                        <span>Низкий</span>
-                    </label>
-                    <label class="radio-group-value">
-                        <input type="radio" value="medium" name="effort" />
-                        <span>Средний</span>
-                    </label>
-                    <label class="radio-group-value">
-                        <input type="radio" value="high" name="effort" />
-                        <span>Высокий</span>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="result" id="sp-count">
-            1 сп
-        </div>
-        <div class="sp-count-description" id="sp-description"></div>
-    </div>
+        </section>
+    </main>
+
     <footer class="footer">
-        <a href="/index.html">Главная</a>
-        <a href="https://github.com/Thisman/thisman.github.io" target="_blank">GitHub</a>
+        <a href="/index.html">Home</a>
+        <a href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer">Repository</a>
     </footer>
+
     <script type="module" src="./index.js"></script>
 </body>
 </html>

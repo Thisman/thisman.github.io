@@ -1,24 +1,45 @@
-/* how-many-sp specific styles */
+.estimator-page {
+    gap: var(--space-2xl);
+}
 
-h4 {
-    font-weight: 700;
+.hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+    gap: var(--space-lg);
+    align-items: start;
+}
+
+.compact-header {
+    margin-bottom: var(--space-lg);
+}
+
+.intro-panel,
+.controls-panel {
+    display: grid;
+    gap: var(--space-lg);
+}
+
+.intro-list {
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.result-panel {
+    min-height: 100%;
+    justify-items: start;
 }
 
 .task-properties-container {
-    margin: var(--spacing-md) auto;
+    display: grid;
+    gap: var(--space-xl);
 }
-
 
 .sp-count-description {
-    font-size: 15px;
-    margin-top: var(--spacing-xs);
-    line-height: 18px;
-    height: 18px;
-    text-align: center;
-    font-style: italic;
-    color: var(--text-secondary);
+    min-height: 28px;
 }
 
-li {
-    margin-bottom: 8px;
+@media (max-width: 860px) {
+    .hero-grid {
+        grid-template-columns: 1fr;
+    }
 }

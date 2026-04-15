@@ -3,146 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-    <!-- Primary Meta Tags -->
-    <title>Оценка по трем точкам - PERT метод</title>
-    <meta name="title" content="Оценка по трем точкам - PERT метод">
-    <meta name="description" content="Онлайн калькулятор для оценки задач по методу PERT. Учет оптимистичной, реалистичной и пессимистичной оценки.">
-    <meta name="keywords" content="PERT метод, оценка по трем точкам, треугольное распределение, оптимистичная оценка, реалистичная оценка, пессимистичная оценка, планирование проектов, управление рисками, калькулятор">
-    <meta name="author" content="Thisman">
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="Russian">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://thisman.github.io/triangular-estimation/">
-    <meta property="og:title" content="Оценка по трем точкам - PERT метод с визуализацией">
-    <meta property="og:description" content="Онлайн калькулятор для оценки задач по методу PERT. Учет оптимистичной, реалистичной и пессимистичной оценки с визуализацией треугольного распределения вероятностей.">
-    <meta property="og:image" content="https://thisman.github.io/images/demo.png">
-    <meta property="og:site_name" content="Оценка по трем точкам">
-    <meta property="og:locale" content="ru_RU">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://thisman.github.io/triangular-estimation/">
-    <meta property="twitter:title" content="Оценка по трем точкам - PERT метод с визуализацией">
-    <meta property="twitter:description" content="Онлайн калькулятор для оценки задач по методу PERT. Учет оптимистичной, реалистичной и пессимистичной оценки с визуализацией треугольного распределения вероятностей.">
-    <meta property="twitter:image" content="https://thisman.github.io/images/demo.png">
-    
-    <!-- Additional SEO Meta Tags -->
-    <meta name="theme-color" content="#2196F3">
-    <meta name="msapplication-TileColor" content="#2196F3">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Оценка по трем точкам">
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://thisman.github.io/triangular-estimation/">
-    
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Оценка по трем точкам",
-        "description": "Онлайн калькулятор для оценки задач по методу PERT с визуализацией",
-        "url": "https://thisman.github.io/triangular-estimation/",
-        "applicationCategory": "ProductivityApplication",
-        "operatingSystem": "Web Browser",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-        },
-        "author": {
-            "@type": "Person",
-            "name": "Thisman"
-        },
-        "featureList": [
-            "Оптимистичная оценка",
-            "Реалистичная оценка",
-            "Пессимистичная оценка",
-            "Формула PERT: (O + 4R + P) / 6",
-            "Визуализация треугольного распределения",
-            "График плотности вероятности"
-        ]
-    }
-    </script>
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="/shared/common.css">
-    <link rel="stylesheet" href="index.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Yandex.Metrika counter -->
+    <title>PERT — оценка по трём точкам</title>
+    <meta name="title" content="PERT — оценка по трём точкам" />
+    <meta name="description" content="Оценка по трём точкам с формулой PERT: оптимистичная, реалистичная и пессимистичная величины." />
+    <meta name="keywords" content="PERT, estimation, project planning, optimistic, realistic, pessimistic" />
+    <meta name="author" content="Thisman" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Russian" />
+    <meta name="theme-color" content="#f5f5f5" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thisman.github.io/triangular-estimation/" />
+    <meta property="og:title" content="PERT — оценка по трём точкам" />
+    <meta property="og:description" content="Калькулятор PERT для быстрых проектных оценок." />
+    <meta property="og:image" content="https://thisman.github.io/images/demo.png" />
+    <meta property="og:locale" content="ru_RU" />
+
+    <link rel="canonical" href="https://thisman.github.io/triangular-estimation/" />
+    <script src="/shared/theme.js"></script>
+    <link rel="stylesheet" href="/shared/common.css" />
+    <link rel="stylesheet" href="./index.css" />
+
     <script type="text/javascript">
         (function(m,e,t,r,i,k,a){
             m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
             m[i].l=1*new Date();
             for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a);
         })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107098559', 'ym');
 
         ym(107098559, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/107098559" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
 </head>
 <body>
-    <div class="main-container">
-        <div class="description">
-            <h4>Оценка по трём точкам</h4>
-            Метод позволяет учесть оптимистичную, реалистичную и пессимистичную оценку задачи.
-            <ol>
-                <li>Оптимистичная оценка&nbsp;&mdash; время при идеальном ходе работ.</li>
-                <li>Реалистичная&nbsp;&mdash; сколько задача занимает обычно с учётом рисков.</li>
-                <li>Пессимистичная&nbsp;&mdash; сколько может потребоваться в худшем случае.</li>
-            </ol>
-            Итог вычисляется по формуле <strong>(O + 4R + P) / 6</strong>.
-        </div>
-        <hr />
-        <div class="inputs-container">
-            <div class="estimates-row">
-                <div class="field">
-                    <label for="optimistic">Оптимистичная</label>
-                    <input type="number" id="optimistic" />
+    <main class="main-container pert-page">
+        <header class="page-header">
+            <div class="nav-row">
+                <a class="nav-chip" href="/index.html">Back</a>
+                <span class="nav-chip">PERT</span>
+            </div>
+            <div class="page-kicker">Three Point Estimate</div>
+            <h1 class="page-title">PERT</h1>
+            <p class="page-summary">
+                Метод объединяет оптимистичную, реалистичную и пессимистичную оценки в одно число.
+                Подходит для быстрого сравнения сценариев и обсуждения рисков до старта работы.
+            </p>
+        </header>
+
+        <section class="hero-grid">
+            <article class="panel intro-panel">
+                <div class="panel-header">
+                    <div class="page-kicker">Formula</div>
+                    <h2 class="section-title">Одна взвешенная оценка</h2>
                 </div>
-                <div class="field">
-                    <label for="realistic">Реалистичная</label>
-                    <input type="number" id="realistic" />
+                <p class="formula-copy">
+                    Итог вычисляется по формуле <strong>(O + 4R + P) / 6</strong>, где реалистичный сценарий
+                    имеет больший вес, чем экстремальные значения.
+                </p>
+                <ul class="intro-list">
+                    <li><strong>O</strong> — оптимистичная оценка при идеальном ходе работ.</li>
+                    <li><strong>R</strong> — наиболее вероятный сценарий.</li>
+                    <li><strong>P</strong> — верхняя граница в плохом случае.</li>
+                </ul>
+            </article>
+
+            <aside class="panel metric-panel result-panel">
+                <div class="metric-label">Результат</div>
+                <div id="result" class="result">0 дней</div>
+                <div id="error-message" class="error-message"></div>
+            </aside>
+        </section>
+
+        <section class="panel controls-panel">
+            <div class="panel-header compact-header">
+                <div class="page-kicker">Input</div>
+                <h2 class="section-title">Задай три точки</h2>
+            </div>
+
+            <div class="inputs-container">
+                <div class="estimates-row">
+                    <div class="field">
+                        <label for="optimistic">Оптимистичная</label>
+                        <input type="number" id="optimistic" />
+                    </div>
+                    <div class="field">
+                        <label for="realistic">Реалистичная</label>
+                        <input type="number" id="realistic" />
+                    </div>
+                    <div class="field">
+                        <label for="pessimistic">Пессимистичная</label>
+                        <input type="number" id="pessimistic" />
+                    </div>
                 </div>
-                <div class="field">
-                    <label for="pessimistic">Пессимистичная</label>
-                    <input type="number" id="pessimistic" />
+
+                <div class="radio-group">
+                    <div class="radio-group-name">Единица измерения</div>
+                    <div class="radio-group-values">
+                        <label class="radio-group-value">
+                            <input type="radio" value="hours" name="unit" />
+                            <span>Часы</span>
+                        </label>
+                        <label class="radio-group-value">
+                            <input type="radio" value="days" name="unit" checked />
+                            <span>Дни</span>
+                        </label>
+                        <label class="radio-group-value">
+                            <input type="radio" value="weeks" name="unit" />
+                            <span>Недели</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button id="calc" class="btn" type="button">Рассчитать</button>
                 </div>
             </div>
-            <div id="error-message" class="error-message"></div>
-            <div class="radio-group">
-                <div class="radio-group-name">Единица измерения</div>
-                <div class="radio-group-values">
-                    <label class="radio-group-value">
-                        <input type="radio" value="hours" name="unit" />
-                        <span>Часы</span>
-                    </label>
-                    <label class="radio-group-value">
-                        <input type="radio" value="days" name="unit" checked />
-                        <span>Дни</span>
-                    </label>
-                    <label class="radio-group-value">
-                        <input type="radio" value="weeks" name="unit" />
-                        <span>Недели</span>
-                    </label>
-                </div>
-            </div>
-            <button id="calc" class="btn">Посчитать</button>
-        </div>
-        <div id="result" class="result">0 дней</div>
-    </div>
+        </section>
+    </main>
+
     <footer class="footer">
-        <a href="/index.html">Главная</a>
-        <a href="https://github.com/Thisman/thisman.github.io" target="_blank">GitHub</a>
+        <a href="/index.html">Home</a>
+        <a href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer">Repository</a>
     </footer>
+
     <script type="module" src="./index.js"></script>
 </body>
 </html>

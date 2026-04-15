@@ -1,36 +1,52 @@
-/* triangular-estimation specific styles */
+.pert-page {
+    gap: var(--space-2xl);
+}
 
+.hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+    gap: var(--space-lg);
+    align-items: start;
+}
+
+.intro-panel,
+.controls-panel,
 .inputs-container {
-    margin: var(--spacing-md) auto;
+    display: grid;
+    gap: var(--space-lg);
+}
+
+.formula-copy,
+.intro-list {
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.compact-header {
+    margin-bottom: var(--space-lg);
+}
+
+.result-panel {
+    min-height: 100%;
 }
 
 .estimates-row {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-xl);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-md);
 }
 
-/* Override .field for this page: flex: 1 and no bottom margin */
-.estimates-row .field {
-    flex: 1;
-    min-width: 0;
-    margin-bottom: 0;
+.action-row {
+    justify-content: flex-start;
 }
 
-.estimates-row .field label {
-    white-space: nowrap;
+.error-message {
+    min-height: 24px;
 }
 
-.estimates-row .field input[type="number"] {
-    user-select: none;
-}
-
-
-/* Responsive design */
-@media (max-width: 750px) {
+@media (max-width: 860px) {
+    .hero-grid,
     .estimates-row {
-        flex-direction: column;
-        gap: var(--spacing-sm);
+        grid-template-columns: 1fr;
     }
 }

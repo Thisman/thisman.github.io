@@ -2,20 +2,20 @@
  * Common utilities and constants for the project
  */
 
-// Color constants (cozy warm palette)
+// Shared Nothing-inspired light palette
 export const COLORS = {
-    PRIMARY: '#5a7896',
-    PRIMARY_DARK: '#49627c',
-    PRIMARY_DARKER: '#384d60',
-    SUCCESS: '#5a8a70',
-    WARNING: '#b88040',
-    ERROR: '#a85858',
-    DANGER: '#a85858',
-    TEXT_PRIMARY: '#4b4a47',
-    TEXT_SECONDARY: '#6a6259',
-    TEXT_MUTED: '#c0b5ac',
-    BORDER: 'rgba(190, 180, 170, 0.6)',
-    BACKGROUND_LIGHT: '#f1e7db'
+    PRIMARY: '#000000',
+    PRIMARY_DARK: '#232323',
+    PRIMARY_DARKER: '#000000',
+    SUCCESS: '#4a9e5c',
+    WARNING: '#d4a843',
+    ERROR: '#d71921',
+    DANGER: '#d71921',
+    TEXT_PRIMARY: '#1a1a1a',
+    TEXT_SECONDARY: '#666666',
+    TEXT_MUTED: '#999999',
+    BORDER: '#e8e8e8',
+    BACKGROUND_LIGHT: '#f0f0f0'
 };
 
 // DOM utilities

@@ -3,99 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- Primary Meta Tags -->
     <title>Thisman — инструменты и игры</title>
-    <meta name="title" content="Thisman — инструменты и игры">
-    <meta name="description" content="Калькуляторы для оценки задач, музыкальный тренажёр и браузерные игры.">
-    <meta name="author" content="Thisman">
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="Russian">
+    <meta name="title" content="Thisman — инструменты и игры" />
+    <meta name="description" content="Набор браузерных инструментов для оценки задач, музыкальный тренажёр и несколько игр в едином светлом интерфейсе." />
+    <meta name="author" content="Thisman" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Russian" />
+    <meta name="theme-color" content="#f5f5f5" />
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://thisman.github.io/">
-    <meta property="og:title" content="Thisman — инструменты и игры">
-    <meta property="og:description" content="Калькуляторы для оценки задач, музыкальный тренажёр и браузерные игры.">
-    <meta property="og:image" content="https://thisman.github.io/images/demo.png">
-    <meta property="og:locale" content="ru_RU">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thisman.github.io/" />
+    <meta property="og:title" content="Thisman — инструменты и игры" />
+    <meta property="og:description" content="Браузерные инструменты, тренажёры и игры в единой светлой системе." />
+    <meta property="og:image" content="https://thisman.github.io/images/demo.png" />
+    <meta property="og:locale" content="ru_RU" />
 
-    <!-- Additional Meta Tags -->
-    <meta name="theme-color" content="#2196F3">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Thisman">
+    <link rel="canonical" href="https://thisman.github.io/" />
+    <script src="/shared/theme.js"></script>
+    <link rel="stylesheet" href="./shared/common.css" />
+    <link rel="stylesheet" href="./index.css" />
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://thisman.github.io/">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="./shared/common.css">
-    <link rel="stylesheet" href="./index.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
         (function(m,e,t,r,i,k,a){
             m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
             m[i].l=1*new Date();
             for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a);
         })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107098559', 'ym');
 
         ym(107098559, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/107098559" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
 </head>
 <body>
-    <div class="main-container">
+    <main class="main-container landing">
+        <header class="page-header landing-header">
+            <div class="page-kicker">Tools / Music / Games</div>
+            <h1 class="page-title">THISMAN</h1>
+            <p class="page-summary">
+                Набор небольших браузерных приложений: оценки для планирования, музыкальный тренажёр и игры.
+                Все страницы собраны в одной светлой системе с одинаковой типографикой, навигацией и палитрой.
+            </p>
+            <div class="nav-row">
+                <a class="nav-chip" href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer">GitHub</a>
+                <span class="nav-chip">Light Theme</span>
+                <span class="nav-chip">Nothing Inspired</span>
+            </div>
+        </header>
+
         <section class="group">
-            <h2 class="group-title">Планирование</h2>
+            <div class="group-title">Планирование</div>
             <div class="cards">
-                <a href="./how-many-sp/index.html" class="card">
+                <a href="./how-many-sp/index.html" class="card app-card">
+                    <span class="card-eyebrow">Estimator</span>
                     <span class="card-title">Сколько сториков?</span>
-                    <span class="card-desc">Рассчитай сторипоинты по трём критериям: неопределённость, сложность и объём работы</span>
+                    <span class="card-desc">Оценка story points по трём критериям: неопределённость, сложность и объём работы.</span>
                 </a>
-                <a href="./triangular-estimation/index.html" class="card">
+                <a href="./triangular-estimation/index.html" class="card app-card">
+                    <span class="card-eyebrow">PERT</span>
                     <span class="card-title">Оценка по трём точкам</span>
-                    <span class="card-desc">Метод PERT: введи оптимистичную, реалистичную и пессимистичную оценки — получи итог с графиком распределения</span>
+                    <span class="card-desc">Оптимистичная, реалистичная и пессимистичная оценка с итогом по формуле PERT.</span>
                 </a>
             </div>
         </section>
 
         <section class="group">
-            <h2 class="group-title">Музыка</h2>
+            <div class="group-title">Музыка</div>
             <div class="cards">
-                <a href="./gamma-trainer/index.html" class="card">
+                <a href="./gamma-trainer/index.html" class="card app-card">
+                    <span class="card-eyebrow">Trainer</span>
                     <span class="card-title">Гаммы и лады</span>
-                    <span class="card-desc">Выбери тонику и лад — изучи ступени, трезвучия и родственные тональности</span>
+                    <span class="card-desc">Тоника, лад, ступени, трезвучия и родственные тональности в одном компактном интерфейсе.</span>
                 </a>
             </div>
         </section>
 
         <section class="group">
-            <h2 class="group-title">Игры</h2>
+            <div class="group-title">Игры</div>
             <div class="cards">
-                <a href="./babylon-tower/index.html" class="card">
+                <a href="./babylon-tower/index.html" class="card app-card">
+                    <span class="card-eyebrow">3D Puzzle</span>
                     <span class="card-title">Babylon Tower</span>
-                    <span class="card-desc">3D-головоломка: расставь цветные фишки по граням пятиугольной призмы</span>
+                    <span class="card-desc">Головоломка с пятиугольной призмой и перестановкой цветных чипов по граням.</span>
                 </a>
-                <a href="./tic-tac-toe/index.html" class="card">
+                <a href="./tic-tac-toe/index.html" class="card app-card">
+                    <span class="card-eyebrow">Board Game</span>
                     <span class="card-title">Swap-Tac-Toe</span>
-                    <span class="card-desc">Крестики-нолики с механикой swap: ставь метки или меняй соседние фишки местами</span>
+                    <span class="card-desc">Крестики-нолики с механикой swap, настраиваемым полем и режимом против бота.</span>
                 </a>
-
-                <a href="./the-maze/index.html" class="card">
+                <a href="./the-maze/index.html" class="card app-card ">
                     <span class="card-title">The Maze</span>
-                    <span class="card-desc">Управляй двумя объектами одновременно — приведи их к цели за нужное число шагов</span>
+                    <span class="card-desc">Две сущности двигаются одновременно: нужно привести их к финишу ровно за нужное число шагов.</span>
                 </a>
             </div>
         </section>
-    </div>
+    </main>
 
     <footer class="footer">
-        <a href="https://github.com/Thisman/thisman.github.io" target="_blank">GitHub</a>
+        <a href="./index.html">Home</a>
+        <a href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer">Repository</a>
     </footer>
 </body>
 </html>

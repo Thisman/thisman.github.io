@@ -12,29 +12,62 @@ const ACTION_DIRS = {
   R: { x: 1, y: 0 },
 };
 
-const PLAYER_COLORS = ["#4f5d73"];
-const START_COLOR = "#b7c9e4";
-const GOAL_COLOR = "#b9d6c5";
-const TELEPORT_IN_COLOR = "#cbb9e6";
-const TELEPORT_OUT_COLOR = "#b5a4dc";
-const WALL_COLOR = "#d1b9aa";
-const HIGHLIGHT_COLOR = "rgba(170, 160, 150, 0.25)";
-const ICE_COLOR = "#c8e8f0";
-const ARROW_COLOR = "#e8d4b0";
-const ARROW_SYMBOL_COLOR = "#7a6a50";
-const HOLE_COLOR = "#3d3830";
-const SPRING_COLOR = "#8ed84a";
-const BUTTON_COLOR = "#f0c870";
-const DOOR_COLOR_CLOSED = "#7a5040";
-const DOOR_COLOR_OPEN = "#c8b080";
-const CRUMBLE_COLOR = "#c49a3c";
-const SWAMP_COLOR = "#4a7040";
+let PLAYER_COLORS = ["#000000"];
+let START_COLOR = "#007aff";
+let GOAL_COLOR = "#4a9e5c";
+let TELEPORT_IN_COLOR = "#d4a843";
+let TELEPORT_OUT_COLOR = "#d71921";
+let WALL_COLOR = "#d8d8d8";
+let GRID_COLOR = "rgba(0, 0, 0, 0.12)";
+let MAP_OUTLINE_COLOR = "rgba(0, 0, 0, 0.18)";
+let HIGHLIGHT_COLOR = "rgba(0, 0, 0, 0.08)";
+let ICE_COLOR = "#d9eef8";
+let ARROW_COLOR = "#ede2c4";
+let ARROW_SYMBOL_COLOR = "#645741";
+let HOLE_COLOR = "#1a1a1a";
+let SPRING_COLOR = "#a4c86b";
+let BUTTON_COLOR = "#d4a843";
+let DOOR_COLOR_CLOSED = "#7a7a7a";
+let DOOR_COLOR_OPEN = "#cfcfcf";
+let CRUMBLE_COLOR = "#d4a843";
+let SWAMP_COLOR = "#71824b";
 const ROTATION_ICON_CLASSES = "fa-solid fa-arrow-rotate-right";
-const ROTATION_ICON_COLOR = "#6b655d";
+let ROTATION_ICON_COLOR = "#666666";
 const ROTATION_ICON_SIZE = 16;
 const ROTATION_ICON_OFFSET_X = 12;
 const ROTATION_ICON_OFFSET_Y = -14;
 let rotationIcon = null;
+
+function readCssVar(name, fallback) {
+  if (typeof window === "undefined") {
+    return fallback;
+  }
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
+
+function syncThemePalette() {
+  PLAYER_COLORS = [readCssVar("--maze-player", "#000000")];
+  START_COLOR = readCssVar("--maze-start", "#007aff");
+  GOAL_COLOR = readCssVar("--maze-goal", "#4a9e5c");
+  TELEPORT_IN_COLOR = readCssVar("--maze-teleport-in", "#d4a843");
+  TELEPORT_OUT_COLOR = readCssVar("--maze-teleport-out", "#d71921");
+  WALL_COLOR = readCssVar("--maze-wall", "#d8d8d8");
+  GRID_COLOR = readCssVar("--maze-grid", "rgba(0, 0, 0, 0.12)");
+  MAP_OUTLINE_COLOR = readCssVar("--maze-map-outline", "rgba(0, 0, 0, 0.18)");
+  HIGHLIGHT_COLOR = readCssVar("--maze-highlight", "rgba(0, 0, 0, 0.08)");
+  ICE_COLOR = readCssVar("--maze-ice", "#d9eef8");
+  ARROW_COLOR = readCssVar("--maze-arrow", "#ede2c4");
+  ARROW_SYMBOL_COLOR = readCssVar("--maze-arrow-symbol", "#645741");
+  HOLE_COLOR = readCssVar("--maze-hole", "#1a1a1a");
+  SPRING_COLOR = readCssVar("--maze-spring", "#a4c86b");
+  BUTTON_COLOR = readCssVar("--maze-button", "#d4a843");
+  DOOR_COLOR_CLOSED = readCssVar("--maze-door-closed", "#7a7a7a");
+  DOOR_COLOR_OPEN = readCssVar("--maze-door-open", "#cfcfcf");
+  CRUMBLE_COLOR = readCssVar("--maze-crumble", "#d4a843");
+  SWAMP_COLOR = readCssVar("--maze-swamp", "#71824b");
+  ROTATION_ICON_COLOR = readCssVar("--maze-rotation-icon", "#666666");
+}
 
 function lerp(a, b, t) {
   return a + (b - a) * t;
@@ -228,8 +261,8 @@ function drawRotationBadge(ctx, viewport) {
   const startAngle = Math.PI * 0.2;
   const endAngle = Math.PI * 1.6;
   ctx.save();
-  ctx.strokeStyle = "rgba(120, 110, 100, 0.75)";
-  ctx.fillStyle = "rgba(120, 110, 100, 0.75)";
+  ctx.strokeStyle = ROTATION_ICON_COLOR;
+  ctx.fillStyle = ROTATION_ICON_COLOR;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius, startAngle, endAngle);
@@ -253,7 +286,7 @@ function drawRotationBadge(ctx, viewport) {
 }
 
 function drawGrid(ctx, viewport, map, tileSize) {
-  ctx.strokeStyle = "rgba(140, 130, 120, 0.25)";
+  ctx.strokeStyle = GRID_COLOR;
   ctx.lineWidth = 1;
 
   for (let y = 0; y < map.h; y += 1) {
@@ -266,6 +299,14 @@ function drawGrid(ctx, viewport, map, tileSize) {
       );
     }
   }
+}
+
+function drawMapOutline(ctx, viewport) {
+  ctx.save();
+  ctx.strokeStyle = MAP_OUTLINE_COLOR;
+  ctx.lineWidth = 2;
+  ctx.strokeRect(viewport.x - 1, viewport.y - 1, viewport.width + 2, viewport.height + 2);
+  ctx.restore();
 }
 
 function drawHighlights(ctx, viewport, map, tileSize, hoverCell) {
@@ -498,6 +539,7 @@ export function createRenderer(canvas) {
   }
 
   function render(level, positions, anim, options = {}) {
+    syncThemePalette();
     const maps = level.maps;
     const showRotationBadge = Boolean(options.showRotationBadge);
     const hoverCell = options.hoverCell || null;
@@ -510,7 +552,7 @@ export function createRenderer(canvas) {
     const height = canvas.getBoundingClientRect().height;
 
     ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = "#f6f2ea";
+    ctx.fillStyle = readCssVar("--page-bg", "#f5f5f5");
     ctx.fillRect(0, 0, width, height);
 
     for (let i = 0; i < maps.length; i += 1) {
@@ -534,6 +576,7 @@ export function createRenderer(canvas) {
         drawGrid(ctx, localViewport, map, localViewport.tileSize);
         drawHighlights(ctx, localViewport, map, localViewport.tileSize, hoverCell);
       });
+      drawMapOutline(ctx, viewport);
       if (showRotationBadge && normalizeRotation(map.rotation) !== 0) {
         drawRotationBadge(ctx, viewport);
       }

@@ -1,80 +1,35 @@
-:root {
-    /* Backgrounds */
-    --md-bg:      #f6f2ea;
-    --md-surface: #fffaf2;
-
-    /* Text */
-    --md-on:   #4b4a47;
-    --md-muted: #6a6259;
-
-    /* Accent */
-    --md-primary:   #5a7896;   /* dusty blue */
-    --md-secondary: #7a5a8a;   /* muted mauve */
-    --ring: rgba(90, 120, 150, 0.22);
-
-    /* Ступени по качеству трезвучия (muted, cozy) */
-    --deg-major: #3d6b4a;   /* muted forest green */
-    --deg-minor: #3d5f7a;   /* muted steel blue */
-    --deg-dim:   #7a3d3d;   /* muted brick */
-    --deg-aug:   #7a5a35;   /* warm brown */
-    --char:      #a07830;   /* warm amber */
-
-    /* Pill (note badges) */
-    --pill-bg: #f1e7db;
-    --pill-on: #4b4a47;
+.gamma-page {
+    gap: var(--space-2xl);
 }
 
-html,
-body {
-    height: 100%;
+.controls-panel {
+    display: grid;
+    gap: var(--space-lg);
 }
 
-body {
-    margin: 0;
-    min-height: 100svh;
-    background: var(--md-bg);
-    color: var(--md-on);
-    font: 16px/1.35 system-ui, -apple-system, sans-serif;
+.control-block {
+    display: grid;
+    gap: var(--space-md);
 }
 
-.main-container,
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.toolbar {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* ===== ЧИПЫ-РАДИО ===== */
 .chipbar {
     display: flex;
-    gap: 8px;
+    gap: var(--space-sm);
     align-items: center;
 }
 
-/* ноты-тоники в одну строку */
 .chipbar.nowrap {
-    flex-wrap: nowrap;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: var(--space-xs);
 }
 
-/* лады с переносом */
 .chipbar.wrap {
     flex-wrap: wrap;
 }
 
 .chip-radio {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
 }
 
 .chip-radio input {
@@ -85,156 +40,157 @@ body {
 }
 
 .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
+    min-height: 40px;
+    padding: 10px 14px;
+    border: 1px solid var(--border-visible);
     border-radius: 999px;
-    background: var(--md-surface);
-    border: 1px solid rgba(127, 127, 127, .25);
-    color: var(--md-on);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     cursor: pointer;
-    user-select: none;
-    transition: box-shadow .15s, background .15s, border-color .15s;
+    transition:
+        background-color var(--transition-normal),
+        border-color var(--transition-normal),
+        color var(--transition-normal);
+    white-space: nowrap;
 }
 
 .chip-radio input:checked + .chip {
-    border-color: var(--md-primary);
-    box-shadow: 0 0 0 3px var(--ring) inset;
-    background: color-mix(in oklab, var(--md-primary) 12%, var(--md-surface));
+    background: var(--text-display);
+    border-color: var(--text-display);
+    color: var(--page-bg);
 }
 
-/* ===== Карточки ===== */
 .stage {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(280px, 0.9fr);
+    gap: var(--space-lg);
+    align-items: start;
 }
 
-.card {
-    background: var(--md-surface);
-    border: 1px solid rgba(127, 127, 127, .25);
-    border-radius: 14px;
+.compact-header {
+    margin-bottom: var(--space-lg);
 }
 
-.notes-card {
-    flex: 1 1 600px;
-    padding: 18px;
-}
-
+.notes-card,
 .legend-card {
-    flex: 0 0 260px;
-    padding: 16px;
+    height: 100%;
 }
 
-.card-title {
-    margin: 0 0 12px;
-    font-weight: 700;
-}
-
-/* ===== Линия нот лада ===== */
 .notes-line {
     display: flex;
-    gap: 14px;
     flex-wrap: wrap;
-    justify-content: center; /* центр по горизонтали */
+    gap: var(--space-lg);
+    justify-content: center;
 }
 
 .cell {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    min-width: 56px;
+    display: grid;
+    gap: var(--space-sm);
+    justify-items: center;
+    min-width: 78px;
 }
 
 .degree {
-    font-weight: 800;
-    font-size: 20px;
-    line-height: 1;
-    padding: 8px 12px;
+    min-width: 70px;
+    min-height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
+    border: 1px solid transparent;
     border-radius: 999px;
-    border: 2px solid transparent;
-    letter-spacing: .5px;
+    background: var(--surface-raised);
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    line-height: 1;
+    letter-spacing: 0.02em;
 }
 
 .degree.char {
-    box-shadow: 0 0 0 3px var(--char) inset;
-    border-color: var(--char);
+    border-color: var(--accent);
+    color: var(--accent);
 }
 
-.deg-major {
-    color: var(--deg-major);
-}
-
-.deg-minor {
-    color: var(--deg-minor);
-}
-
-.deg-dim {
-    color: var(--deg-dim);
-}
-
+.deg-major,
+.deg-minor,
+.deg-dim,
 .deg-aug {
-    color: var(--deg-aug);
+    color: var(--text-display);
 }
 
 .note {
-    width: 78px;
-    box-sizing: border-box;
-    display: flex;
+    min-width: 88px;
+    min-height: 40px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 14px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
     border-radius: 999px;
-    background: var(--pill-bg);
-    color: var(--pill-on);
-    border: 2px solid transparent;
-    font-weight: 700;
+    background: var(--surface);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
 }
 
 .note.is-parent-major {
-    border-color: var(--md-primary);
-    box-shadow: 0 0 0 4px var(--ring);
+    border-color: var(--success);
+    color: var(--success);
 }
 
 .note.is-parent-minor {
-    border-color: var(--md-secondary);
-    box-shadow: 0 0 0 4px color-mix(in oklab, var(--md-secondary) 25%, transparent);
+    border-color: var(--interactive);
+    color: var(--interactive);
 }
 
-/* ===== Легенда (в столбик) ===== */
 .legend-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    display: grid;
+    gap: var(--space-md);
 }
 
 .legend-item {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    gap: var(--space-sm);
+    align-items: flex-start;
+    color: var(--text-secondary);
+    font-size: var(--body-sm);
+    line-height: 1.6;
+}
+
+.legend-note {
+    margin-top: var(--space-lg);
+    color: var(--text-secondary);
+    font-size: var(--body-sm);
+    line-height: 1.7;
 }
 
 .dot {
     width: 14px;
     height: 14px;
+    margin-top: 4px;
     border-radius: 50%;
-    display: inline-block;
+    background: var(--border-visible);
     flex: 0 0 14px;
 }
 
 .dot.major {
-    background: var(--md-primary);
+    background: var(--success);
 }
 
 .dot.minor {
-    background: var(--md-secondary);
+    background: var(--interactive);
 }
 
 .dot.char {
-    background: var(--char);
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, .08) inset;
+    background: var(--accent);
 }
 
+@media (max-width: 900px) {
+    .stage {
+        grid-template-columns: 1fr;
+    }
+}

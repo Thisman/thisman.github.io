@@ -102,7 +102,7 @@ function setOverlay(visible, title, buttonText, buttonCommand, timeMs = null) {
   }
 }
 
-function setLoading(visible, message = "Loading level...") {
+function setLoading(visible, message = "[ Загрузка уровня ]") {
   if (!loadingEl) {
     return;
   }
@@ -233,7 +233,7 @@ function generateLevelAsync(number) {
 async function loadLevelByNumber(number) {
   const loadingStart = performance.now();
   stopTimer();
-  setLoading(true, "Loading level...");
+  setLoading(true, "[ Загрузка уровня ]");
   setOverlay(false, "", "", "");
   let level = loadedLevels.get(number) || null;
   try {
@@ -269,7 +269,7 @@ async function startFromLevel(index) {
     await loadLevelByNumber(levelNumber);
   } catch (error) {
     console.error(error);
-    setOverlay(true, "Load Failed", "Restart", "restart");
+    setOverlay(true, "Не удалось загрузить уровень", "Перезапуск", "restart");
   }
 }
 
@@ -284,10 +284,10 @@ function tick(now) {
           const elapsed = elapsedTime();
           stopTimer();
           ym(107098559, 'reachGoal', 'level_complete', { level: currentLevelNumber });
-          setOverlay(true, "Level Complete", "Next", "next", elapsed);
+          setOverlay(true, "Уровень пройден", "Дальше", "next", elapsed);
         } else if (game.state === "lost") {
           stopTimer();
-          setOverlay(true, "Try Again", "Restart", "restart");
+          setOverlay(true, "Попробовать снова", "Перезапуск", "restart");
         }
       }
     }
@@ -538,7 +538,7 @@ async function init() {
 }
 
 init().catch((error) => {
-  setOverlay(true, "Load Failed", "Restart", "restart");
+  setOverlay(true, "Не удалось загрузить уровень", "Перезапуск", "restart");
   console.error(error);
 });
 

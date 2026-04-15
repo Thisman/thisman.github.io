@@ -32,8 +32,6 @@ const HEART_PATTERN = [
   [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
 ];
 
-const BRICK_COLOR = "#fb7185";
-
 const keys = {
   left: false,
   right: false,
@@ -50,6 +48,16 @@ let lastTime = 0;
 let ballLaunched = false;
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+const readThemePaints = () => {
+  const styles = getComputedStyle(document.documentElement);
+
+  return {
+    brick: styles.getPropertyValue("--arcade-brick").trim() || "#d71921",
+    brickStroke: styles.getPropertyValue("--arcade-brick-stroke").trim() || "rgba(0, 0, 0, 0.08)",
+    paddle: styles.getPropertyValue("--arcade-paddle").trim() || "#1a1a1a",
+    ball: styles.getPropertyValue("--arcade-ball").trim() || "#000000",
+  };
+};
 
 const updateLives = () => {
   livesEl.textContent = lives.toString();
@@ -110,7 +118,6 @@ const initBricks = () => {
         y,
         width: CONFIG.brickSize,
         height: CONFIG.brickSize,
-        color: BRICK_COLOR,
         alive: true,
       });
     }
@@ -240,23 +247,24 @@ const update = (dt) => {
 };
 
 const drawBricks = () => {
+  const theme = readThemePaints();
   for (const brick of bricks) {
     if (!brick.alive) continue;
-    ctx.fillStyle = brick.color;
+    ctx.fillStyle = theme.brick;
     ctx.fillRect(brick.x, brick.y, brick.width, brick.height);
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.strokeStyle = theme.brickStroke;
     ctx.strokeRect(brick.x, brick.y, brick.width, brick.height);
   }
 };
 
 const drawPaddle = () => {
-  ctx.fillStyle = "#e2e8f0";
+  ctx.fillStyle = readThemePaints().paddle;
   ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
 };
 
 const drawBall = () => {
   ctx.beginPath();
-  ctx.fillStyle = "#f8fafc";
+  ctx.fillStyle = readThemePaints().ball;
   ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
   ctx.fill();
   ctx.closePath();
