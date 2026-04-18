@@ -8,7 +8,7 @@
  */
 
 import * as THREE from 'three';
-import { EMPTY, C1, C2, C3, C4, LAYERS, FACES } from './logic.js';
+import { EMPTY, C1, C2, C3, C4, LAYERS, FACES } from '../core/puzzle.js';
 
 // Scene configuration
 const CELL_SIZE = 0.9;      // Size of each cell (square)

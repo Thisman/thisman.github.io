@@ -21,7 +21,7 @@ import {
     canSlide,
     scramble,
     EMPTY
-} from './logic.js';
+} from '../core/puzzle.js';
 
 import {
     initScene,
@@ -47,7 +47,7 @@ import {
     shouldFlipRotationDirection,
     markDirty,
     consumeRenderFlag
-} from './render.js';
+} from '../ui/renderer.js';
 
 // Game state
 let gameState = null;
