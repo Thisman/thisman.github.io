@@ -152,6 +152,13 @@ a {
     margin-top: 1.15em;
 }
 
+.story-divider {
+    width: min(180px, 46%);
+    height: 1px;
+    margin: clamp(28px, 6vw, 46px) auto;
+    background: linear-gradient(90deg, transparent, rgba(37, 34, 30, 0.34), transparent);
+}
+
 @media (max-width: 640px) {
     body {
         font-size: 17px;
