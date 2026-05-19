@@ -115,6 +115,8 @@ a {
 
 .back-link {
     display: inline-block;
+    min-height: 44px;
+    padding: 10px 12px;
     margin-bottom: 28px;
     color: var(--muted);
     font-size: 0.95rem;
@@ -124,6 +126,15 @@ a {
 
 .back-link:hover {
     color: var(--accent);
+}
+
+.story-footer {
+    margin-top: clamp(28px, 5vw, 48px);
+    text-align: center;
+}
+
+.story-footer .back-link {
+    margin-bottom: 0;
 }
 
 .story-text {
