@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#f7f4ef">
+    <title>Повтори фигуру</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="app" id="app" data-screen="home">
+      <canvas id="gameCanvas" class="game-canvas" aria-label="Игровое поле для рисования"></canvas>
+
+      <section class="home-panel" id="homePanel" aria-labelledby="gameTitle">
+        <h1 id="gameTitle">Повтори фигуру</h1>
+        <div class="home-stats">
+          <span>Лучший результат</span>
+          <strong id="homeBest">0%</strong>
+        </div>
+        <button class="button button-primary" id="startButton" type="button">Начать</button>
+      </section>
+
+      <header class="hud" id="hud" aria-live="polite">
+        <strong class="timer" id="timerBadge">--</strong>
+      </header>
+
+      <div class="settings-controls">
+        <button class="settings-control theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему">
+          Тема: авто
+        </button>
+        <button class="settings-control language-toggle" id="languageToggle" type="button" aria-label="Переключить язык">
+          RU
+        </button>
+      </div>
+
+      <section class="controls" id="controls" aria-live="polite">
+        <button class="button button-primary" id="readyButton" type="button">Нарисовать</button>
+        <button class="button button-primary" id="checkButton" type="button">Проверить</button>
+        <article class="result-card" id="resultCard" aria-labelledby="scoreLabel">
+          <div class="result-comparison">
+            <div class="result-value result-score">
+              <span id="resultText">Результат</span>
+              <strong id="scoreLabel">0%</strong>
+            </div>
+            <div class="result-value result-record">
+              <span id="previousBestText">Предыдущий рекорд</span>
+              <strong id="previousBestLabel">0%</strong>
+            </div>
+          </div>
+          <button class="button button-primary" id="againButton" type="button">Еще раз</button>
+        </article>
+      </section>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
