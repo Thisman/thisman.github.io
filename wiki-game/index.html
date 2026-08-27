@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Игра-навигация: доберитесь от одной случайной статьи русской Википедии до другой только по ссылкам в тексте." />
+    <meta name="theme-color" content="#f7f4ed" />
+    <title>Wiki Path — игра по Википедии</title>
+    <link rel="icon" href="/images/main-icon.png" />
+    <script src="/shared/browser/analytics.js"></script>
+    <link rel="stylesheet" href="/shared/common.css" />
+    <link rel="stylesheet" href="./index.css" />
+</head>
+<body>
+    <header class="game-hud" aria-label="Состояние игры">
+        <nav class="hud-navigation" aria-label="Навигация сайта">
+            <a class="icon-link" href="/index.html" aria-label="На главную" title="На главную">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z" /></svg>
+            </a>
+            <a class="icon-link" href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer" aria-label="GitHub репозиторий" title="GitHub репозиторий">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.88c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.82a9.6 9.6 0 0 1 2.5.34c1.92-1.3 2.76-1.02 2.76-1.02.54 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.35 4.68-4.58 4.93.36.31.68.92.68 1.86V21c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" /></svg>
+            </a>
+            <span class="game-name">Wiki Path</span>
+        </nav>
+
+        <div class="target-block">
+            <span class="hud-label">Цель</span>
+            <strong id="targetTitle" class="target-title">Выбираем статью…</strong>
+        </div>
+
+        <dl class="metrics" aria-live="polite">
+            <div class="metric">
+                <dt>Время</dt>
+                <dd id="timer">00:00</dd>
+            </div>
+            <div class="metric">
+                <dt>Переходы</dt>
+                <dd id="transitionCount">0</dd>
+            </div>
+            <div class="metric">
+                <dt>Повторы</dt>
+                <dd id="revisitCount">0</dd>
+            </div>
+        </dl>
+
+        <button id="newGameButton" class="new-game-button" type="button">Новая игра</button>
+    </header>
+
+    <main class="game-shell">
+        <section id="initialState" class="initial-state" aria-live="polite">
+            <div id="loadingDots" class="loading-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <p class="eyebrow">Русская Википедия</p>
+            <h1 id="initialTitle">Строим новый маршрут</h1>
+            <p id="initialMessage">Выбираем две случайные статьи и готовим стартовую страницу.</p>
+            <button id="initialRetryButton" class="primary-button" type="button" hidden>Попробовать снова</button>
+        </section>
+
+        <section id="errorPanel" class="error-panel" role="alert" hidden>
+            <p id="errorMessage">Не удалось загрузить статью</p>
+            <button id="retryButton" type="button">Повторить</button>
+        </section>
+
+        <section id="articleStage" class="article-stage" aria-labelledby="currentTitle" hidden>
+            <article class="article-card">
+                <header class="article-header">
+                    <p class="eyebrow">Текущая статья</p>
+                    <h1 id="currentTitle"></h1>
+                </header>
+                <div id="articleContent" class="article-content"></div>
+            </article>
+
+            <div id="transitionLoader" class="transition-loader" role="status" hidden>
+                <span class="spinner" aria-hidden="true"></span>
+                <span>Загружаем статью…</span>
+            </div>
+        </section>
+
+        <section id="resultScreen" class="result-screen" aria-labelledby="resultHeading" hidden>
+            <div class="victory-mark" aria-hidden="true">✓</div>
+            <p class="eyebrow">Маршрут найден</p>
+            <h1 id="resultHeading">Победа</h1>
+            <p id="resultPair" class="result-pair"></p>
+
+            <dl class="result-metrics">
+                <div><dt>Время</dt><dd id="resultTime">00:00</dd></div>
+                <div><dt>Переходы</dt><dd id="resultTransitions">0</dd></div>
+                <div><dt>Повторы</dt><dd id="resultRevisits">0</dd></div>
+            </dl>
+
+            <div class="route-block">
+                <h2>Ваш маршрут</h2>
+                <ol id="routeList" class="route-list"></ol>
+            </div>
+
+            <button id="resultNewGameButton" class="primary-button" type="button">Новая игра</button>
+        </section>
+    </main>
+
+    <script type="module" src="./index.js"></script>
+</body>
+</html>
