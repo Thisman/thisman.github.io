@@ -1,15 +1,21 @@
 const API_URL = 'https://ru.wikipedia.org/w/api.php';
 const WIKI_ORIGIN = 'https://ru.wikipedia.org';
 const WIKI_ARTICLE_BASE = `${WIKI_ORIGIN}/wiki/`;
-const IMAGE_HOST = 'upload.wikimedia.org';
+const WIKI_REST_PAGE_URL = `${WIKI_ORIGIN}/w/rest.php/v1/page`;
 const TIMER_INTERVAL_MS = 250;
 const RANDOM_PAIR_ATTEMPTS = 3;
+const RECORDS_STORAGE_KEY = 'wiki-path-records';
 
 const STATUSES = Object.freeze({
     LOADING: 'LOADING',
     PLAYING: 'PLAYING',
     FINISHED: 'FINISHED',
     ERROR: 'ERROR'
+});
+
+const ARTICLE_VIEWS = Object.freeze({
+    CURRENT: 'CURRENT',
+    TARGET: 'TARGET'
 });
 
 const BLOCKED_NAMESPACE_PREFIXES = new Set([
@@ -25,21 +31,12 @@ const BLOCKED_NAMESPACE_PREFIXES = new Set([
     'служебная', 'участник', 'файл', 'шаблон', 'википедия'
 ]);
 
-const REMOVED_CONTENT_SELECTORS = [
-    'script', 'style', 'link', 'meta', 'base', 'iframe', 'object', 'embed',
-    'form', 'input', 'button', 'textarea', 'select', 'audio', 'video', 'source', 'nav',
-    '.mw-editsection', '.mw-indicators', '.mw-jump-link', '.toc',
-    '.mw-table-of-contents', '.navbox', '.vertical-navbox', '.sistersitebox',
-    '.infobox', '.sidebar', '.portal', '.catlinks', '.mw-normal-catlinks', '.mw-hidden-catlinks',
-    '.printfooter', '.mw-authority-control', '.navigation-not-searchable',
-    '.mw-cite-backlink'
-].join(',');
-
 const dom = {
     targetTitle: document.querySelector('#targetTitle'),
     timer: document.querySelector('#timer'),
     transitionCount: document.querySelector('#transitionCount'),
     revisitCount: document.querySelector('#revisitCount'),
+    recordsButton: document.querySelector('#recordsButton'),
     newGameButton: document.querySelector('#newGameButton'),
     initialState: document.querySelector('#initialState'),
     initialTitle: document.querySelector('#initialTitle'),
@@ -50,6 +47,10 @@ const dom = {
     errorMessage: document.querySelector('#errorMessage'),
     retryButton: document.querySelector('#retryButton'),
     articleStage: document.querySelector('#articleStage'),
+    currentArticleTab: document.querySelector('#currentArticleTab'),
+    targetArticleTab: document.querySelector('#targetArticleTab'),
+    articlePanel: document.querySelector('#articlePanel'),
+    articleEyebrow: document.querySelector('#articleEyebrow'),
     currentTitle: document.querySelector('#currentTitle'),
     articleContent: document.querySelector('#articleContent'),
     transitionLoader: document.querySelector('#transitionLoader'),
@@ -59,7 +60,11 @@ const dom = {
     resultTransitions: document.querySelector('#resultTransitions'),
     resultRevisits: document.querySelector('#resultRevisits'),
     routeList: document.querySelector('#routeList'),
-    resultNewGameButton: document.querySelector('#resultNewGameButton')
+    resultNewGameButton: document.querySelector('#resultNewGameButton'),
+    recordsModal: document.querySelector('#recordsModal'),
+    closeRecordsButton: document.querySelector('#closeRecordsButton'),
+    recordsEmpty: document.querySelector('#recordsEmpty'),
+    recordsList: document.querySelector('#recordsList')
 };
 
 let session = null;
@@ -67,6 +72,8 @@ let roundToken = 0;
 let requestController = null;
 let timerId = null;
 let retryAction = null;
+let recordsReturnFocus = null;
+let articleRenderToken = 0;
 
 function createSession(startPage, targetPage) {
     return {
@@ -76,6 +83,9 @@ function createSession(startPage, targetPage) {
         targetTitle: targetPage.title,
         currentPageId: null,
         currentTitle: '',
+        currentArticle: null,
+        targetArticle: null,
+        articleView: ARTICLE_VIEWS.CURRENT,
         startedAt: null,
         finishedAt: null,
         visitedPages: [],
@@ -131,27 +141,36 @@ async function fetchRandomPair(signal) {
 }
 
 async function fetchArticle(page, signal) {
-    const pageParameter = page.pageid
-        ? { pageid: String(page.pageid) }
-        : { page: page.title };
-    const data = await apiRequest({
-        action: 'parse',
-        ...pageParameter,
-        prop: 'text|displaytitle',
-        redirects: '1',
-        disableeditsection: '1',
-        disabletoc: '1'
-    }, signal);
-    const parsed = data.parse;
+    if (!page.title) {
+        throw new Error('Wikipedia article title is unavailable');
+    }
 
-    if (!parsed?.pageid || !parsed.title || typeof parsed.text !== 'string') {
+    const encodedTitle = encodeURIComponent(page.title.replaceAll(' ', '_'));
+    const response = await fetch(`${WIKI_REST_PAGE_URL}/${encodedTitle}/html`, {
+        headers: { Accept: 'text/html' },
+        signal
+    });
+
+    if (!response.ok) {
+        throw new Error(`Wikipedia REST API returned HTTP ${response.status}`);
+    }
+
+    const html = await response.text();
+    const parsedDocument = new DOMParser().parseFromString(html, 'text/html');
+    const pageId = Number.parseInt(
+        parsedDocument.querySelector('meta[property="mw:pageId"]')?.getAttribute('content') ?? '',
+        10
+    );
+    const title = parsedDocument.title.trim();
+
+    if (!Number.isInteger(pageId) || pageId <= 0 || !title || !parsedDocument.body) {
         throw new Error('Wikipedia article is unavailable');
     }
 
     return {
-        pageid: parsed.pageid,
-        title: parsed.title,
-        html: parsed.text
+        pageid: pageId,
+        title,
+        html
     };
 }
 
@@ -198,69 +217,124 @@ function getPlayableTitle(rawHref) {
 }
 
 function replaceLinkWithText(link) {
-    const replacement = document.createElement('span');
+    const replacement = link.ownerDocument.createElement('span');
     replacement.className = 'wiki-disabled-link';
     replacement.replaceChildren(...link.childNodes);
     link.replaceWith(replacement);
 }
 
-function normalizeImage(image) {
-    const rawSource = image.getAttribute('src') || image.getAttribute('data-src');
-
-    try {
-        const source = new URL(rawSource, WIKI_ORIGIN);
-        if (source.protocol !== 'https:' || source.hostname !== IMAGE_HOST) {
-            image.remove();
-            return;
-        }
-        image.src = source.href;
-    } catch {
-        image.remove();
-        return;
-    }
-
-    image.removeAttribute('srcset');
-    image.removeAttribute('data-src');
-    image.loading = 'lazy';
-    image.decoding = 'async';
-}
-
-function prepareArticleHtml(html) {
+function prepareArticleDocument(html, interactiveLinks = true) {
     const parsedDocument = new DOMParser().parseFromString(html, 'text/html');
-    parsedDocument.querySelectorAll(REMOVED_CONTENT_SELECTORS).forEach((element) => element.remove());
+    parsedDocument.querySelectorAll('script').forEach((element) => element.remove());
+    let base = parsedDocument.querySelector('base');
+    if (!base) {
+        base = parsedDocument.createElement('base');
+        parsedDocument.head.prepend(base);
+    }
+    base.href = WIKI_ARTICLE_BASE;
+
+    parsedDocument.querySelectorAll('link[href]').forEach((link) => {
+        link.href = new URL(link.getAttribute('href'), WIKI_ARTICLE_BASE).href;
+    });
 
     parsedDocument.querySelectorAll('a').forEach((link) => {
         const playableTitle = getPlayableTitle(link.getAttribute('href'));
         const isUnavailable = link.classList.contains('new');
 
-        if (!playableTitle || isUnavailable) {
+        if (!interactiveLinks || !playableTitle || isUnavailable) {
             replaceLinkWithText(link);
             return;
         }
 
-        link.href = '#';
+        link.setAttribute('href', '#');
         link.dataset.wikiTitle = playableTitle;
         link.removeAttribute('target');
         link.removeAttribute('rel');
     });
 
-    parsedDocument.querySelectorAll('img').forEach(normalizeImage);
-    parsedDocument.querySelectorAll('*').forEach((element) => {
-        [...element.attributes].forEach((attribute) => {
-            const name = attribute.name.toLocaleLowerCase();
-            if (name.startsWith('on') || name === 'style' || name === 'id' || name === 'srcdoc' || name === 'contenteditable') {
-                element.removeAttribute(attribute.name);
+    return `<!DOCTYPE html>\n${parsedDocument.documentElement.outerHTML}`;
+}
+
+function updateArticleFrameHeight() {
+    const frameDocument = dom.articleContent.contentDocument;
+    if (!frameDocument) return;
+
+    dom.articleContent.style.height = '1px';
+    const height = Math.max(
+        frameDocument.documentElement?.scrollHeight ?? 0,
+        frameDocument.body?.scrollHeight ?? 0,
+        frameDocument.body?.offsetHeight ?? 0
+    );
+    dom.articleContent.style.height = `${Math.max(320, Math.ceil(height))}px`;
+}
+
+function bindArticleFrameInteractions(frameDocument) {
+    frameDocument.addEventListener('click', (event) => {
+        const link = event.target.closest?.('a[data-wiki-title]');
+        if (!link) return;
+        event.preventDefault();
+        navigateToArticle(link.dataset.wikiTitle);
+    });
+
+    ['auxclick', 'contextmenu', 'dragstart'].forEach((eventName) => {
+        frameDocument.addEventListener(eventName, (event) => {
+            if (event.target.closest?.('a[data-wiki-title]')) {
+                event.preventDefault();
             }
         });
     });
 
-    return parsedDocument.body.innerHTML;
+    frameDocument.addEventListener('mousedown', (event) => {
+        if (event.button === 1 && event.target.closest?.('a[data-wiki-title]')) {
+            event.preventDefault();
+        }
+    });
 }
 
-function renderArticle(article) {
+function loadArticleFrame(documentHtml, renderToken) {
+    return new Promise((resolve) => {
+        dom.articleContent.addEventListener('load', () => {
+            if (renderToken !== articleRenderToken) {
+                resolve(false);
+                return;
+            }
+
+            const frameDocument = dom.articleContent.contentDocument;
+            if (!frameDocument) {
+                resolve(false);
+                return;
+            }
+
+            bindArticleFrameInteractions(frameDocument);
+            updateArticleFrameHeight();
+            resolve(true);
+        }, { once: true });
+
+        dom.articleContent.style.height = '320px';
+        dom.articleContent.srcdoc = documentHtml;
+    });
+}
+
+async function renderArticle(article, view = ARTICLE_VIEWS.CURRENT) {
+    const renderToken = ++articleRenderToken;
+    const isTarget = view === ARTICLE_VIEWS.TARGET;
+    session.articleView = view;
+    dom.currentArticleTab.classList.toggle('is-active', !isTarget);
+    dom.currentArticleTab.setAttribute('aria-selected', String(!isTarget));
+    dom.currentArticleTab.tabIndex = isTarget ? -1 : 0;
+    dom.targetArticleTab.classList.toggle('is-active', isTarget);
+    dom.targetArticleTab.setAttribute('aria-selected', String(isTarget));
+    dom.targetArticleTab.tabIndex = isTarget ? 0 : -1;
+    dom.articlePanel.setAttribute('aria-labelledby', isTarget ? 'targetArticleTab' : 'currentArticleTab');
+    dom.articleEyebrow.textContent = isTarget ? 'Цель' : 'Текущая статья';
     dom.currentTitle.textContent = article.title;
-    dom.articleContent.innerHTML = prepareArticleHtml(article.html);
-    document.title = `${article.title} → ${session.targetTitle} · Wiki Path`;
+    dom.articleContent.title = `${isTarget ? 'Цель' : 'Текущая статья'}: ${article.title}`;
+    await loadArticleFrame(prepareArticleDocument(article.html, !isTarget), renderToken);
+    if (renderToken !== articleRenderToken) return;
+
+    document.title = isTarget
+        ? `Цель: ${article.title} · Wiki Path`
+        : `${article.title} → ${session.targetTitle} · Wiki Path`;
 }
 
 function updateHud() {
@@ -289,6 +363,99 @@ function formatTime(milliseconds) {
         parts.unshift(String(hours).padStart(2, '0'));
     }
     return parts.join(':');
+}
+
+function getRussianCountText(count, forms) {
+    const lastTwoDigits = count % 100;
+    const lastDigit = count % 10;
+
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+        return `${count} ${forms[2]}`;
+    }
+    if (lastDigit === 1) {
+        return `${count} ${forms[0]}`;
+    }
+    if (lastDigit >= 2 && lastDigit <= 4) {
+        return `${count} ${forms[1]}`;
+    }
+    return `${count} ${forms[2]}`;
+}
+
+function loadRecords() {
+    try {
+        const storedRecords = JSON.parse(window.localStorage.getItem(RECORDS_STORAGE_KEY) ?? '[]');
+        if (!Array.isArray(storedRecords)) {
+            return [];
+        }
+
+        return storedRecords.filter((record) => (
+            typeof record?.startTitle === 'string'
+            && typeof record?.targetTitle === 'string'
+            && Number.isFinite(record?.elapsedMilliseconds)
+            && Number.isFinite(record?.transitionCount)
+            && Number.isFinite(record?.revisitCount)
+        ));
+    } catch (error) {
+        console.warn('Failed to load Wiki Path records:', error);
+        return [];
+    }
+}
+
+function saveCompletedRecord() {
+    const records = loadRecords();
+    records.unshift({
+        startTitle: session.startTitle,
+        targetTitle: session.targetTitle,
+        elapsedMilliseconds: getElapsedTime(),
+        transitionCount: session.transitionCount,
+        revisitCount: session.revisitCount,
+        finishedAt: session.finishedAt
+    });
+
+    try {
+        window.localStorage.setItem(RECORDS_STORAGE_KEY, JSON.stringify(records));
+    } catch (error) {
+        console.warn('Failed to save Wiki Path record:', error);
+    }
+}
+
+function createRecordItem(record) {
+    const item = document.createElement('li');
+    const route = document.createElement('span');
+    const metrics = document.createElement('span');
+
+    route.className = 'record-route';
+    route.textContent = `Старт «${record.startTitle}» — Конец «${record.targetTitle}»`;
+    metrics.className = 'record-metrics';
+    metrics.textContent = `${formatTime(record.elapsedMilliseconds)}, ${getRussianCountText(record.transitionCount, ['переход', 'перехода', 'переходов'])}, ${getRussianCountText(record.revisitCount, ['повтор', 'повтора', 'повторов'])}`;
+    item.append(route, document.createTextNode(': '), metrics);
+    return item;
+}
+
+function renderRecords() {
+    const records = loadRecords();
+    dom.recordsList.replaceChildren(...records.map(createRecordItem));
+    dom.recordsEmpty.hidden = records.length > 0;
+    dom.recordsList.hidden = records.length === 0;
+}
+
+function openRecords() {
+    renderRecords();
+    recordsReturnFocus = document.activeElement;
+    dom.recordsModal.hidden = false;
+    document.body.classList.add('modal-open');
+    dom.closeRecordsButton.focus();
+}
+
+function closeRecords() {
+    if (dom.recordsModal.hidden) {
+        return;
+    }
+
+    dom.recordsModal.hidden = true;
+    document.body.classList.remove('modal-open');
+    recordsReturnFocus?.focus();
+    recordsReturnFocus = null;
 }
 
 function updateTimer() {
@@ -343,6 +510,58 @@ function setTransitionLoading(isLoading) {
     dom.articleStage.classList.toggle('is-loading', isLoading);
     dom.articleContent.setAttribute('aria-busy', String(isLoading));
     dom.transitionLoader.hidden = !isLoading;
+    dom.currentArticleTab.disabled = isLoading;
+    dom.targetArticleTab.disabled = isLoading;
+}
+
+async function showCurrentArticle() {
+    if (!session || session.status !== STATUSES.PLAYING || !session.currentArticle) {
+        return;
+    }
+
+    hideError();
+    await renderArticle(session.currentArticle, ARTICLE_VIEWS.CURRENT);
+    window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+async function showTargetArticle() {
+    if (!session || session.status !== STATUSES.PLAYING || session.articleView === ARTICLE_VIEWS.TARGET) {
+        return;
+    }
+
+    if (session.targetArticle) {
+        hideError();
+        await renderArticle(session.targetArticle, ARTICLE_VIEWS.TARGET);
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        return;
+    }
+
+    const token = roundToken;
+    requestController = new AbortController();
+    session.status = STATUSES.LOADING;
+    hideError();
+    setTransitionLoading(true);
+
+    try {
+        const article = await fetchArticle({ title: session.targetTitle }, requestController.signal);
+        if (token !== roundToken) return;
+
+        session.targetArticle = article;
+        session.status = STATUSES.PLAYING;
+        await renderArticle(article, ARTICLE_VIEWS.TARGET);
+        window.scrollTo({ top: 0, behavior: 'auto' });
+    } catch (error) {
+        if (error.name === 'AbortError' || token !== roundToken) return;
+        console.error(`Failed to load target Wikipedia article "${session.targetTitle}":`, error);
+        session.status = STATUSES.PLAYING;
+        await renderArticle(session.currentArticle, ARTICLE_VIEWS.CURRENT);
+        showTransitionError(showTargetArticle);
+    } finally {
+        if (token === roundToken) {
+            requestController = null;
+            setTransitionLoading(false);
+        }
+    }
 }
 
 async function startNewGame() {
@@ -364,21 +583,23 @@ async function startNewGame() {
 
         session = createSession(startPage, targetPage);
         updateHud();
-        const startArticle = await fetchArticle({ pageid: startPage.pageid }, requestController.signal);
+        const startArticle = await fetchArticle({ title: startPage.title }, requestController.signal);
         if (token !== roundToken) return;
 
         session.startPageId = startArticle.pageid;
         session.startTitle = startArticle.title;
         session.currentPageId = startArticle.pageid;
         session.currentTitle = startArticle.title;
+        session.currentArticle = startArticle;
         session.visitedPages.push({ pageid: startArticle.pageid, title: startArticle.title, revisit: false });
         session.visitedPageIds.add(startArticle.pageid);
-        renderArticle(startArticle);
+        await renderArticle(startArticle, ARTICLE_VIEWS.CURRENT);
 
         session.status = STATUSES.PLAYING;
         session.startedAt = Date.now();
         dom.initialState.hidden = true;
         dom.articleStage.hidden = false;
+        updateArticleFrameHeight();
         window.scrollTo({ top: 0, behavior: 'auto' });
         startTimer();
         updateHud();
@@ -396,7 +617,7 @@ async function startNewGame() {
 }
 
 async function navigateToArticle(title) {
-    if (!session || session.status !== STATUSES.PLAYING) {
+    if (!session || session.status !== STATUSES.PLAYING || session.articleView !== ARTICLE_VIEWS.CURRENT) {
         return;
     }
 
@@ -420,13 +641,14 @@ async function navigateToArticle(title) {
         }
 
         const revisit = session.visitedPageIds.has(article.pageid);
-        renderArticle(article);
         session.currentPageId = article.pageid;
         session.currentTitle = article.title;
+        session.currentArticle = article;
         session.transitionCount += 1;
         session.revisitCount += revisit ? 1 : 0;
         session.visitedPages.push({ pageid: article.pageid, title: article.title, revisit });
         session.visitedPageIds.add(article.pageid);
+        await renderArticle(article, ARTICLE_VIEWS.CURRENT);
         updateHud();
         window.scrollTo({ top: 0, behavior: 'auto' });
 
@@ -453,6 +675,7 @@ function finishRound() {
     session.finishedAt = Date.now();
     stopTimer();
     updateHud();
+    saveCompletedRecord();
 
     dom.resultPair.textContent = `${session.startTitle}  →  ${session.targetTitle}`;
     dom.resultTime.textContent = formatTime(getElapsedTime());
@@ -477,11 +700,22 @@ function finishRound() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-dom.articleContent.addEventListener('click', (event) => {
-    const link = event.target.closest('a[data-wiki-title]');
-    if (!link) return;
-    event.preventDefault();
-    navigateToArticle(link.dataset.wikiTitle);
+dom.currentArticleTab.addEventListener('click', showCurrentArticle);
+dom.targetArticleTab.addEventListener('click', showTargetArticle);
+window.addEventListener('resize', updateArticleFrameHeight);
+
+dom.recordsButton.addEventListener('click', openRecords);
+dom.closeRecordsButton.addEventListener('click', closeRecords);
+dom.recordsModal.addEventListener('click', (event) => {
+    if (event.target === dom.recordsModal) {
+        closeRecords();
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !dom.recordsModal.hidden) {
+        closeRecords();
+    }
 });
 
 dom.retryButton.addEventListener('click', () => {
