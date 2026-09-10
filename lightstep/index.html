@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#ced7cc">
+    <meta name="description" content="Тише света. Перепрыгивай световые волны и найди выход с процедурного 3D-острова.">
+    <title>Lightstep — Тише света</title>
+    <link rel="icon" href="/images/main-icon.png">
+    <link rel="stylesheet" href="/shared/common.css">
+    <link rel="stylesheet" href="./index.css">
+    <script type="importmap">
+        { "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+        } }
+    </script>
+</head>
+<body>
+    <div class="game-shell">
+        <header class="topbar">
+            <div class="stage-actions">
+                <button id="pause" class="icon-button" type="button" aria-label="Пауза (Esc)" title="Пауза · Esc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg></button>
+                <button id="retry" class="icon-button" type="button" aria-label="Повторить карту (R)" title="Повторить · R"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1.5 7M4 4v6h6"/></svg></button>
+                <button id="new-map" class="text-button" type="button" title="Другая карта · N">Другая карта <span aria-hidden="true">↗</span></button>
+            </div>
+            <div class="run-info" aria-label="Прогресс">
+                <div><span class="eyebrow">УРОВЕНЬ</span><strong id="level">01</strong></div>
+                <span class="info-divider"></span>
+                <div><span class="eyebrow">ПОПЫТКА</span><strong id="attempt">01</strong></div>
+            </div>
+            <nav class="navigation" aria-label="Навигация">
+                <a class="icon-button" href="/" aria-label="Все приложения" title="Все приложения">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 11 9-8 9 8M5 9v11h5v-6h4v6h5V9"/></svg>
+                </a>
+                <a class="icon-button" href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub"><img src="/images/github-icon.png" alt="" width="20" height="20"></a>
+            </nav>
+        </header>
+
+        <main id="stage" class="stage" aria-label="Игровое поле" data-state="loading">
+            <canvas id="game-canvas" tabindex="0" aria-label="3D-поле. WASD — движение, пробел — прыжок. Дойдите до клетки со стрелкой и избегайте белых клеток."></canvas>
+            <p id="notice" class="notice" role="status" aria-live="polite">Загрузка…</p>
+            <section id="result" class="result-card" aria-labelledby="result-title" hidden>
+                <h2 id="result-title"></h2>
+                <button id="result-action" class="primary-button" type="button">Повторить <span aria-hidden="true">↗</span></button>
+            </section>
+        </main>
+
+        <div class="touch-controls" aria-label="Сенсорное управление">
+            <div class="dpad"><button type="button" data-move="w" aria-label="Вперёд">↑</button><button type="button" data-move="a" aria-label="Влево">←</button><button type="button" data-move="s" aria-label="Назад">↓</button><button type="button" data-move="d" aria-label="Вправо">→</button></div>
+            <button id="touch-jump" type="button" aria-label="Прыжок">Прыжок <span aria-hidden="true">↑</span></button>
+        </div>
+    </div>
+    <noscript><p class="fallback">Для игры нужен JavaScript.</p></noscript>
+    <script type="module">
+        import('./index.js').catch(error => {
+            console.error(error);
+            document.querySelector('#notice').textContent = 'Не удалось загрузить 3D. Обновите страницу.';
+            document.querySelector('#stage').dataset.state = 'error';
+        });
+    </script>
+</body>
+</html>

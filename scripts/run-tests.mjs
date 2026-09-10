@@ -2,6 +2,7 @@ const testFiles = [
     '../babylon-tower/tests/puzzle.test.js',
     '../gamma-trainer/tests/music-theory.test.js',
     '../how-many-sp/tests/story-points.test.js',
+    '../lightstep/tests/game.test.js',
     '../my-valentine/tests/game-state.test.js',
     '../the-maze/tests/core.test.mjs',
     '../tic-tac-toe/tests/board.test.js',

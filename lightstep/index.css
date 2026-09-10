@@ -1,0 +1,87 @@
+:root {
+    color-scheme: light;
+    --ls-bg: #ced7cc;
+    --ls-ink: #293b32;
+    --ls-muted: #586b5d;
+    --ls-line: rgba(46, 66, 52, 0.18);
+}
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; }
+body { overflow: hidden; padding: 0; color: var(--ls-ink); background: var(--ls-bg); font-family: 'Space Grotesk', system-ui, sans-serif; }
+body::before { display: none; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; }
+button, .icon-button { touch-action: manipulation; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--ls-ink); outline-offset: 5px; }
+button:disabled { opacity: 0.45; cursor: default; }
+[hidden] { display: none !important; }
+.game-shell { height: 100dvh; min-height: 320px; display: flex; flex-direction: column; padding: 0 42px; }
+.topbar { height: 72px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--ls-line); }
+.run-info { display: flex; gap: 27px; align-items: center; margin-left: auto; margin-right: 48px; }
+.run-info > div { display: flex; align-items: center; gap: 13px; }
+.eyebrow { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 400; letter-spacing: 1.8px; color: var(--ls-muted); line-height: 1.6; }
+.run-info strong { font-size: 25px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.info-divider { height: 23px; width: 1px; background: var(--ls-line); }
+.navigation { display: flex; gap: 8px; }
+.icon-button { width: 39px; height: 39px; border: 1px solid var(--ls-line); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: transparent; color: var(--ls-ink); cursor: pointer; transition: background 150ms, transform 150ms; text-decoration: none; padding: 9px; }
+.icon-button svg { width: 20px; height: 20px; flex-shrink: 0; }
+.icon-button img { object-fit: contain; opacity: 0.75; }
+.icon-button:hover, .text-button:hover { background: #bccbb9; }
+.icon-button:active, .primary-button:active { transform: translateY(1px); }
+.stage { flex: 1; position: relative; min-height: 0; isolation: isolate; }
+#game-canvas { position: absolute; width: 100%; height: 100%; inset: 0; display: block; outline: none; }
+.stage-actions { display: flex; align-items: center; gap: 9px; }
+.text-button { display: flex; align-items: center; gap: 18px; min-height: 39px; border: 1px solid var(--ls-line); border-radius: 24px; padding: 0 16px; color: var(--ls-ink); background: transparent; font-size: 11px; cursor: pointer; transition: background 150ms; }
+.text-button span { font-size: 18px; }
+.notice { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); margin: 0; color: var(--ls-ink); font-size: 12px; text-align: center; white-space: nowrap; pointer-events: none; }
+.notice:empty { display: none; }
+.result-card { position: absolute; z-index: 3; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(270px, calc(100% - 28px)); border: 1px solid rgba(255,255,255,0.55); border-radius: 17px; padding: 22px; background: #e4e9de; box-shadow: 0 18px 70px rgba(31,48,35,0.16); text-align: center; }
+.result-card h2 { margin: 0 0 18px; font-size: 25px; font-weight: 500; letter-spacing: -0.9px; }
+.primary-button { width: 100%; border: 0; border-radius: 8px; padding: 12px 17px; color: #f2f3eb; background: #3c5945; cursor: pointer; font-size: 12px; transition: background 150ms, transform 150ms; display: flex; justify-content: space-between; align-items: center; }
+.primary-button:hover { background: #2f4a37; }
+.primary-button span { font-size: 19px; }
+.touch-controls { display: none; }
+.fallback { position: fixed; top: 40%; left: 15%; width: 70%; text-align: center; }
+@media (min-width: 1600px) { .game-shell { padding: 0 64px; } }
+@media (max-width: 1000px) {
+    .game-shell { padding: 0 25px; }
+    .run-info { margin-right: 15px; gap: 17px; }
+    .run-info > div { gap: 8px; }
+    .notice { bottom: 76px; }
+}
+@media (max-width: 640px) {
+    .game-shell { padding: 0 19px; }
+    .topbar { height: 66px; gap: 8px; }
+    .navigation { gap: 5px; }
+    .navigation .icon-button { width: 32px; height: 32px; padding: 6px; }
+    .navigation a:last-child { display: none; }
+    .run-info { gap: 8px; margin-right: 0; }
+    .run-info > div { flex-direction: column; gap: 0; }
+    .run-info strong { font-size: 20px; }
+    .run-info .eyebrow { font-size: 7px; letter-spacing: 0.6px; }
+    .info-divider { display: none; }
+    .eyebrow { font-size: 7px; letter-spacing: 1.1px; }
+    .stage-actions { gap: 5px; }
+    .stage-actions .icon-button { width: 36px; height: 36px; }
+    .text-button { min-height: 36px; font-size: 9px; padding: 0 8px; gap: 6px; }
+    .notice { bottom: 65px; font-size: 11px; max-width: 95%; white-space: normal; }
+}
+@media (pointer: coarse), (max-width: 640px) {
+    .touch-controls { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; padding: 8px 0 max(16px, env(safe-area-inset-bottom)); }
+    .dpad { display: grid; grid-template-columns: repeat(3, 39px); gap: 4px; }
+    .touch-controls button { border: 1px solid #99ae98; border-radius: 9px; background: #bdcdba; color: var(--ls-ink); touch-action: none; user-select: none; -webkit-user-select: none; height: 37px; }
+    .dpad button:first-child { grid-column: 2; }
+    .dpad button:nth-child(2) { grid-column: 1; }
+    .touch-controls button:active, .touch-controls button.pressed { background: #a0b59d; }
+    #touch-jump { height: 54px; padding: 0 25px; font-size: 12px; }
+    #touch-jump span { margin-left: 16px; }
+}
+@media (max-height: 570px) and (min-width: 641px) { .topbar { height: 60px; } }
+@media (pointer: coarse) and (max-height: 570px) and (min-width: 641px) {
+    .topbar { height: 60px; }
+    .touch-controls { padding: 4px 0 8px; }
+    .dpad { grid-template-columns: repeat(4, 39px); }
+    .dpad button:first-child, .dpad button:nth-child(2) { grid-column: auto; }
+    #touch-jump { height: 37px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
