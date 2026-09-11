@@ -1,0 +1,7 @@
+- main "Rectangle Puzzle" [ref=e2]:
+  - generic [ref=e3]:
+    - 'status "Очки: 0" [ref=e4]': "0"
+    - timer "Оставшееся время хода" [ref=e5]:
+      - generic [ref=e8]: 7,00 с
+  - button "Повернуть текущую фигуру" [ref=e10]
+  - 'img "Игровое поле 8 на 8. Занято клеток: 0" [ref=e11]'

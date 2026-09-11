@@ -1,0 +1,14 @@
+- main "Раскраска рёбер графа" [ref=e2]:
+  - generic [ref=e3]:
+    - region "Игровое поле" [ref=e4]:
+      - generic [ref=e5]:
+        - generic "Уровень 1" [ref=e6]: L1
+        - time [ref=e7]: 00:00
+      - img "Рёбра и вершины графа" [ref=e8]:
+        - 'button "Ребро 1: не окрашено" [ref=e9] [cursor=pointer]'
+        - 'button "Ребро 2: не окрашено" [ref=e11] [cursor=pointer]'
+        - 'button "Ребро 3: не окрашено" [ref=e13] [cursor=pointer]'
+    - group "Выбор цвета, клавиши 1, 2, 3" [ref=e15]:
+      - button "Цвет 1" [pressed] [ref=e16] [cursor=pointer]
+      - button "Цвет 2" [ref=e17] [cursor=pointer]
+      - button "Цвет 3" [ref=e18] [cursor=pointer]

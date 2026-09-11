@@ -1,0 +1,19 @@
+- main "Раскраска рёбер графа" [ref=e2]:
+  - generic [ref=e3]:
+    - region "Игровое поле" [ref=e4]:
+      - tablist "Сложность" [ref=e5]:
+        - tab "Intro" [selected] [ref=e6] [cursor=pointer]
+        - tab "Easy" [ref=e7] [cursor=pointer]
+        - tab "Normal" [ref=e8] [cursor=pointer]
+        - tab "Hard" [ref=e9] [cursor=pointer]
+        - tab "Expert" [ref=e10] [cursor=pointer]
+        - tab "Extreme" [ref=e11] [cursor=pointer]
+      - time [ref=e13]: 00:00
+      - tabpanel "Intro" [ref=e14]:
+        - status [ref=e15]:
+          - generic [ref=e17]: Создаём пазл…
+    - group "Выбор цвета, клавиши 1, 2, 3, 4" [ref=e18]:
+      - button "Цвет 1" [disabled] [pressed] [ref=e19]
+      - button "Цвет 2" [disabled] [ref=e20]
+      - button "Цвет 3" [disabled] [ref=e21]
+      - button "Цвет 4" [disabled] [ref=e22]

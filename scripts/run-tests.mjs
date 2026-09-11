@@ -4,6 +4,7 @@ const testFiles = [
     '../how-many-sp/tests/story-points.test.js',
     '../lightstep/tests/game.test.js',
     '../my-valentine/tests/game-state.test.js',
+    '../edge-coloring/tests/game.test.js',
     '../the-maze/tests/core.test.mjs',
     '../tic-tac-toe/tests/board.test.js',
     '../triangular-estimation/tests/pert.test.js'

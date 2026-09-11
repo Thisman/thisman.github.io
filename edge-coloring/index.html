@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#F5F4F0">
+    <meta name="description" content="Раскрасьте рёбра сетки от 5 × 5 до 9 × 9 в четыре цвета. Шесть сложностей с защищёнными подсказками и единственным решением.">
+    <title>Edgoku</title>
+    <link rel="icon" href="/images/main-icon.png">
+    <link rel="stylesheet" href="./index.css">
+    <script type="module" src="./index.js"></script>
+</head>
+<body>
+    <h1 class="game-title">Edgoku</h1>
+    <main id="game" class="game" aria-label="Раскраска рёбер графа">
+        <div class="workspace">
+            <section class="board" aria-label="Игровое поле">
+                <div id="difficulties" class="difficulties" role="tablist" aria-label="Сложность"></div>
+                <div class="hud">
+                    <time id="timer" aria-label="Время решения">00:00</time>
+                </div>
+                <div id="graph-stage" class="graph-stage is-generating" role="tabpanel" aria-busy="true">
+                    <svg id="graph" viewBox="0 0 720 720" aria-label="Сетка графа"></svg>
+                    <div id="loader" class="loader" role="status" aria-live="polite">
+                        <span class="spinner" aria-hidden="true"></span>
+                        <span id="generation-status">Создаём пазл…</span>
+                        <button id="retry-generation" type="button" hidden>Попробовать ещё</button>
+                    </div>
+                </div>
+            </section>
+            <div class="controls">
+                <button id="show-help" class="utility-button" type="button" aria-label="Правила игры" aria-haspopup="dialog" aria-controls="help-dialog" title="Правила игры">
+                    <img src="./icons/font-awesome/question.svg" width="20" height="20" alt="" aria-hidden="true">
+                </button>
+                <div id="palette" class="palette" role="group" aria-label="Выбор цвета, клавиши 1, 2, 3, 4">
+                    <button type="button" class="swatch" data-color="0" aria-label="Цвет 1" aria-keyshortcuts="1" aria-pressed="true"></button>
+                    <button type="button" class="swatch" data-color="1" aria-label="Цвет 2" aria-keyshortcuts="2" aria-pressed="false"></button>
+                    <button type="button" class="swatch" data-color="2" aria-label="Цвет 3" aria-keyshortcuts="3" aria-pressed="false"></button>
+                    <button type="button" class="swatch" data-color="3" aria-label="Цвет 4" aria-keyshortcuts="4" aria-pressed="false"></button>
+                </div>
+                <button id="show-reset" class="utility-button" type="button" aria-label="Сбросить пазл" aria-haspopup="dialog" aria-controls="reset-dialog" title="Сбросить пазл" disabled>
+                    <img src="./icons/font-awesome/rotate-right.svg" width="20" height="20" alt="" aria-hidden="true">
+                </button>
+            </div>
+        </div>
+    </main>
+    <dialog id="help-dialog" class="popup help-popup" aria-labelledby="help-title">
+        <h2 id="help-title">Как играть</h2>
+        <p>Раскрасьте все серые рёбра четырьмя цветами. У каждой вершины сходящиеся рёбра должны быть разных цветов.</p>
+        <ul class="rules">
+            <li><strong>Выбор цвета:</strong> нажмите на круг палитры или клавишу 1, 2, 3, 4.</li>
+            <li><strong>Левая кнопка мыши:</strong> красит ребро выбранным цветом. Повторный клик тем же цветом стирает его; другой цвет перекрашивает.</li>
+            <li><strong>Правая кнопка мыши:</strong> выбирает следующий цвет по кругу и красит ребро под указателем. Вне ребра — только меняет выбранный цвет.</li>
+            <li><strong>Замок на ребре:</strong> это подсказка. Её нельзя стереть или перекрасить.</li>
+            <li><strong>Красная подсветка:</strong> у вершины повторяется цвет. Исправьте эти рёбра, чтобы убрать конфликт.</li>
+        </ul>
+        <p class="popup-note">На сенсорном экране касание работает как левая кнопка. С клавиатуры выбирайте ребро через Tab и красьте через Enter или пробел.</p>
+        <div class="popup-actions"><button type="button" class="popup-button primary" data-close-dialog autofocus>Закрыть</button></div>
+    </dialog>
+    <dialog id="reset-dialog" class="popup reset-popup" aria-labelledby="reset-title" aria-describedby="reset-description">
+        <h2 id="reset-title">Сбросить пазл?</h2>
+        <p id="reset-description">Все ваши цвета будут удалены, а таймер обнулён. Подсказки и сам пазл сохранятся.</p>
+        <div class="popup-actions">
+            <button type="button" class="popup-button" data-close-dialog autofocus>Отмена</button>
+            <button id="confirm-reset" type="button" class="popup-button primary">Сбросить</button>
+        </div>
+    </dialog>
+    <dialog id="completion" class="completion" aria-labelledby="completion-title" aria-describedby="final-time">
+        <h1 id="completion-title">Готово</h1>
+        <p id="final-time">00:00</p>
+        <button id="new-puzzle" type="button" autofocus>Новый граф <span aria-hidden="true">→</span></button>
+    </dialog>
+</body>
+</html>
