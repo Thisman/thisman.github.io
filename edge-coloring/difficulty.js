@@ -1,10 +1,10 @@
 export const DIFFICULTIES = [
-    { id: 'intro', label: 'Intro', gridSize: 5, clues: 24 },
-    { id: 'easy', label: 'Easy', gridSize: 6, clues: 42 },
-    { id: 'normal', label: 'Normal', gridSize: 7, clues: 50 },
-    { id: 'hard', label: 'Hard', gridSize: 8, clues: 56 },
-    { id: 'expert', label: 'Expert', gridSize: 9, clues: 40 },
-    { id: 'extreme', label: 'Extreme', gridSize: 9, clues: 32 }
+    { id: 'intro', label: 'Intro', gridSize: 5, clues: 20 },
+    { id: 'easy', label: 'Easy', gridSize: 6, clues: 29 },
+    { id: 'normal', label: 'Normal', gridSize: 7, clues: 40 },
+    { id: 'hard', label: 'Hard', gridSize: 8, clues: 52 },
+    { id: 'expert', label: 'Expert', gridSize: 9, clues: 65 },
+    { id: 'extreme', label: 'Extreme', gridSize: 9, clues: 58 }
 ];
 export const getDifficulty = id => DIFFICULTIES.find(item => item.id === id);
 

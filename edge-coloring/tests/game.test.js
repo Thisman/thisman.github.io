@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { analyse, choosePalette, elapsedMs, formatTime, paintEdge, PALETTES, resetPuzzle } from '../game.js';
+import { analyse, choosePalette, elapsedMs, eraseEdge, formatTime, paintEdge, PALETTES, resetPuzzle } from '../game.js';
 import { generatePuzzle, generateSolution, clueQuality } from '../generator.js';
 import { DIFFICULTIES, matchesDifficulty } from '../difficulty.js';
 import { ALL_COLORS, GRID_EDGES, INCIDENT, countSolutions, searchDomains, seededRandom } from '../solver.js';
@@ -17,7 +17,7 @@ function seeded(seed) {
     return () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 2 ** 32; };
 }
 
-function checkGrid(graph, givens = 40) {
+function checkGrid(graph, givens = 65) {
     const size = graph.gridSize;
     assert.equal(graph.vertices.length, size ** 2);
     assert.equal(graph.edges.length, 2 * size * (size - 1));
@@ -58,9 +58,9 @@ function checkGrid(graph, givens = 40) {
 
 test('difficulty table exactly matches the requested sizes, totals, clues and remaining edges', () => {
     const expected = [
-        ['intro', 5, 40, 24, 16], ['easy', 6, 60, 42, 18],
-        ['normal', 7, 84, 50, 34], ['hard', 8, 112, 56, 56],
-        ['expert', 9, 144, 40, 104], ['extreme', 9, 144, 32, 112]
+        ['intro', 5, 40, 20, 20], ['easy', 6, 60, 29, 31],
+        ['normal', 7, 84, 40, 44], ['hard', 8, 112, 52, 60],
+        ['expert', 9, 144, 65, 79], ['extreme', 9, 144, 58, 86]
     ];
     assert.deepEqual(DIFFICULTIES.map(({ id, gridSize, clues }) => {
         const total = getGrid(gridSize).edges.length;
@@ -266,6 +266,24 @@ test('painting supports the fourth color, toggling and recoloring without resett
     assert.equal(elapsedMs(puzzle, 5000), 4000);
 });
 
+test('explicit erasing clears every player color, leaves empty edges untouched and preserves the timer', () => {
+    const puzzle = createPuzzle(), target = puzzle.edges.find(edge => !edge.locked);
+    const initial = structuredClone(puzzle);
+    assert.equal(eraseEdge(puzzle, 'missing'), false);
+    assert.equal(eraseEdge(puzzle, target.id), false);
+    assert.deepEqual(puzzle, initial, 'erasing empty space does not start the timer');
+    for (let color = 0; color < 4; color++) {
+        paintEdge(puzzle, target.id, color, 1000 + color);
+        assert.equal(eraseEdge(puzzle, target.id), true);
+        assert.equal(target.paintedColor, null);
+        assert.equal(puzzle.startedAt, 1000);
+        assert.equal(puzzle.finishedAt, null);
+        assert.ok(isValidPuzzle(puzzle));
+        assert.equal(eraseEdge(puzzle, target.id), false);
+    }
+    assert.deepEqual(puzzle, { ...initial, startedAt: 1000 });
+});
+
 test('conflicts at a four-way junction mark only repeated colors, including the fourth color', () => {
     const puzzle = createPuzzle(null, seeded(2));
     for (const edge of puzzle.edges) { edge.locked = false; edge.paintedColor = null; }
@@ -283,6 +301,7 @@ test('clues reject recoloring and erasing in every color without starting the ti
     const puzzle = createPuzzle(null, seeded(91)), before = JSON.stringify(puzzle);
     for (const edge of puzzle.edges.filter(edge => edge.locked)) {
         for (let color = 0; color < 4; color++) assert.equal(paintEdge(puzzle, edge.id, color, 1000), false);
+        assert.equal(eraseEdge(puzzle, edge.id), false);
     }
     assert.equal(JSON.stringify(puzzle), before);
     assert.equal(puzzle.startedAt, null);
@@ -297,6 +316,7 @@ test('completing the grid freezes time and prevents further editing', () => {
     assert.equal(elapsedMs(puzzle, 999999), (editable.length - 1) * 2000);
     const before = JSON.stringify(puzzle);
     assert.equal(paintEdge(puzzle, editable[0].id, 2, 999999), false);
+    assert.equal(eraseEdge(puzzle, editable[0].id), false);
     assert.equal(JSON.stringify(puzzle), before);
     assert.ok(isValidPuzzle(puzzle));
 });

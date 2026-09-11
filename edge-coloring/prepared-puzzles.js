@@ -1,5 +1,5 @@
 // Generated offline with randomized MRV/backtracking and unique clue removal.
-// Sparse 9×9 configurations; Expert adds clues to 40, Extreme retains 32.
+// Sparse 9×9 configurations; extra clues are added to each difficulty's target.
 export const PREPARED_PUZZLES = [
     {
         "source": "bank-5/0",

@@ -71,7 +71,21 @@ export function removeClues(solution, target, random) {
     return null;
 }
 
-function transformPrepared(prepared, random, target) {
+function restoreClues(solution, clues, target, random, difficulty) {
+    if (!clues || !matchesDifficulty(difficulty, evaluateHumanDifficulty(clues))) return null;
+    let count = clues.filter(color => color !== null).length;
+    for (const edge of shuffle(clues.flatMap((color, i) => color === null ? [i] : []), random)) {
+        if (count === target) return clues;
+        clues[edge] = solution[edge];
+        // Added clues preserve uniqueness, but must not reveal a square or
+        // shortcut the deductions that make the puzzle fit its difficulty.
+        if (revealedSquares(clues).length || !matchesDifficulty(difficulty, evaluateHumanDifficulty(clues))) clues[edge] = null;
+        else count++;
+    }
+    return count === target ? clues : null;
+}
+
+function transformPrepared(prepared, random, target, difficulty) {
     const colors = shuffle([0, 1, 2, 3], random), symmetry = Math.floor(random() * 8);
     const vertex = id => {
         let row = Math.floor(id / 9), column = id % 9;
@@ -85,14 +99,7 @@ function transformPrepared(prepared, random, target) {
         solution[next] = colors[Number(prepared.solution[index])];
         if (prepared.clues[index] !== '.') clues[next] = solution[next];
     });
-    // Adding clues to a certified unique puzzle preserves uniqueness. Every
-    // transformed candidate is still independently checked before publication.
-    let count = clues.filter(color => color !== null).length;
-    for (const edge of shuffle(clues.map((color, i) => color === null ? i : -1).filter(i => i >= 0), random)) {
-        if (count >= target) break;
-        clues[edge] = solution[edge]; count++;
-    }
-    return { solution, clues };
+    return { solution, clues: restoreClues(solution, clues, target, random, difficulty) };
 }
 
 export function generatePuzzle({ difficulty = 'intro', seed, previousPalette = null } = {}) {
@@ -113,11 +120,11 @@ export function generatePuzzle({ difficulty = 'intro', seed, previousPalette = n
             startedAt: null, finishedAt: null
         };
     };
-    if (config.gridSize === 9 && config.clues <= 40) {
+    if (config.gridSize === 9) {
         const candidates = PREPARED_PUZZLES.filter(item => item.clues.replaceAll('.', '').length <= config.clues);
         for (let attempt = 0; attempt < 2000; attempt++) {
             const prepared = candidates[Math.floor(random() * candidates.length)];
-            const { solution, clues } = transformPrepared(prepared, random, config.clues);
+            const { solution, clues } = transformPrepared(prepared, random, config.clues, difficulty);
             const puzzle = accept(solution, clues);
             if (puzzle) return puzzle;
         }

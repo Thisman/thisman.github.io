@@ -43,6 +43,14 @@ export function paintEdge(puzzle, edgeId, color, now = Date.now()) {
     return true;
 }
 
+export function eraseEdge(puzzle, edgeId) {
+    if (puzzle.finishedAt !== null) return false;
+    const edge = puzzle.edges.find(edge => edge.id === edgeId);
+    if (!edge || edge.locked || edge.paintedColor === null) return false;
+    edge.paintedColor = null;
+    return true;
+}
+
 export function elapsedMs(puzzle, now = Date.now()) {
     return puzzle.startedAt === null ? 0 : Math.max(0, (puzzle.finishedAt ?? now) - puzzle.startedAt);
 }

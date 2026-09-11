@@ -1,4 +1,4 @@
-import { analyse, COLOR_COUNT, elapsedMs, formatTime, paintEdge, PALETTES, resetPuzzle } from './game.js';
+import { analyse, COLOR_COUNT, elapsedMs, eraseEdge, formatTime, paintEdge, PALETTES, resetPuzzle } from './game.js';
 import { loadProgress, saveProgress } from './storage.js';
 import { sectorPath, vertexSectors, VERTEX_RADIUS } from './geometry.js';
 import { animatePaint } from './paint-animation.js';
@@ -107,10 +107,10 @@ function renderEdgeColor(edge) {
     for (const sector of edgeSectors.get(edge.id)) sector.style.fill = color;
 }
 
-function paint(id, event) {
+function paint(id, event, erase = false) {
     if (generating || !puzzle || puzzle.finishedAt !== null || isDialogOpen()) return;
     paintWaves.get(id)?.finish();
-    if (!paintEdge(puzzle, id, selectedColor)) return;
+    if (!(erase ? eraseEdge(puzzle, id) : paintEdge(puzzle, id, selectedColor))) return;
     if (!reducedMotion.matches) {
         const edge = puzzle.edges.find(edge => edge.id === id);
         const wave = animatePaint(graph, edgeElements.get(id).querySelector('.edge-line'), edgeSectors.get(id), event, edgeColor(edge), () => {
@@ -151,7 +151,7 @@ function renderPuzzle() {
             element.append(marker);
         }
         edgeSectors.set(edge.id, []);
-        element.addEventListener('click', event => paint(edge.id, event));
+        element.addEventListener('click', event => paint(edge.id, event, event.shiftKey && event.button === 0));
         element.addEventListener('keydown', event => {
             if (event.key !== 'Enter' && event.key !== ' ') return;
             event.preventDefault();

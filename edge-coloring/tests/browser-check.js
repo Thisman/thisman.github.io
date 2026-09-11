@@ -9,12 +9,14 @@ async (page) => {
     const ready = () => page.waitForFunction(() => document.querySelector('#graph-stage').getAttribute('aria-busy') === 'false' && document.querySelector('#loader').hidden);
     const saved = () => page.evaluate(key => JSON.parse(localStorage.getItem(key)), key);
     const edge = id => page.locator('[data-edge-id="' + id + '"]');
-    const clickEdge = async (id, button = 'left') => {
+    const clickEdge = async (id, button = 'left', shift = false) => {
         const point = await edge(id).locator('.edge-hit').evaluate(line => {
             const p = new DOMPoint((+line.getAttribute('x1') + +line.getAttribute('x2')) / 2, (+line.getAttribute('y1') + +line.getAttribute('y2')) / 2).matrixTransform(line.getScreenCTM());
             return { x: p.x, y: p.y };
         });
-        await page.mouse.click(point.x, point.y, { button });
+        if (shift) await page.keyboard.down('Shift');
+        try { await page.mouse.click(point.x, point.y, { button }); }
+        finally { if (shift) await page.keyboard.up('Shift'); }
     };
     const boxes = () => page.evaluate(() => ['#difficulties', '#graph-stage', '#palette', '#timer'].map(selector => {
         const { x, y, width, height } = document.querySelector(selector).getBoundingClientRect();
@@ -23,7 +25,7 @@ async (page) => {
     const sameBoxes = (a, b) => a.every((rect, i) => Object.keys(rect).every(key => Math.abs(rect[key] - b[i][key]) < 0.1));
     await ready();
     check(await page.getByRole('tab').allTextContents().then(names => names.join() === 'Intro,Easy,Normal,Hard,Expert,Extreme'), 'Six named difficulty tabs replace numerical levels');
-    for (const [name, size, total, count] of [['Intro',5,40,24], ['Easy',6,60,42], ['Normal',7,84,50], ['Hard',8,112,56], ['Expert',9,144,40], ['Extreme',9,144,32]]) {
+    for (const [name, size, total, count] of [['Intro',5,40,20], ['Easy',6,60,29], ['Normal',7,84,40], ['Hard',8,112,52], ['Expert',9,144,65], ['Extreme',9,144,58]]) {
         const started = Date.now();
         await page.getByRole('tab', { name, exact: true }).click(); await ready();
         check(Date.now() - started >= 1950, 'Loader stays visible for at least two seconds for ' + name);
@@ -70,7 +72,7 @@ async (page) => {
             await page.getByRole('tab', { name: 'Easy', exact: true }).click();
             check(await page.getByRole('tab', { name: 'Easy', exact: true }).getAttribute('aria-selected') === 'true' && await page.locator('#loader').isVisible(), 'Tabs stay responsive and select the newest request while generation is pending');
             release(); await ready();
-            check((await saved()).puzzle.difficulty === 'easy' && await page.locator('.edge.is-locked').count() === 42, 'Cancelled generation cannot replace the latest Easy puzzle');
+            check((await saved()).puzzle.difficulty === 'easy' && await page.locator('.edge.is-locked').count() === 29, 'Cancelled generation cannot replace the latest Easy puzzle');
             check(sameBoxes(before, await boxes()), 'Finishing generation leaves all layout positions unchanged at ' + width + 'x' + height);
             check(await page.evaluate(() => {
                 const game = document.querySelector('#game').getBoundingClientRect(), stage = document.querySelector('#graph-stage').getBoundingClientRect();
@@ -89,6 +91,9 @@ async (page) => {
     }
     check(JSON.stringify((await saved()).puzzle) === JSON.stringify(state.puzzle), 'Protected clues reject mouse and keyboard changes');
     const target = state.puzzle.edges.find(edge => !edge.locked);
+    await clickEdge(clue.id, 'left', true);
+    await clickEdge(target.id, 'left', true);
+    check(JSON.stringify((await saved()).puzzle) === JSON.stringify(state.puzzle), 'Shift-click leaves clues and empty edges unchanged without starting time');
     await page.keyboard.press('4'); await clickEdge(target.id);
     state = await saved();
     check(state.puzzle.edges.find(edge => edge.id === target.id).paintedColor === 3 && state.puzzle.startedAt !== null, 'Editable edges paint and start the timer');
@@ -96,6 +101,21 @@ async (page) => {
     check(await page.locator('[data-sector-edge="' + target.id + '"]').evaluateAll(paths => paths.length === 2 && paths.every(path => path.style.fill !== '')), 'Paint reaches both vertex sectors');
     await clickEdge(target.id);
     check((await saved()).puzzle.edges.find(edge => edge.id === target.id).paintedColor === null, 'Repeating the same color erases an editable edge');
+    await clickEdge(target.id);
+    await page.keyboard.press('1');
+    await clickEdge(target.id, 'left', true);
+    let erased = await saved();
+    check(erased.puzzle.edges.find(edge => edge.id === target.id).paintedColor === null && erased.selectedColor === 0 && erased.puzzle.startedAt === state.puzzle.startedAt, 'Shift-click erases during a paint wave regardless of selected color and preserves selection and time');
+    await page.waitForFunction(() => document.querySelectorAll('clipPath').length === 0);
+    check(await page.locator('[data-sector-edge="' + target.id + '"]').evaluateAll(paths => paths.length === 2 && paths.every(path => path.style.fill === 'var(--edge)')), 'Erasing returns both vertex sectors to gray');
+    await clickEdge(target.id, 'left', true);
+    check(JSON.stringify(await saved()) === JSON.stringify(erased), 'Repeated Shift-click on an empty edge is a no-op');
+    await clickEdge(target.id);
+    await page.keyboard.press('2'); await clickEdge(target.id);
+    check((await saved()).puzzle.edges.find(edge => edge.id === target.id).paintedColor === 1, 'Ordinary left-click still repaints with a different active color');
+    await clickEdge(target.id, 'right', true);
+    check((await saved()).selectedColor === 2 && (await saved()).puzzle.edges.find(edge => edge.id === target.id).paintedColor === 2, 'Shift does not change right-click cycling and painting');
+    await clickEdge(target.id, 'left', true);
     const partial = await saved();
     await page.reload(); await ready();
     check(JSON.stringify(await saved()) === JSON.stringify(partial) && await page.getByRole('tab', { name: 'Easy', exact: true }).getAttribute('aria-selected') === 'true', 'Reload restores the puzzle, difficulty, colors and running timestamp');
