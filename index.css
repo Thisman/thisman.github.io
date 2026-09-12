@@ -82,7 +82,8 @@ a:focus-visible, button:focus-visible, .carousel:focus-visible { outline: 2px so
 @media (hover: hover) { .tool-panel:hover .tool-copy { transform: scale(1.035); } }
 .tool-panel:focus-visible { outline-offset: -12px; }
 
-.music { display: flex; align-items: center; padding: 160px var(--landing-gutter) 100px; overflow: hidden; background: var(--landing-clay); color: #fff5e8; }
+.music, .stories { display: flex; align-items: center; padding: 160px var(--landing-gutter) 100px; overflow: hidden; color: #fff5e8; }
+.music { background: var(--landing-clay); }
 /* Replace this background image when the final music artwork is supplied. */
 .music-art { position: absolute; inset: 0; z-index: -1; overflow: hidden; background-image: radial-gradient(ellipse at 70% 30%, #dca987 0, transparent 65%), linear-gradient(120deg, #ac6249, #c98a6e); }
 .record {
@@ -101,13 +102,20 @@ a:focus-visible, button:focus-visible, .carousel:focus-visible { outline: 2px so
 .record-label::after { content: ''; position: absolute; width: 12px; height: 12px; background: #2b3027; border-radius: 50%; }
 .record-label span { position: absolute; bottom: 20%; font: italic clamp(18px, 3vw, 44px) Georgia, serif; }
 .music-staff { position: absolute; inset: auto 0 8% 0; height: 65px; background: repeating-linear-gradient(transparent 0 14px, rgb(255 245 232 / 12%) 15px 16px); transform: rotate(-7deg) scaleX(1.1); }
-.music-copy { position: relative; width: min(460px, 43%); }
-.music-copy .eyebrow { margin-bottom: 27px; }
-.music-copy h2 { font-size: clamp(65px, 7.5vw, 120px); font-weight: 500; line-height: .98; letter-spacing: -.06em; }
-.music-copy h2 span { font: italic 1.06em/.98 Georgia, 'Times New Roman', serif; }
-.music-copy p { max-width: 330px; margin-top: 32px; font-size: 15px; line-height: 1.7; }
-.music-copy .link-arrow { transition: transform .3s var(--landing-ease); }
-.music-copy:hover .link-arrow { transform: translate(4px, -4px); }
+.music-copy, .stories-copy { position: relative; width: min(460px, 43%); }
+.music-copy .eyebrow, .stories-copy .eyebrow { margin-bottom: 27px; }
+.music-copy h2, .stories-copy h2 { font-size: clamp(65px, 7.5vw, 120px); font-weight: 500; line-height: .98; letter-spacing: -.06em; }
+.music-copy h2 span, .stories-copy h2 span { font: italic 1.06em/.98 Georgia, 'Times New Roman', serif; }
+.music-copy p, .stories-copy p { max-width: 330px; margin-top: 32px; font-size: 15px; line-height: 1.7; }
+.music-copy .link-arrow, .stories-copy .link-arrow { transition: transform .3s var(--landing-ease); }
+.music-copy:hover .link-arrow, .stories-copy:hover .link-arrow { transform: translate(4px, -4px); }
+
+.stories { background: #302c23; }
+.stories-art { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+.stories-art img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.stories-art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgb(28 26 20 / 75%), rgb(28 26 20 / 35%) 42%, transparent 75%); }
+.stories-link { display: flex; align-items: center; gap: 22px; margin-top: 35px; font: 12px var(--font-mono); }
+.stories-link .link-arrow { width: 30px; height: 30px; margin: 0; }
 
 .games { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 30px; padding: 150px 0 32px; overflow: hidden; }
 .carousel { --card-text-scale: 1.8; --card-width: 500px; --card-step: 500px; --card-height: 520px; --card-description-height: 230.4px; position: relative; width: 100%; }
@@ -189,10 +197,12 @@ a:focus-visible, button:focus-visible, .carousel:focus-visible { outline: 2px so
     .tool-copy p { margin-top: 16px; font-size: 14px; max-width: 310px; padding-right: 24px; }
     .tool-copy .link-arrow { position: absolute; bottom: 4px; right: 0; width: 28px; height: 28px; margin: 0; }
     .tool-pert { padding-top: 50px; }
-    .music { padding-top: 140px; padding-bottom: 110px; }
-    .music-copy { width: 100%; max-width: 390px; }
-    .music-copy h2 { font-size: clamp(66px, 14vw, 90px); }
-    .music-copy p { max-width: 290px; font-size: 14px; }
+    .music, .stories { padding-top: 140px; padding-bottom: 110px; }
+    .music-copy, .stories-copy { width: 100%; max-width: 390px; }
+    .music-copy h2, .stories-copy h2 { font-size: clamp(66px, 14vw, 90px); }
+    .music-copy p, .stories-copy p { max-width: 290px; font-size: 14px; }
+    .stories-art img { object-position: 65% center; }
+    .stories-art::after { background: linear-gradient(90deg, rgb(28 26 20 / 88%), rgb(28 26 20 / 65%) 60%, rgb(28 26 20 / 15%)); }
     .music-art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgb(110 54 36 / 45%), rgb(110 54 36 / 10%)); }
     .record { width: 105vw; left: 46%; top: 63%; opacity: .8; }
     .games { gap: 30px; padding-top: 112px; padding-bottom: 18px; }

@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Thisman — инструменты и игры</title>
-    <meta name="description" content="Инструменты для оценки задач, музыкальный тренажёр и маленькие браузерные игры.">
+    <title>Thisman — инструменты, игры и рассказы</title>
+    <meta name="description" content="Инструменты для оценки задач, музыкальный тренажёр, маленькие браузерные игры и короткие рассказы Untold Stories.">
     <meta name="author" content="Thisman">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#f3f1eb">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://thisman.github.io/">
-    <meta property="og:title" content="Thisman — инструменты и игры">
-    <meta property="og:description" content="Инструменты для оценки задач, музыкальный тренажёр и браузерные игры.">
+    <meta property="og:title" content="Thisman — инструменты, игры и рассказы">
+    <meta property="og:description" content="Инструменты для оценки задач, музыкальный тренажёр, браузерные игры и короткие рассказы Untold Stories.">
     <meta property="og:image" content="https://thisman.github.io/images/demo.png">
     <meta property="og:locale" content="ru_RU">
     <link rel="canonical" href="https://thisman.github.io/">
@@ -19,7 +19,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="/shared/common.css">
-    <link rel="stylesheet" href="/index.css?v=landing-9">
+    <link rel="stylesheet" href="/index.css?v=landing-10">
     <script src="/shared/browser/analytics.js" defer></script>
     <script src="/index.js?v=landing-4" defer></script>
 </head>
@@ -40,16 +40,17 @@
         <a href="#tools" aria-label="Планирование"></a>
         <a href="#music" aria-label="Музыка"></a>
         <a href="#games" aria-label="Игры"></a>
+        <a href="#untold" aria-label="Рассказы Untold"></a>
     </nav>
     <main>
         <section class="screen welcome" id="welcome" aria-labelledby="welcome-title">
-            <div class="welcome-top meta">Tools / Music / Games</div>
+            <div class="welcome-top meta">Tools / Music / Games / Stories</div>
             <h1 class="welcome-title" id="welcome-title" aria-label="@tablescable present" lang="en">
                 <span class="type-line type-line-handle" data-type-line aria-hidden="true">@tablescable</span>
                 <span class="type-line type-line-secondary" data-type-line aria-hidden="true">present</span>
             </h1>
             <a class="scroll-cue" href="#tools" lang="en"><span>scroll down</span><svg viewBox="0 0 24 36" aria-hidden="true"><path d="M12 2v30M4 24l8 8 8-8"/></svg></a>
-            <span class="welcome-index meta" aria-hidden="true">01 — 04</span>
+            <span class="welcome-index meta" aria-hidden="true">01 — 05</span>
         </section>
         <section class="screen tools" id="tools" aria-label="Планирование">
             <div class="section-meta meta"><span>01 / Tools</span></div>
@@ -143,6 +144,18 @@
                 </div>
                 <p class="sr-only" data-carousel-status aria-live="polite" aria-atomic="true">Edgoku, 1 из 7</p>
             </div>
+        </section>
+        <section class="screen stories" id="untold" aria-labelledby="stories-title">
+            <div class="section-meta meta"><span>04 / Stories</span></div>
+            <div class="stories-art" aria-hidden="true">
+                <img src="/images/untold-newspaper.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async">
+            </div>
+            <a class="stories-copy" href="/untold/index.html">
+                <span class="eyebrow">Рассказы</span>
+                <h2 id="stories-title" lang="en">Untold<br><span>stories.</span></h2>
+                <p>Небольшие истории для неспешного чтения. Выберите рассказ и побудьте в нём немного.</p>
+                <span class="stories-link">Читать рассказы<svg class="link-arrow" aria-hidden="true"><use href="#arrow-up-right"/></svg></span>
+            </a>
         </section>
     </main>
 </body>
