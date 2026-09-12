@@ -2,115 +2,148 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Thisman — инструменты и игры</title>
-    <meta name="title" content="Thisman — инструменты и игры" />
-    <meta name="description" content="Набор браузерных инструментов для оценки задач, музыкальный тренажёр и несколько игр в едином светлом интерфейсе." />
-    <meta name="author" content="Thisman" />
-    <meta name="robots" content="index, follow" />
-    <meta name="language" content="Russian" />
-    <meta name="theme-color" content="#f5f5f5" />
-
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://thisman.github.io/" />
-    <meta property="og:title" content="Thisman — инструменты и игры" />
-    <meta property="og:description" content="Браузерные инструменты, тренажёры и игры в единой светлой системе." />
-    <meta property="og:image" content="https://thisman.github.io/images/demo.png" />
-    <meta property="og:locale" content="ru_RU" />
-
-    <link rel="canonical" href="https://thisman.github.io/" />
-    <script src="/shared/theme.js"></script>
-    <script src="/shared/browser/analytics.js"></script>
-    <link rel="stylesheet" href="./shared/common.css" />
-    <link rel="stylesheet" href="./index.css" />
+    <meta name="description" content="Инструменты для оценки задач, музыкальный тренажёр и маленькие браузерные игры.">
+    <meta name="author" content="Thisman">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#f3f1eb">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://thisman.github.io/">
+    <meta property="og:title" content="Thisman — инструменты и игры">
+    <meta property="og:description" content="Инструменты для оценки задач, музыкальный тренажёр и браузерные игры.">
+    <meta property="og:image" content="https://thisman.github.io/images/demo.png">
+    <meta property="og:locale" content="ru_RU">
+    <link rel="canonical" href="https://thisman.github.io/">
+    <link rel="icon" href="/images/main-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="/shared/common.css">
+    <link rel="stylesheet" href="/index.css?v=landing-9">
+    <script src="/shared/browser/analytics.js" defer></script>
+    <script src="/index.js?v=landing-4" defer></script>
 </head>
 <body>
-    <main class="main-container landing">
-        <header class="page-header landing-header">
-            <div class="page-kicker">Tools / Music / Games</div>
-            <h1 class="page-title">THISMAN</h1>
-            <p class="page-summary">
-                Набор небольших браузерных приложений: оценки для планирования, музыкальный тренажёр и игры.
-                Все страницы собраны в одной светлой системе с одинаковой типографикой, навигацией и палитрой.
-            </p>
-            <div class="nav-row">
-                <a class="nav-chip" href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer">GitHub</a>
-                <span class="nav-chip">Light Theme</span>
-                <span class="nav-chip">Nothing Inspired</span>
-            </div>
-        </header>
-
-        <section class="group">
-            <div class="group-title">Планирование</div>
-            <div class="cards">
-                <a href="./how-many-sp/index.html" class="card app-card">
-                    <span class="card-eyebrow">Estimator</span>
-                    <span class="card-title">Сколько сториков?</span>
-                    <span class="card-desc">Оценка story points по трём критериям: неопределённость, сложность и объём работы.</span>
-                </a>
-                <a href="./triangular-estimation/index.html" class="card app-card">
-                    <span class="card-eyebrow">PERT</span>
-                    <span class="card-title">Оценка по трём точкам</span>
-                    <span class="card-desc">Оптимистичная, реалистичная и пессимистичная оценка с итогом по формуле PERT.</span>
-                </a>
-            </div>
+    <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <symbol id="arrow-up-right" viewBox="0 0 24 24"><path d="M5 19 19 5M5 5h14v14"/></symbol>
+        <symbol id="arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-7-7 7 7-7 7"/></symbol>
+    </svg>
+    <a class="skip-link" href="#tools">К приложениям</a>
+    <header class="site-header" aria-label="Главная навигация">
+        <a class="wordmark" href="#welcome" aria-label="Thisman — наверх">thisman</a>
+        <a class="github-link" href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer" aria-label="Репозиторий на GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .8a11.4 11.4 0 0 0-3.6 22.2c.6.1.8-.2.8-.5v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.4-1.3-5.4-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.1 1.2a10.8 10.8 0 0 1 5.7 0c2.2-1.5 3.1-1.2 3.1-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.8 5.4-5.4 5.7.4.4.8 1.1.8 2.2v3.4c0 .3.2.6.8.5A11.4 11.4 0 0 0 12 .8Z"/></svg>
+        </a>
+    </header>
+    <nav class="section-nav" aria-label="Разделы страницы">
+        <a href="#welcome" aria-label="Приветствие" aria-current="location"></a>
+        <a href="#tools" aria-label="Планирование"></a>
+        <a href="#music" aria-label="Музыка"></a>
+        <a href="#games" aria-label="Игры"></a>
+    </nav>
+    <main>
+        <section class="screen welcome" id="welcome" aria-labelledby="welcome-title">
+            <div class="welcome-top meta">Tools / Music / Games</div>
+            <h1 class="welcome-title" id="welcome-title" aria-label="@tablescable present" lang="en">
+                <span class="type-line type-line-handle" data-type-line aria-hidden="true">@tablescable</span>
+                <span class="type-line type-line-secondary" data-type-line aria-hidden="true">present</span>
+            </h1>
+            <a class="scroll-cue" href="#tools" lang="en"><span>scroll down</span><svg viewBox="0 0 24 36" aria-hidden="true"><path d="M12 2v30M4 24l8 8 8-8"/></svg></a>
+            <span class="welcome-index meta" aria-hidden="true">01 — 04</span>
         </section>
-
-        <section class="group">
-            <div class="group-title">Музыка</div>
-            <div class="cards">
-                <a href="./gamma-trainer/index.html" class="card app-card">
-                    <span class="card-eyebrow">Trainer</span>
-                    <span class="card-title">Гаммы и лады</span>
-                    <span class="card-desc">Тоника, лад, ступени, трезвучия и родственные тональности в одном компактном интерфейсе.</span>
-                </a>
-            </div>
+        <section class="screen tools" id="tools" aria-label="Планирование">
+            <div class="section-meta meta"><span>01 / Tools</span></div>
+            <a class="tool-panel tool-story" href="/how-many-sp/index.html">
+                <div class="tool-copy">
+                    <span class="eyebrow">Estimator</span>
+                    <h2>Сколько<br> сториков?</h2>
+                    <p>Оценка story points по трём критериям: неопределённость, сложность и объём работы.</p>
+                    <svg class="link-arrow" aria-hidden="true"><use href="#arrow-up-right"/></svg>
+                </div>
+            </a>
+            <a class="tool-panel tool-pert" href="/triangular-estimation/index.html">
+                <div class="tool-copy">
+                    <span class="eyebrow">PERT</span>
+                    <h2>Оценка<br> по трём точкам</h2>
+                    <p>Оптимистичная, реалистичная и пессимистичная оценка с итогом по формуле PERT.</p>
+                    <svg class="link-arrow" aria-hidden="true"><use href="#arrow-up-right"/></svg>
+                </div>
+            </a>
         </section>
-
-        <section class="group">
-            <div class="group-title">Игры</div>
-            <div class="cards">
-                <a href="./edge-coloring/index.html" class="card app-card">
-                    <span class="card-eyebrow">Puzzle</span>
-                    <span class="card-title">Edgoku</span>
-                    <span class="card-desc">Сетки от 5 × 5 до 9 × 9 и четыре цвета. Раскрасьте рёбра так, чтобы у каждой вершины цвета были разными.</span>
-                </a>
-                <a href="./lightstep/index.html" class="card app-card">
-                    <span class="card-eyebrow">3D Arcade</span>
-                    <span class="card-title">Lightstep — Тише света</span>
-                    <span class="card-desc">Перепрыгивайте световые волны и ищите выход с островов, которые каждый раз меняют форму.</span>
-                </a>
-                <a href="./babylon-tower/index.html" class="card app-card">
-                    <span class="card-eyebrow">3D Puzzle</span>
-                    <span class="card-title">Babylon Tower</span>
-                    <span class="card-desc">Головоломка с пятиугольной призмой и перестановкой цветных чипов по граням.</span>
-                </a>
-                <a href="./tic-tac-toe/index.html" class="card app-card">
-                    <span class="card-eyebrow">Board Game</span>
-                    <span class="card-title">Swap-Tac-Toe</span>
-                    <span class="card-desc">Крестики-нолики с механикой swap, настраиваемым полем и режимом против бота.</span>
-                </a>
-                <a href="./the-maze/index.html" class="card app-card ">
-                    <span class="card-title">The Maze</span>
-                    <span class="card-desc">Две сущности двигаются одновременно: нужно привести их к финишу ровно за нужное число шагов.</span>
-                </a>
-                <a href="./copy-my-draw/index.html" class="card app-card">
-                    <span class="card-eyebrow">Drawing Game</span>
-                    <span class="card-title">Повтори фигуру</span>
-                    <span class="card-desc">Запомните фигуру и повторите её одной непрерывной линией, чтобы набрать как можно больше очков за точность.</span>
-                </a>
-                <a href="./wiki-game/index.html" class="card app-card">
-                    <span class="card-eyebrow">Navigation Game</span>
-                    <span class="card-title">Wiki Path</span>
-                    <span class="card-desc">Доберитесь от одной случайной статьи Википедии до другой только по ссылкам внутри текста.</span>
-                </a>
+        <section class="screen music" id="music" aria-labelledby="music-title">
+            <div class="section-meta meta"><span>02 / Music</span></div>
+            <div class="music-art" aria-hidden="true"><div class="record"><div class="record-label"><span>33⅓</span></div></div><div class="music-staff"></div></div>
+            <a class="music-copy" href="/gamma-trainer/index.html">
+                <span class="eyebrow">Trainer</span>
+                <h2 id="music-title">Гаммы<br><span>и лады.</span></h2>
+                <p>Тоника, лад, ступени, трезвучия и родственные тональности в одном компактном интерфейсе.</p>
+                <svg class="link-arrow" aria-hidden="true"><use href="#arrow-up-right"/></svg>
+            </a>
+        </section>
+        <section class="screen games" id="games" aria-labelledby="games-title">
+            <div class="section-meta meta"><span>03 / Games</span></div>
+            <h2 class="sr-only" id="games-title">Игры</h2>
+            <div class="carousel" role="region" aria-roledescription="карусель" aria-label="Браузерные игры" tabindex="0">
+                <div class="carousel-loader" role="status"><span class="sr-only">Загрузка игр…</span></div>
+                <div class="carousel-stage">
+                    <article class="game-card is-active" role="group" aria-roledescription="слайд" aria-label="1 из 7">
+                        <div class="card-top"><span class="eyebrow">Puzzle</span><span class="card-number">01</span></div>
+                        <svg class="game-symbol" viewBox="0 0 80 64" aria-hidden="true"><path d="M16 8h48M16 32h48M16 56h48" stroke="#adbf57"/><path d="M16 8v48M40 8v48M64 8v48" stroke="#9690c8"/><g fill="currentColor" stroke="none"><circle cx="16" cy="8" r="3"/><circle cx="40" cy="8" r="3"/><circle cx="64" cy="8" r="3"/><circle cx="16" cy="32" r="3"/><circle cx="40" cy="32" r="3"/><circle cx="64" cy="32" r="3"/><circle cx="16" cy="56" r="3"/><circle cx="40" cy="56" r="3"/><circle cx="64" cy="56" r="3"/></g></svg>
+                        <h3 lang="en">Edgoku</h3>
+                        <p class="card-desc">Сетки от 5 × 5 до 9 × 9 и четыре цвета. Раскрасьте рёбра так, чтобы у каждой вершины цвета были разными.</p>
+                        <a class="game-link" href="/edge-coloring/index.html" aria-label="Играть в Edgoku"><span lang="en">Play</span><svg aria-hidden="true"><use href="#arrow-up-right"/></svg></a>
+                    </article>
+                    <article class="game-card" role="group" aria-roledescription="слайд" aria-label="2 из 7">
+                        <div class="card-top"><span class="eyebrow">3D Arcade</span><span class="card-number">02</span></div>
+                        <svg class="game-symbol" viewBox="0 0 80 64" aria-hidden="true"><path d="m8 44 16-9 16 9-16 9Zm32-13 16-9 16 9-16 9ZM24 18l16-9 16 9-16 9Z"/><path d="M40 9V1m-4 4 4-4 4 4" stroke="#c0dc67"/></svg>
+                        <h3 lang="en">Lightstep</h3>
+                        <p class="card-desc">Перепрыгивайте световые волны и ищите выход с островов, которые каждый раз меняют форму.</p>
+                        <a class="game-link" href="/lightstep/index.html" aria-label="Играть в Lightstep"><span lang="en">Play</span><svg aria-hidden="true"><use href="#arrow-up-right"/></svg></a>
+                    </article>
+                    <article class="game-card" role="group" aria-roledescription="слайд" aria-label="3 из 7">
+                        <div class="card-top"><span class="eyebrow">3D Puzzle</span><span class="card-number">03</span></div>
+                        <svg class="game-symbol" viewBox="0 0 80 64" aria-hidden="true"><path d="m20 14 20-9 20 9-7 13H27Zm0 0v35l7 10h26l7-10V14M27 27v32m26-32v32M20 31l7 11h26l7-11"/></svg>
+                        <h3 lang="en">Babylon Tower</h3>
+                        <p class="card-desc">Головоломка с пятиугольной призмой и перестановкой цветных чипов по граням.</p>
+                        <a class="game-link" href="/babylon-tower/index.html" aria-label="Играть в Babylon Tower"><span lang="en">Play</span><svg aria-hidden="true"><use href="#arrow-up-right"/></svg></a>
+                    </article>
+                    <article class="game-card" role="group" aria-roledescription="слайд" aria-label="4 из 7">
+                        <div class="card-top"><span class="eyebrow">Board Game</span><span class="card-number">04</span></div>
+                        <svg class="game-symbol" viewBox="0 0 80 64" aria-hidden="true"><path d="M31 6v52M51 6v52M12 23h58M12 42h58M17 6l10 10M17 16 27 6"/><circle cx="61" cy="52" r="6"/></svg>
+                        <h3 lang="en">Swap-Tac-Toe</h3>
+                        <p class="card-desc">Крестики-нолики с механикой swap, настраиваемым полем и режимом против бота.</p>
+                        <a class="game-link" href="/tic-tac-toe/index.html" aria-label="Играть в Swap-Tac-Toe"><span lang="en">Play</span><svg aria-hidden="true"><use href="#arrow-up-right"/></svg></a>
+                    </article>
+                    <article class="game-card" role="group" aria-roledescription="слайд" aria-label="5 из 7">
+                        <div class="card-top"><span class="eyebrow">Puzzle</span><span class="card-number">05</span></div>
+                        <svg class="game-symbol" viewBox="0 0 80 64" aria-hidden="true"><path d="M32 8H12v48h56V8H48v32H28V24m20 16v16"/><circle cx="40" cy="8" r="3"/><circle cx="28" cy="24" r="3"/></svg>
+                        <h3 lang="en">The Maze</h3>
+                        <p class="card-desc">Две сущности двигаются одновременно: нужно привести их к финишу ровно за нужное число шагов.</p>
+                        <a class="game-link" href="/the-maze/index.html" aria-label="Играть в The Maze"><span lang="en">Play</span><svg aria-hidden="true"><use href="#arrow-up-right"/></svg></a>
+                    </article>
+                    <article class="game-card" role="group" aria-roledescription="слайд" aria-label="6 из 7">
+                        <div class="card-top"><span class="eyebrow">Drawing Game</span><span class="card-number">06</span></div>
+                        <svg class="game-symbol" viewBox="0 0 80 64" aria-hidden="true"><path d="m40 5 8 18 20 2-15 14 4 20-17-10-17 10 4-20-15-14 20-2Z" stroke-dasharray="4 4"/><path d="m23 59 4-20-15-14 20-2 8-18"/></svg>
+                        <h3 lang="en">Copy My Draw</h3>
+                        <p class="card-desc">Запомните фигуру и повторите её одной непрерывной линией, чтобы набрать как можно больше очков за точность.</p>
+                        <a class="game-link" href="/copy-my-draw/index.html" aria-label="Играть в Copy My Draw"><span lang="en">Play</span><svg aria-hidden="true"><use href="#arrow-up-right"/></svg></a>
+                    </article>
+                    <article class="game-card" role="group" aria-roledescription="слайд" aria-label="7 из 7">
+                        <div class="card-top"><span class="eyebrow">Navigation Game</span><span class="card-number">07</span></div>
+                        <svg class="game-symbol" viewBox="0 0 80 64" aria-hidden="true"><circle cx="15" cy="45" r="7"/><circle cx="65" cy="15" r="7"/><path d="M22 45h18V15h18m-8-7 8 7-8 7"/></svg>
+                        <h3 lang="en">Wiki Path</h3>
+                        <p class="card-desc">Доберитесь от одной случайной статьи Википедии до другой только по ссылкам внутри текста.</p>
+                        <a class="game-link" href="/wiki-game/index.html" aria-label="Играть в Wiki Path"><span lang="en">Play</span><svg aria-hidden="true"><use href="#arrow-up-right"/></svg></a>
+                    </article>
+                </div>
+                <div class="carousel-controls">
+                    <button class="carousel-button previous" type="button" aria-label="Предыдущая игра"><svg aria-hidden="true"><use href="#arrow-right"/></svg></button>
+                    <span class="carousel-count meta" aria-hidden="true"><span data-current>01</span><span class="count-divider"></span><span>07</span></span>
+                    <button class="carousel-button next" type="button" aria-label="Следующая игра"><svg aria-hidden="true"><use href="#arrow-right"/></svg></button>
+                </div>
+                <p class="sr-only" data-carousel-status aria-live="polite" aria-atomic="true">Edgoku, 1 из 7</p>
             </div>
         </section>
     </main>
-
-    <footer class="footer">
-        <a href="./index.html">Home</a>
-        <a href="https://github.com/Thisman/thisman.github.io" target="_blank" rel="noreferrer">Repository</a>
-    </footer>
 </body>
 </html>
