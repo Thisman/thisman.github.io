@@ -1,5 +1,5 @@
 import { analyse, COLOR_COUNT, elapsedMs, eraseEdge, formatTime, paintEdge, PALETTES, resetPuzzle } from './game.js';
-import { loadProgress, saveProgress } from './storage.js';
+import { loadBestTimes, loadProgress, saveBestTime, saveProgress } from './storage.js';
 import { sectorPath, vertexSectors, VERTEX_RADIUS } from './geometry.js';
 import { animatePaint } from './paint-animation.js';
 import { DIFFICULTIES } from './difficulty.js';
@@ -13,10 +13,13 @@ const completion = document.querySelector('#completion');
 const finalTime = document.querySelector('#final-time');
 const nextButton = document.querySelector('#new-puzzle');
 const helpButton = document.querySelector('#show-help');
+const rankingButton = document.querySelector('#show-ranking');
 const resetButton = document.querySelector('#show-reset');
 const helpDialog = document.querySelector('#help-dialog');
+const rankingDialog = document.querySelector('#ranking-dialog');
+const rankingResults = document.querySelector('#ranking-results');
 const resetDialog = document.querySelector('#reset-dialog');
-const popups = [helpDialog, resetDialog];
+const popups = [helpDialog, rankingDialog, resetDialog];
 const tabs = document.querySelector('#difficulties');
 const stage = document.querySelector('#graph-stage');
 const loader = document.querySelector('#loader');
@@ -44,8 +47,27 @@ function svgElement(tag, attributes = {}) {
     return element;
 }
 
-function persist() { if (puzzle && !generating) saveProgress(storage, puzzle, selectedColor); }
+function persist() {
+    if (!puzzle || generating) return;
+    saveProgress(storage, puzzle, selectedColor);
+    if (puzzle.finishedAt !== null) saveBestTime(storage, puzzle.difficulty, elapsedMs(puzzle));
+}
 function isDialogOpen() { return completion.open || popups.some(dialog => dialog.open); }
+
+function renderRanking() {
+    const times = loadBestTimes(storage);
+    rankingResults.replaceChildren();
+    for (const { id, label } of DIFFICULTIES) {
+        const row = document.createElement('tr');
+        const name = document.createElement('th');
+        name.scope = 'row';
+        name.textContent = label;
+        const time = document.createElement('td');
+        time.textContent = times[id] == null ? '—' : formatTime(times[id]);
+        row.append(name, time);
+        rankingResults.append(row);
+    }
+}
 
 function renderTimer() {
     const elapsed = puzzle && !generating ? elapsedMs(puzzle) : 0;
@@ -262,6 +284,11 @@ tabs.addEventListener('keydown', event => {
 retryButton.addEventListener('click', () => generate(difficulty));
 helpButton.addEventListener('click', () => {
     if (!isDialogOpen()) helpDialog.showModal();
+});
+rankingButton.addEventListener('click', () => {
+    if (isDialogOpen()) return;
+    renderRanking();
+    rankingDialog.showModal();
 });
 resetButton.addEventListener('click', () => {
     if (!generating && puzzle && !isDialogOpen()) resetDialog.showModal();

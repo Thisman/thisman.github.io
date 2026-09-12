@@ -32,6 +32,9 @@
                 <button id="show-help" class="utility-button" type="button" aria-label="Правила игры" aria-haspopup="dialog" aria-controls="help-dialog" title="Правила игры">
                     <img src="./icons/font-awesome/question.svg" width="20" height="20" alt="" aria-hidden="true">
                 </button>
+                <button id="show-ranking" class="utility-button" type="button" aria-label="Локальный рейтинг" aria-haspopup="dialog" aria-controls="ranking-dialog" title="Локальный рейтинг">
+                    <img src="./icons/font-awesome/trophy.svg" width="20" height="20" alt="" aria-hidden="true">
+                </button>
                 <div id="palette" class="palette" role="group" aria-label="Выбор цвета, клавиши 1, 2, 3, 4">
                     <button type="button" class="swatch" data-color="0" aria-label="Цвет 1" aria-keyshortcuts="1" aria-pressed="true"></button>
                     <button type="button" class="swatch" data-color="1" aria-label="Цвет 2" aria-keyshortcuts="2" aria-pressed="false"></button>
@@ -55,6 +58,15 @@
             <li><strong>Красная подсветка:</strong> у вершины повторяется цвет. Исправьте эти рёбра, чтобы убрать конфликт.</li>
         </ul>
         <p class="popup-note">На сенсорном экране касание работает как левая кнопка. С клавиатуры выбирайте ребро через Tab и красьте через Enter или пробел.</p>
+        <div class="popup-actions"><button type="button" class="popup-button primary" data-close-dialog autofocus>Закрыть</button></div>
+    </dialog>
+    <dialog id="ranking-dialog" class="popup ranking-popup" aria-labelledby="ranking-title" aria-describedby="ranking-description">
+        <h2 id="ranking-title">Локальный рейтинг</h2>
+        <p id="ranking-description" class="popup-note">Лучшее время для каждой сложности</p>
+        <table class="ranking-table">
+            <thead><tr><th scope="col">Сложность</th><th scope="col">Время</th></tr></thead>
+            <tbody id="ranking-results"></tbody>
+        </table>
         <div class="popup-actions"><button type="button" class="popup-button primary" data-close-dialog autofocus>Закрыть</button></div>
     </dialog>
     <dialog id="reset-dialog" class="popup reset-popup" aria-labelledby="reset-title" aria-describedby="reset-description">

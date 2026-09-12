@@ -1,11 +1,12 @@
 import { analyse, isColor, PALETTES } from './game.js';
 import { gridVertex } from './layout.js';
-import { getDifficulty, matchesDifficulty } from './difficulty.js';
+import { DIFFICULTIES, getDifficulty, matchesDifficulty } from './difficulty.js';
 import { getGrid } from './grid.js';
 import { revealedSquares } from './grid-squares.js';
 
 export const STORAGE_KEY = 'edge-coloring:current:v1';
 export const STORAGE_VERSION = 6;
+export const BEST_TIMES_KEY = 'edge-coloring:best-times:v1';
 const isTime = value => value === null || (Number.isFinite(value) && value >= 0);
 const isPalette = value => Number.isInteger(value) && Boolean(PALETTES[value]);
 
@@ -68,6 +69,28 @@ export function loadProgress(storage) {
 export function saveProgress(storage, puzzle, selectedColor) {
     try {
         storage.setItem(STORAGE_KEY, JSON.stringify({ version: STORAGE_VERSION, puzzle, selectedColor }));
+        return true;
+    } catch { return false; }
+}
+
+export function loadBestTimes(storage) {
+    const times = {};
+    try {
+        const saved = JSON.parse(storage.getItem(BEST_TIMES_KEY));
+        for (const { id } of DIFFICULTIES) {
+            if (Number.isFinite(saved?.[id]) && saved[id] >= 0) times[id] = saved[id];
+        }
+    } catch { /* Missing, damaged or unavailable records show as dashes. */ }
+    return times;
+}
+
+export function saveBestTime(storage, difficulty, milliseconds) {
+    if (!getDifficulty(difficulty) || !Number.isFinite(milliseconds) || milliseconds < 0) return false;
+    const times = loadBestTimes(storage);
+    if (times[difficulty] != null && times[difficulty] <= milliseconds) return false;
+    times[difficulty] = milliseconds;
+    try {
+        storage.setItem(BEST_TIMES_KEY, JSON.stringify(times));
         return true;
     } catch { return false; }
 }

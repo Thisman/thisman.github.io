@@ -79,6 +79,13 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 7px; }
 .rules li + li { margin-top: 10px; }
 .popup .popup-note { color: #646872; font-size: 13px; }
 .reset-popup { width: min(360px, calc(100vw - 32px)); }
+.ranking-popup { width: min(360px, calc(100vw - 32px)); }
+.ranking-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ranking-table th, .ranking-table td { padding: 10px 0; text-align: left; }
+.ranking-table thead { color: #646872; font-size: 12px; }
+.ranking-table th { font-weight: 550; }
+.ranking-table tbody tr { border-top: 1px solid #EAE9E4; }
+.ranking-table tr > :last-child { text-align: right; font-variant-numeric: tabular-nums; }
 .popup-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
 .popup-button { border: 0; border-radius: 12px; padding: 12px 18px; background: #EAE9E4; font-size: 14px; transition: background 150ms; }
 .popup-button:hover { background: #DEDFD9; }
@@ -89,12 +96,15 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 7px; }
 #new-puzzle { display: flex; align-items: center; justify-content: center; gap: 22px; width: 100%; border: 0; border-radius: 14px; padding: 15px 20px; background: var(--ink); color: #FAF9F6; font-size: 15px; transition: background 150ms, transform 150ms; }
 #new-puzzle:hover { background: #343B4A; }
 #new-puzzle:active { transform: scale(0.98); }
-@media (max-height: 480px) and (min-width: 621px) { .controls, .palette { gap: 12px; } }
+@media (max-height: 620px) and (min-width: 621px) {
+    .controls { --control-size: clamp(28px, calc((100svh - 96px) / 7), 48px); }
+    .controls, .palette { gap: 12px; }
+}
 @media (max-width: 620px) {
     .game { width: min(calc(100vw - 28px), calc(100svh - 250px)); }
     .workspace { grid-template-columns: minmax(0, 1fr); gap: 34px; }
-    .controls { --control-size: clamp(32px, calc((100vw - 88px) / 6), 48px); flex-direction: row; justify-content: center; gap: 8px; }
-    .palette { flex-direction: row; justify-content: center; gap: clamp(12px, 4vw, 24px); }
+    .controls { --control-size: clamp(28px, calc((100vw - 84px) / 7), 48px); flex-direction: row; justify-content: center; gap: 8px; }
+    .palette { flex-direction: row; justify-content: center; gap: 8px; }
     .hud { padding-bottom: 8px; font-size: 12px; }
     .edge-line, .edge-wave { stroke-width: 10px; }
     .edge:not(.is-locked):hover .edge-line, .edge:not(.is-locked):focus-visible .edge-line, .edge:hover .edge-wave, .edge:focus-visible .edge-wave { stroke-width: 12px; }
